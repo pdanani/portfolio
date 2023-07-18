@@ -1,28 +1,33 @@
-import { Container } from '@mui/material';
-import styled from 'styled-components';
+import React, { useEffect, useRef } from 'react';
+import * as THREE from 'three';
+import WAVES from 'vanta/dist/vanta.waves.min';
 
-const Background = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("https://source.unsplash.com/random");
-  background-size: cover;
-  z-index: -1;
-`;
+const Layout = ({ children }) => {
+  const vantaRef = useRef(null);
+  useEffect(() => {
+    vantaRef.current = WAVES({
+      el: '#vanta',
+      THREE,
+      mouseControls: false,
+      touchControls: false,
+      color: '#150C38', // Adjusted color to a slightly more vibrant purple
+      waveSpeed: 0.6, // Slowed down the layout movement
+    });
 
-const LayoutContainer = styled(Container)`
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 8px;
-  margin-top: 32px;
-`;
+    return () => {
+      if (vantaRef.current) {
+        vantaRef.current.destroy();
+      }
+    };
+  }, []);
 
-export default function Layout({ children }) {
   return (
-    <LayoutContainer maxWidth="sm">
-      <Background />
-      {children}
-    </LayoutContainer>
+    <div style={{ width: '100vw', height: '100vh', textAlign:'center' }}>
+      <div id="vanta" style={{ width: '100%', height: '100%' }}>
+        {children}
+      </div>
+    </div>
   );
-}
+};
+
+export default Layout;
