@@ -1,0 +1,32 @@
+{
+    "name": "Pawan Danani",
+    "picture": "URL to your picture",
+    "email": "your.email@example.com",
+    "github": "URL to your GitHub profile",
+    "linkedin": "URL to your LinkedIn profile",
+    "experiences": [
+      {
+        "id": 1,
+        "title": "Job Title 1",
+        "description": "Job Description 1"
+      },
+      {
+        "id": 2,
+        "title": "Job Title 2",
+        "description": "Job Description 2"
+      }
+    ],
+    "projects": [
+      {
+        "id": 1,
+        "title": "Project Title 1",
+        "github": "URL to the GitHub repository of Project 1"
+      },
+      {
+        "id": 2,
+        "title": "Project Title 2",
+        "github": "URL to the GitHub repository of Project 2"
+      }
+    ]
+  }
+  
