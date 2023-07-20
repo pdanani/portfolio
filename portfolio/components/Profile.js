@@ -1,17 +1,16 @@
 import React from 'react';
 
 const Profile = ({ profile }) => {
-  const { fullName, profilePicture, githubLink, linkedinLink, email } = profile;
-
+  const { fullName, profilePicture, githubURL, linkedinURL, email } = profile;
   return (
     <div>
       <h1>{fullName}</h1>
-      <img src={profilePicture} alt={fullName} />
+      <img src={profilePicture} alt={'PD'} />
       <div>
-        <a href={githubLink} target="_blank" rel="noopener noreferrer">
+        <a href={githubURL} target="_blank" rel="noopener noreferrer">
           GitHub
         </a>
-        <a href={linkedinLink} target="_blank" rel="noopener noreferrer">
+        <a href={linkedinURL} target="_blank" rel="noopener noreferrer">
           LinkedIn
         </a>
         <a href={`mailto:${email}`}>Email</a>

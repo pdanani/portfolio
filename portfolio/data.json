@@ -1,32 +1,29 @@
 {
-    "name": "Pawan Danani",
-    "picture": "URL to your picture",
-    "email": "your.email@example.com",
-    "github": "URL to your GitHub profile",
-    "linkedin": "URL to your LinkedIn profile",
-    "experiences": [
-      {
-        "id": 1,
-        "title": "Job Title 1",
-        "description": "Job Description 1"
-      },
-      {
-        "id": 2,
-        "title": "Job Title 2",
-        "description": "Job Description 2"
-      }
-    ],
-    "projects": [
-      {
-        "id": 1,
-        "title": "Project Title 1",
-        "github": "URL to the GitHub repository of Project 1"
-      },
-      {
-        "id": 2,
-        "title": "Project Title 2",
-        "github": "URL to the GitHub repository of Project 2"
-      }
-    ]
-  }
-  
+  "profile": {
+    "fullName": "Your Full Name",
+    "profilePicture": "/path/to/profile-picture.jpg",
+    "githubURL": "https://github.com/your-github-profile",
+    "linkedinURL": "https://linkedin.com/in/your-linkedin-profile",
+    "email": "your-email@example.com"
+  },
+  "projects": [
+    {
+      "title": "Project 1",
+      "description": "Description of Project 1",
+      "leftButtonHref": "https://project1-link.com",
+      "leftButtonText": "Visit Project 1",
+      "rightButtonHref": "https://github.com/project1-repo",
+      "rightButtonText": "GitHub Repo for Project 1",
+      "cardWidth": "6"
+    },
+    {
+      "title": "Project 2",
+      "description": "Description of Project 2",
+      "leftButtonHref": "https://project2-link.com",
+      "leftButtonText": "Visit Project 2",
+      "rightButtonHref": "https://github.com/project2-repo",
+      "rightButtonText": "GitHub Repo for Project 2",
+      "cardWidth": "6"
+    }
+  ]
+}

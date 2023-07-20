@@ -3,27 +3,30 @@ import Layout from '../components/Layout';
 import ProjectCard from '../components/ProjectCard';
 // import Listening from '../components/Listening';
 import data from '../data.json';
+import Profile from '../components/Profile';
 
 const IndexPage = () => {
-  const { name, projects } = data;
-
+  const { name, projects, profile } = data;
+  console.log(projects, 'projects')
+  console.log('data', data)
+  console.log('profile', profile)
   return (
     <Layout>
-      <h1>{name}</h1>
-
-      <h2>Projects</h2>
+      <Profile profile={profile} />
       {projects.map((project, index) => (
+
         <ProjectCard
           key={index}
           title={project.title}
-          leftButtonHref={project.leftButtonHref}
-          leftButtonText={project.leftButtonText}
-          rightButtonHref={project.rightButtonHref}
-          rightButtonText={project.rightButtonText}
+          demoLink={project.leftButtonHref}
+          demoText={`Try ${project.leftButtonText}`}
+          rightButtonH={project.rightButtonHref}
+          githubText={project.rightButtonText}
           cardWidth={project.cardWidth}
           rocketcrab={project.rocketcrab}
         >
           {project.description}
+          {console.log(name)}
         </ProjectCard>
       ))}
 

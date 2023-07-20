@@ -1,5 +1,5 @@
 import React from 'react';
-import Card from './Card';
+import { Card } from 'react-bootstrap';
 
 const ProjectCard = ({
   title,
@@ -11,7 +11,7 @@ const ProjectCard = ({
   cardWidth = '6'
 }) => {
   return (
-    <Card cardWidth={cardWidth}>
+    <Card style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(8px)', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)', padding: '1rem' }}>
       <h3 className="card-title">{title}</h3>
       <p className="card-text">{description}</p>
       <div>
