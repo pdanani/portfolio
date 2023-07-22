@@ -13,7 +13,7 @@ const Profile = ({ profile }) => {
         <a href={linkedinURL} target="_blank" rel="noopener noreferrer">
           LinkedIn
         </a>
-        <a href={`mailto:${email}`}>Email</a>
+        <a href={`mailto:${email}`}>{email}</a>
       </div>
     </div>
   );

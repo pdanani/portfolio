@@ -1,29 +1,23 @@
 {
   "profile": {
-    "fullName": "Your Full Name",
+    "fullName": "Pawan Danani",
     "profilePicture": "/path/to/profile-picture.jpg",
-    "githubURL": "https://github.com/your-github-profile",
-    "linkedinURL": "https://linkedin.com/in/your-linkedin-profile",
-    "email": "your-email@example.com"
+    "githubURL": "https://github.com/pdanani",
+    "linkedinURL": "https://www.linkedin.com/in/pawan-danani-8b9402148/",
+    "email": "nycpawan@gmail.com"
   },
   "projects": [
     {
       "title": "Project 1",
       "description": "Description of Project 1",
-      "leftButtonHref": "https://project1-link.com",
-      "leftButtonText": "Visit Project 1",
-      "rightButtonHref": "https://github.com/project1-repo",
-      "rightButtonText": "GitHub Repo for Project 1",
-      "cardWidth": "6"
+      "demoURL": "https://project1-link.com",
+      "githubURL": "https://github.com/project1-repo"
     },
     {
       "title": "Project 2",
       "description": "Description of Project 2",
-      "leftButtonHref": "https://project2-link.com",
-      "leftButtonText": "Visit Project 2",
-      "rightButtonHref": "https://github.com/project2-repo",
-      "rightButtonText": "GitHub Repo for Project 2",
-      "cardWidth": "6"
+      "demoURL": "https://project2-link.com",
+      "githubURL": "https://github.com/project2-repo"
     }
   ]
 }

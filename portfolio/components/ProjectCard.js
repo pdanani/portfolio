@@ -1,34 +1,28 @@
 import React from 'react';
-import { Card } from 'react-bootstrap';
 
 const ProjectCard = ({
   title,
   description,
-  leftButtonHref,
-  leftButtonText,
-  rightButtonHref,
-  rightButtonText,
-  cardWidth = '6'
+  githubURL,
+  demoURL,
 }) => {
   return (
-    <Card style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(8px)', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)', padding: '1rem' }}>
-      <h3 className="card-title">{title}</h3>
-      <p className="card-text">{description}</p>
-      <div>
-        <a href={leftButtonHref} target="_blank">
-          <button type="button" className="btn btn-outline-light">
-            {leftButtonText}
+    <div className="bg-black bg-opacity-10 backdrop-filter backdrop-blur-lg shadow-md p-4">
+      <h3 className="text-xl font-semibold text-white">{title}</h3>
+      <p className="text-white">{description}</p>
+      <div className="mt-4">
+        <a href={demoURL} target="_blank" rel="noopener noreferrer">
+          <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            Demo
           </button>
         </a>
-        {rightButtonHref && (
-          <a href={rightButtonHref} target="_blank">
-            <button type="button" className="btn btn-outline-light">
-              {rightButtonText}
-            </button>
-          </a>
-        )}
+        <a href={githubURL} target="_blank" rel="noopener noreferrer">
+          <button className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded ml-2">
+            GitHub
+          </button>
+        </a>
       </div>
-    </Card>
+    </div>
   );
 };
 
