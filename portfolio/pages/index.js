@@ -6,12 +6,11 @@ import data from '../data.json';
 import Profile from '../components/Profile';
 import Projects from '../components/Projects';
 const IndexPage = () => {
-  const { name, projects, profile } = data;
+  const { projects, profile } = data;
   return (
     <Layout>
-      <Profile profile={profile} />
+      <Profile image={profile.image} name={profile.name} links={profile.links} />
       <Projects projects={projects} />
-
       <h2>Currently Listening</h2>
       {/* <Listening /> */}
     </Layout>

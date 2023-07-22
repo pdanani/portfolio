@@ -1,23 +1,35 @@
 {
   "profile": {
-    "fullName": "Pawan Danani",
+    "name": "Pawan Danani",
     "profilePicture": "/path/to/profile-picture.jpg",
-    "githubURL": "https://github.com/pdanani",
-    "linkedinURL": "https://www.linkedin.com/in/pawan-danani-8b9402148/",
-    "email": "nycpawan@gmail.com"
-  },
-  "projects": [
-    {
-      "title": "Project 1",
-      "description": "Description of Project 1",
-      "demoURL": "https://project1-link.com",
-      "githubURL": "https://github.com/project1-repo"
-    },
-    {
-      "title": "Project 2",
-      "description": "Description of Project 2",
-      "demoURL": "https://project2-link.com",
-      "githubURL": "https://github.com/project2-repo"
-    }
-  ]
+    "links": [
+      {
+        "name": "GitHub",
+        "url": "https://github.com/pdanani"
+      },
+      {
+        "name": "LinkedIn",
+        "url": "https://www.linkedin.com/in/pawan-danani-8b9402148/"
+      },
+      {
+        "name": "Email",
+        "url": "nycpawan@gmail.com"
+      }
+    ]},
+
+    "projects": [
+      {
+        "title": "Project 1",
+        "description": "Description of Project 1",
+        "demoURL": "https://project1-link.com",
+        "githubURL": "https://github.com/project1-repo"
+      },
+      {
+        "title": "Project 2",
+        "description": "Description of Project 2",
+        "demoURL": "https://project2-link.com",
+        "githubURL": "https://github.com/project2-repo"
+      }
+    ]
+  
 }
