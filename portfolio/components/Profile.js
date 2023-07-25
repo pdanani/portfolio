@@ -1,9 +1,16 @@
 import React from 'react';
-
-const Profile = ({ image, name, links }) => {
+import Image from 'next/image'; // Import the next/image component
+const Profile = ({ name, links }) => {
   return (
     <div className="text-center py-4">
-      <img className="mx-auto h-32 w-32 rounded-full" src={image} alt={name} />
+      {/* Use the next/image component */}
+      <Image
+        src="/profile.jpg"
+        alt={name}
+        width={200}
+        height={200}
+        className="mx-auto rounded-full"
+      />
       <h2 className="text-3xl font-bold mt-4 font-poppins">{name}</h2>
       <p className="mt-2 text-lg font-poppins">
         {links.map((link, index) => (
@@ -20,3 +27,5 @@ const Profile = ({ image, name, links }) => {
 };
 
 export default Profile;
+
+
