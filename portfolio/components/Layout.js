@@ -11,7 +11,9 @@ const Layout = ({ children }) => {
       mouseControls: false,
       touchControls: false,
       color: '#272063', // Adjusted color to a slightly more vibrant purple
-      waveSpeed: 0.6, // Slowed down the layout movement
+      waveSpeed: 0.3, // Slowed down the layout movement
+      zoom: 1.5, // Adjust the zoom level here (try different values)
+
     });
 
     return () => {
