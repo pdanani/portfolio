@@ -1,21 +1,24 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
 .material-card {
-    background-color: rgba(255, 255, 255, 0.8); /* Set a semi-transparent background color */
-    border-radius: 8px; /* Apply rounded corners */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* Add a subtle box shadow */
-    padding: 16px;
-  }
-  
-  .content {
-    /* Add styles for the content inside the card */
-    /* You can customize these styles based on your design preferences */
-    color: #333;
-  }
- 
-  
-  .font-poppins {
-    font-family: 'Poppins', sans-serif;
-  }
-  
+  background-color: rgba(255, 255, 255, 0.8);
+  /* Set a semi-transparent background color */
+  border-radius: 8px;
+  /* Apply rounded corners */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  /* Add a subtle box shadow */
+  padding: 16px;
+}
+
+.content {
+  /* Add styles for the content inside the card */
+  /* You can customize these styles based on your design preferences */
+  color: #333;
+}
+
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}

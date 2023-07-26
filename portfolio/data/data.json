@@ -14,21 +14,46 @@
         "name": "Email",
         "url": "nycpawan@gmail.com"
       }
-    ]},
-
-    "projects": [
-      {
-        "title": "Project 1",
-        "description": "Description of Project 1",
-        "demoURL": "https://project1-link.com",
-        "githubURL": "https://github.com/project1-repo"
-      },
-      {
-        "title": "Project 2",
-        "description": "Description of Project 2",
-        "demoURL": "https://project2-link.com",
-        "githubURL": "https://github.com/project2-repo"
-      }
     ]
-  
+  },
+  "projects": [
+    {
+      "title": "Project 1",
+      "description": "Description of Project 1",
+      "demoURL": "https://project1-link.com",
+      "githubURL": "https://github.com/project1-repo"
+    },
+    {
+      "title": "Project 2",
+      "description": "Description of Project 2",
+      "demoURL": "https://project2-link.com",
+      "githubURL": "https://github.com/project2-repo"
+    }
+  ],
+  "experience": [
+    {
+      "jobTitle": "Job Title 1",
+      "company": "Company 1",
+      "description": "Job description for Job 1",
+      "startDate": "2021-01-01",
+      "endDate": "2022-12-31",
+      "summary": "brief summary of job"
+    },
+    {
+      "jobTitle": "Job Title 1",
+      "company": "Company 1",
+      "description": "Job description for Job 1",
+      "startDate": "2021-01-01",
+      "endDate": "2022-12-31",
+      "summary": "brief summary of job"
+    },
+    {
+      "jobTitle": "Job Title 1",
+      "company": "Company 1",
+      "description": "Job description for Job 1",
+      "startDate": "2021-01-01",
+      "endDate": "2022-12-31",
+      "summary": "brief summary of job"
+    }
+  ]
 }
