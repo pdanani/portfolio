@@ -18,42 +18,59 @@
   },
   "projects": [
     {
-      "title": "Project 1",
-      "description": "Description of Project 1",
-      "demoURL": "https://project1-link.com",
-      "githubURL": "https://github.com/project1-repo"
+      "title": "Marvin's Studio",
+      "description": "Playlist Maker and Music Player, allowing users to share, fork, and collaborate on playlists with friends. Utilized RESTful APIs to extract music from YouTube metadata for acquiring mp3 data.● Designed and implemented data models using Mongoose for user profiles and playlists.Implemented secure Single Sign-On (SSO) and OAuth integration",
+      "githubURL": "https://github.com/pdanani/Marvins-Studio"
     },
     {
-      "title": "Project 2",
-      "description": "Description of Project 2",
-      "demoURL": "https://project2-link.com",
+      "title": "Gesture Swiping Decoder",
+      "description": "Decoding Gesture Swiping using the SHARK2 Algorithm and implemented using numpy. This program goes through multiple stages of pruning using location, shape letter based channels in order to reduce possibilities to a 'best possible word'",
       "githubURL": "https://github.com/project2-repo"
+    },
+    {
+      "title": "Synchronization Free Memory Allocator",
+      "description": "A custom dynamic memory allocator designed for x86-64 architecture, which serves as a replacement for the standard malloc, free, and realloc functions typically supplied by glibc. Key features include the utilization of segregated free lists, which enables a 'first-best fit' block placement strategy, and an immediate colasescing algorithm to minimize external fragmentation.",
+      "githubURL": "https://github.com/pdanani/MemoryAllocator"
+    },
+    {
+      "title": "SongOff",
+      "description": "A song exploration app that allows users to vote on one of 4 daily picks to count toward the Song of the Day",
+      "githubURL": "https://github.com/pdanani/songoff"
+    },
+    {
+      "title": "DNS Dig Tool",
+      "description": "The resolver takes as input a domain name. Using a recursive algorithm the tool resolves this query by first contacting the root server, the top-level domain, all the way until the authoritative name server.",
+      "githubURL": "https://github.com/pdanani/DNSDigTool"
+    },
+    {
+      "title": "GoLogoLo",
+      "description": "Developed a logo creator using the MERN stack and includes functionality to create shapes, text, image importing and gradient coloring. Application includes an option to export your logo as a .png file for web usage.",
+      "githubURL": "https://github.com/pdanani/GoLogoLo-MERN-"
     }
   ],
   "experience": [
     {
-      "jobTitle": "Job Title 1",
-      "company": "Company 1",
-      "description": "Job description for Job 1",
-      "startDate": "2021-01-01",
-      "endDate": "2022-12-31",
-      "summary": "brief summary of job"
+      "jobTitle": "Software Developer",
+      "company": "Park Beauty",
+      "description": "Design and develop a solution to integrate e-commerce platform data with the goal to reduce margin of error and increase employee efficiency",
+      "startDate": "2023-02-01",
+      "tech": "JavaScript React, PostgreSQL, GraphQL, and Apollo"
     },
     {
-      "jobTitle": "Job Title 1",
-      "company": "Company 1",
-      "description": "Job description for Job 1",
-      "startDate": "2021-01-01",
-      "endDate": "2022-12-31",
-      "summary": "brief summary of job"
+      "jobTitle": "Software Developer",
+      "company": "Madeyn",
+      "description": "Full-Stack Developer for Madeyn.com, a platform aiming to make wholesale more social. I created several pages from scratch including the Profile, Explore, and Details page.",
+      "startDate": "2022-03-01",
+      "endDate": "2022-10-01",
+      "tech": "brief summary of job"
     },
     {
-      "jobTitle": "Job Title 1",
-      "company": "Company 1",
-      "description": "Job description for Job 1",
-      "startDate": "2021-01-01",
-      "endDate": "2022-12-31",
-      "summary": "brief summary of job"
+      "jobTitle": "Software Engineer Intern",
+      "company": "PK INTL",
+      "description": "I had the chance to help a small company with an inventory offering system. I used Mongoose and GraphQL a feature to send offers on items with specific quantities by creating an offer model and then developing the Front End using React.",
+      "startDate": "2021-09-30",
+      "endDate": "2022-01-02",
+      "tech": "Mongoose, Express, React, Node, GraphQL"
     }
   ]
 }

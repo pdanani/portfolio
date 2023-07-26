@@ -10,9 +10,9 @@ const Layout = ({ children }) => {
       THREE,
       mouseControls: false,
       touchControls: false,
-      color: '#272063', 
-      waveSpeed: 0.3, 
-      zoom: 1.5, 
+      color: '#272063',
+      waveSpeed: 0.4,
+      zoom: 1.5,
     });
 
     return () => {
@@ -23,7 +23,7 @@ const Layout = ({ children }) => {
   }, []);
 
   return (
-    <div style={{ width: '100vw', height: '100vh', textAlign:'center' }}>
+    <div style={{ width: '100vw', height: '100%', textAlign: 'center' }}>
       <div id="vanta" style={{ width: '100%', height: '100%' }}>
         {children}
       </div>
