@@ -21,7 +21,7 @@ const ExperienceCard = ({
       </div>
       <p className="mt-4 text-lg text-white font-poppins">{summary}</p>
       <button className="mt-4 border-2 border-blue-500 hover:border-blue-600 bg-transparent text-blue-500 hover:text-blue-600 font-bold py-2 px-4 rounded font-poppins"
-        onClick={handleModal}>
+        onClick={() => handleModal(description, jobTitle)}>
         Full Description
       </button>
 

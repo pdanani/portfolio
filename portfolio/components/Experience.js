@@ -2,19 +2,10 @@ import ExperienceCard from "./ExperienceCard";
 import { useState } from "react";
 import Modal from './Modal';
 
-const Experience = ({ experience }) => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const handleModal = () => {
-        setIsOpen(true);
-    };
-
-    const closeModal = () => {
-        setIsOpen(false);
-    };
-
+const Experience = ({ experience, handleModal }) => {
+    const isOpen = useState(false); 
     return (
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {experience.map((job, index) => (
                     <div key={index}>
@@ -30,11 +21,7 @@ const Experience = ({ experience }) => {
                     </div>
                 ))}
             </div>
-            {isOpen && (
-                <Modal onClose={closeModal}>
-       
-                </Modal>
-            )}
+            
         </div>
     );
 };
