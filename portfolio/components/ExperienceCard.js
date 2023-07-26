@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Calendar } from 'react-feather';
-import Modal from './Modal';
-// Replace this with your actual modal component
 
 const ExperienceCard = ({
   jobTitle,
@@ -10,16 +8,8 @@ const ExperienceCard = ({
   startDate,
   endDate,
   summary,
+  handleModal
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleModal = () => {
-    setIsOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsOpen(false);
-  };
 
   return (
     <div className="bg-black bg-opacity-10 backdrop-filter backdrop-blur-lg shadow-md p-4">
@@ -31,16 +21,11 @@ const ExperienceCard = ({
       </div>
       <p className="mt-4 text-lg text-white font-poppins">{summary}</p>
       <button className="mt-4 border-2 border-blue-500 hover:border-blue-600 bg-transparent text-blue-500 hover:text-blue-600 font-bold py-2 px-4 rounded font-poppins"
-              onClick={handleModal}>
+        onClick={handleModal}>
         Full Description
       </button>
 
-      {isOpen && (
-        <Modal onClose={closeModal}>
-          <h2>{jobTitle} at {company}</h2>
-          <p>{description}</p>
-        </Modal>
-      )}
+
     </div>
   );
 };

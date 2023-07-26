@@ -10,10 +10,9 @@ const Layout = ({ children }) => {
       THREE,
       mouseControls: false,
       touchControls: false,
-      color: '#272063', // Adjusted color to a slightly more vibrant purple
-      waveSpeed: 0.3, // Slowed down the layout movement
-      zoom: 1.5, // Adjust the zoom level here (try different values)
-
+      color: '#272063', 
+      waveSpeed: 0.3, 
+      zoom: 1.5, 
     });
 
     return () => {
