@@ -27,8 +27,9 @@ const IndexPage = () => {
   return (
     <Layout>
       <Profile name={profile.name} links={profile.links} />
-      <Projects projects={projects} />
       <Experience experience={experience} handleModal={handleModal} />
+
+      <Projects projects={projects} />
       {/* <h2>Currently Listening</h2> */}
       {/* <Listening /> */}
 

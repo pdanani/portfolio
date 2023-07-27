@@ -4,13 +4,13 @@ import Image from 'next/image'; // Import the next/image component
 const Profile = ({ name, links }) => {
   return (
     <div className="text-center py-4">
-      <div className="inline-block overflow-hidden rounded-full w-48 h-48 shadow-2xl border-2 border-gray-600">
+      <div className="inline-block overflow-hidden border-2 border-gray-600 rounded-full w-200 h-200">
         <Image
           src="/profile.jpg"
           alt={name}
           width={200}
           height={200}
-          objectFit="cover"
+          objectFit="cover" // Set the objectFit property to "cover"
         />
       </div>
       <h2 className="text-3xl font-bold mt-4 font-poppins">{name}</h2>
