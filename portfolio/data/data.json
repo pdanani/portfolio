@@ -19,7 +19,7 @@
   "projects": [
     {
       "title": "Marvin's Studio",
-      "description": "Playlist Maker and Music Player, allowing users to share, fork, and collaborate on playlists with friends. Utilized RESTful APIs to extract music from YouTube metadata for acquiring mp3 data.● Designed and implemented data models using Mongoose for user profiles and playlists.Implemented secure Single Sign-On (SSO) and OAuth integration",
+      "description": "Playlist Maker and Music Player, allowing users to share, fork, and collaborate on playlists with friends. Genre of the Week promotes new songs for users to try out.",
       "githubURL": "https://github.com/pdanani/Marvins-Studio"
     },
     {
@@ -34,7 +34,7 @@
     },
     {
       "title": "SongOff",
-      "description": "A song exploration app that allows users to vote on one of 4 daily picks to count toward the Song of the Day",
+      "description": "A song exploration app that allows users to vote on one of 4 daily picks to count toward the Song of the Day. Votes reset every 24 hours and the winner is stored in the database",
       "githubURL": "https://github.com/pdanani/songoff"
     },
     {
