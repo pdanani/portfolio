@@ -36,7 +36,6 @@ const IndexPage = () => {
       {isOpen && (
         <Modal onClose={closeModal}>
           {jobDescription}
-          {jobTitle}
         </Modal>
       )}
     </Layout>
