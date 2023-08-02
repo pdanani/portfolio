@@ -13,7 +13,7 @@ const Profile = ({ name, links }) => {
           objectFit="cover" // Set the objectFit property to "cover"
         />
       </div>
-      <h2 className="text-3xl font-bold mt-4 font-poppins">{name}</h2>
+      <h2 className="text-3xl font-bold mt-4 font-poppins text-white">{name}</h2>
       <p className="mt-2 text-lg font-poppins">
         {links.map((link, index) => (
           <span key={index}>
