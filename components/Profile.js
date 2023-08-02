@@ -17,9 +17,10 @@ const Profile = ({ name, links }) => {
       <p className="mt-2 text-lg font-poppins">
         {links.map((link, index) => (
           <span key={index}>
-            <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600">
+            <a href={`mailto:${link.url}`} className="text-blue-500 hover:text-blue-600">
               {link.name}
             </a>
+
             {index < links.length - 1 && <span className="mx-2">•</span>}
           </span>
         ))}
