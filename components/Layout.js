@@ -6,7 +6,7 @@ const Layout = ({ children }) => {
   const vantaRef = useRef(null);
   useEffect(() => {
     vantaRef.current = WAVES({
-      el: '#vanta',
+      el: '#vanta-bg',
       THREE,
       mouseControls: false,
       touchControls: false,
@@ -23,8 +23,18 @@ const Layout = ({ children }) => {
   }, []);
 
   return (
-    <div style={{ width: '100vw', height: '100vh', textAlign: 'center' }}>
-      <div id="vanta" style={{ width: '100%', height: '100%' }}>
+    <div style={{ position: 'relative' }}>
+      <div
+        id="vanta-bg"
+        style={{
+          width: '100vw',
+          height: '100vh',
+          position: 'fixed',
+          top: 0,
+          left: 0
+        }}
+      />
+      <div id="vanta" style={{ position: 'relative', minHeight: '100vh', textAlign: 'center' }}>
         {children}
       </div>
     </div>
