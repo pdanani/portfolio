@@ -25,7 +25,7 @@
     {
       "title": "Gesture Swiping Decoder",
       "description": "Decoding Gesture Swiping using the SHARK2 Algorithm and implemented using numpy. This program goes through multiple stages of pruning using location, shape letter based channels in order to reduce possibilities to a 'best possible word'",
-      "githubURL": "https://github.com/project2-repo"
+      "githubURL": "https://github.com/pdanani/Gesture-Typing-Decoder"
     },
     {
       "title": "Synchronization Free Memory Allocator",

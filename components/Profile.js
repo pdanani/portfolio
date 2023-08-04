@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from 'next/image'; // Import the next/image component
+import Image from 'next/image';
 
 const Profile = ({ name, links }) => {
   return (
@@ -10,20 +10,27 @@ const Profile = ({ name, links }) => {
           alt={name}
           width={200}
           height={200}
-          objectFit="cover" // Set the objectFit property to "cover"
+          objectFit="cover"
         />
       </div>
       <h2 className="text-3xl font-bold mt-4 font-poppins text-white">{name}</h2>
       <p className="mt-2 text-lg font-poppins">
-        {links.map((link, index) => (
-          <span key={index}>
-            <a href={`mailto:${link.url}`} className="text-blue-500 hover:text-blue-600">
-              {link.name}
-            </a>
-
-            {index < links.length - 1 && <span className="mx-2">•</span>}
-          </span>
-        ))}
+        {links.map((link, index) => {
+          const isEmail = link.url.includes("@");
+          return (
+            <span key={index}>
+              <a 
+                href={isEmail ? `mailto:${link.url}` : link.url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-blue-500 hover:text-blue-600"
+              >
+                {link.name}
+              </a>
+              {index < links.length - 1 && <span className="mx-2">•</span>}
+            </span>
+          );
+        })}
       </p>
     </div>
   );
