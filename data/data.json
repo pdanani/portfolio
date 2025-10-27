@@ -2,75 +2,102 @@
   "profile": {
     "name": "Pawan Danani",
     "links": [
-      {
-        "name": "GitHub",
-        "url": "https://github.com/pdanani"
-      },
-      {
-        "name": "LinkedIn",
-        "url": "https://www.linkedin.com/in/pawan-danani-8b9402148/"
-      },
-      {
-        "name": "Email",
-        "url": "nycpawan@gmail.com"
-      }
+      { "name": "GitHub", "url": "https://github.com/pdanani" },
+      { "name": "LinkedIn", "url": "https://www.linkedin.com/in/pawan-danani-8b9402148/" },
+      { "name": "Email", "url": "mailto:nycpawan@gmail.com" }
     ]
   },
+  "experience": [
+    {
+      "jobTitle": "Software Engineer",
+      "company": "P.C. Richard & Son",
+      "location": "Long Island, NY",
+      "startDate": "2023-08-01",
+      "description": [
+        "Enhanced the web-based Point of Sale system using React.js, implementing new features such as QR Code sign-in using the employee mobile app.",
+        "Architected and implemented Tap-to-Pay (TTP) integration for Android by wrapping the React app in a native layer and exposing JavaScript interfaces via a native SDK.",
+        "Developed and deployed the frontend for an internal AI multi-agent assistant using React.js, integrated with a FastAPI backend and OpenAI SDK for real-time streamed responses.",
+        "Migrated the AI assistant system to fetch hosted JavaScript files from AWS S3, enabling instant updates without requiring app redeployment.",
+        "Expanded and secured the Node.js middleware API by developing new endpoints and preventing SQL injections on DB2 for IBM i.",
+        "Modernized CI/CD processes by migrating legacy declarative Jenkins pipelines to Pipeline-as-Code, improving deployment efficiency and maintainability.",
+        "Proposed and integrated OpenReplay, a self-hosted session replay tool forked from Sentry, improving error tracking and cross-team debugging workflows.",
+        "Built AWS Lambda functions to automate GPS tagging for rebate verification and generate barcodes dynamically through API Gateway for frontend integration."
+      ],
+      "tech": "React.js, Node.js, FastAPI, AWS Lambda, S3, Cordova, Jenkins, DB2, OpenAI SDK, OpenReplay"
+    },
+    {
+      "jobTitle": "Software Engineer",
+      "company": "Envogue International (madeyn.com)",
+      "location": "New York, NY",
+      "startDate": "2022-03-01",
+      "endDate": "2022-10-01",
+      "description": [
+        "Collaborated in a cross-functional Agile team to build madeyn.com, a socially engaging e-commerce platform.",
+        "Owned the design and development of Explore, Profile, and Home pages using React.js and GraphQL.",
+        "Integrated AWS Cognito authentication and Lambda triggers to sync user data with PostgreSQL.",
+        "Created Lambda-based media compression workflows that reduced S3 data load by 60%."
+      ],
+      "tech": "React.js, GraphQL, AWS Cognito, Lambda, EC2, S3, PostgreSQL"
+    },
+    {
+      "jobTitle": "Software Developer Intern",
+      "company": "PK INTL",
+      "startDate": "2021-09-30",
+      "endDate": "2022-01-02",
+      "description": [
+        "Developed an inventory offering system using Mongoose and GraphQL to send and manage item offers.",
+        "Implemented offer models and created a React-based frontend interface for offer tracking."
+      ],
+      "tech": "Mongoose, Express, React, Node, GraphQL"
+    }
+  ],
   "projects": [
     {
       "title": "Marvin's Studio",
-      "description": "Playlist Maker and Music Player, allowing users to share, fork, and collaborate on playlists with friends. Genre of the Week promotes new songs for users to try out.",
-      "githubURL": "https://github.com/pdanani/Marvins-Studio"
+      "description": "A collaborative playlist maker and music player that allows users to share, fork, and explore new songs weekly via the 'Genre of the Week' feature.",
+      "githubURL": "https://github.com/pdanani/Marvins-Studio",
+      "tech": "JavaScript, React, Node, Express, GraphQL, Mongoose"
     },
     {
       "title": "Gesture Swiping Decoder",
-      "description": "Decoding Gesture Swiping using the SHARK2 Algorithm and implemented using numpy. This program goes through multiple stages of pruning using location, shape letter based channels in order to reduce possibilities to a 'best possible word'",
-      "githubURL": "https://github.com/project2-repo"
+      "description": "A gesture-based word prediction system using the SHARK2 Algorithm, implemented in Python with NumPy and Flask for swipe gesture recognition and multi-stage pruning.",
+      "githubURL": "https://github.com/project2-repo",
+      "tech": "Python, Flask, NumPy"
     },
     {
-      "title": "Synchronization Free Memory Allocator",
-      "description": "A custom dynamic memory allocator designed for x86-64 architecture, which serves as a replacement for the standard malloc, free, and realloc functions typically supplied by glibc. Key features include the utilization of segregated free lists, which enables a 'first-best fit' block placement strategy, and an immediate colasescing algorithm to minimize external fragmentation.",
-      "githubURL": "https://github.com/pdanani/MemoryAllocator"
+      "title": "Synchronization-Free Memory Allocator",
+      "description": "A custom dynamic memory allocator for x86-64 architectures featuring segregated free lists, a 'first-best fit' strategy, and immediate coalescing to minimize external fragmentation.",
+      "githubURL": "https://github.com/pdanani/MemoryAllocator",
+      "tech": "C"
     },
     {
       "title": "SongOff",
-      "description": "A song exploration app that allows users to vote on one of 4 daily picks to count toward the Song of the Day. Votes reset every 24 hours and the winner is stored in the database",
-      "githubURL": "https://github.com/pdanani/songoff"
+      "description": "A daily song voting app that lets users choose among four daily picks, tallying votes to determine a 'Song of the Day' stored in the database.",
+      "githubURL": "https://github.com/pdanani/songoff",
+      "tech": "React, Node, PostgreSQL"
     },
     {
       "title": "DNS Dig Tool",
-      "description": "The resolver takes as input a domain name. Using a recursive algorithm the tool resolves this query by first contacting the root server, the top-level domain, all the way until the authoritative name server.",
-      "githubURL": "https://github.com/pdanani/DNSDigTool"
+      "description": "A recursive DNS resolver that iteratively contacts root, TLD, and authoritative servers to resolve domain names from scratch.",
+      "githubURL": "https://github.com/pdanani/DNSDigTool",
+      "tech": "Python"
     },
     {
       "title": "GoLogoLo",
-      "description": "Developed a logo creator using the MERN stack and includes functionality to create shapes, text, image importing and gradient coloring. Application includes an option to export your logo as a .png file for web usage.",
-      "githubURL": "https://github.com/pdanani/GoLogoLo-MERN-"
+      "description": "A MERN stack logo creation app that allows users to design shapes, text, import images, and export logos as .png files for web use.",
+      "githubURL": "https://github.com/pdanani/GoLogoLo-MERN-",
+      "tech": "MongoDB, Express, React, Node"
+    },
+    {
+      "title": "ShipStation Workflow App",
+      "description": "Developed a React and GraphQL-based workflow application integrating e-commerce data to reduce shipping errors by 75% through employee-ID-linked packages and role-based permissions.",
+      "githubURL": "https://github.com/pdanani/ShipStationWorkflow",
+      "tech": "React, Node, PostgreSQL, Apollo, GraphQL"
     }
   ],
-  "experience": [
-    {
-      "jobTitle": "Software Developer",
-      "company": "Park Beauty",
-      "description": "Design and develop a solution to integrate e-commerce platform data with the goal to reduce margin of error and increase employee efficiency",
-      "startDate": "2023-02-01",
-      "tech": "JavaScript React, PostgreSQL, GraphQL, and Apollo"
-    },
-    {
-      "jobTitle": "Software Developer",
-      "company": "Madeyn",
-      "description": "Full-Stack Developer for Madeyn.com, a platform aiming to make wholesale more social. I created several pages from scratch including the Profile, Explore, and Details page.",
-      "startDate": "2022-03-01",
-      "endDate": "2022-10-01",
-      "tech": "brief summary of job"
-    },
-    {
-      "jobTitle": "Software Engineer Intern",
-      "company": "PK INTL",
-      "description": "I had the chance to help a small company with an inventory offering system. I used Mongoose and GraphQL a feature to send offers on items with specific quantities by creating an offer model and then developing the Front End using React.",
-      "startDate": "2021-09-30",
-      "endDate": "2022-01-02",
-      "tech": "Mongoose, Express, React, Node, GraphQL"
-    }
-  ]
+  "skills": {
+    "languages": ["JavaScript (ES6+)", "HTML/CSS", "Python", "Java", "C", "GraphQL", "SQL", "RPG"],
+    "frameworks": ["React.js", "Node.js", "FastAPI", "Django", "Apollo", "NumPy", "Pandas"],
+    "tools": ["Git", "Docker", "Jenkins", "Jira", "Confluence", "Figma", "AWS Lambda", "OpenReplay"]
+  }
 }

@@ -8,7 +8,6 @@ import { useState } from 'react';
 import Modal from '../components/Modal';
 const IndexPage = () => {
   const { projects, profile, experience } = data;
-  console.log(experience, 'exp')
 
   const [isOpen, setIsOpen] = useState(false);
   const [jobDescription, setJobDescription] = useState('');
@@ -35,8 +34,14 @@ const IndexPage = () => {
 
       {isOpen && (
         <Modal onClose={closeModal}>
-          {jobDescription}
-          {jobTitle}
+          <h2 className="text-2xl font-bold mb-4">{jobTitle}</h2>
+          <ul className="list-disc pl-6 space-y-3">
+            {jobDescription.map((desc, index) => (
+              <li key={index} className="text-base leading-relaxed">
+                {desc}
+              </li>
+            ))}
+          </ul>
         </Modal>
       )}
     </Layout>
