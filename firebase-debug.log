@@ -1,0 +1,62 @@
+[debug] [2025-10-27T23:50:34.125Z] ----------------------------------------------------------------------
+[debug] [2025-10-27T23:50:34.129Z] Command:       /Users/pawan/.nvm/versions/node/v20.18.0/bin/node /usr/local/bin/firebase use --add
+[debug] [2025-10-27T23:50:34.130Z] CLI Version:   12.4.6
+[debug] [2025-10-27T23:50:34.130Z] Platform:      darwin
+[debug] [2025-10-27T23:50:34.130Z] Node Version:  v20.18.0
+[debug] [2025-10-27T23:50:34.131Z] Time:          Mon Oct 27 2025 19:50:34 GMT-0400 (Eastern Daylight Time)
+[debug] [2025-10-27T23:50:34.131Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-27T23:50:34.263Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-27T23:50:34.264Z] > authorizing via signed-in user (pawandanani@gmail.com)
+[debug] [2025-10-27T23:50:34.266Z] > refreshing access token with scopes: []
+[debug] [2025-10-27T23:50:34.269Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-27T23:50:34.269Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-27T23:50:34.578Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-27T23:50:34.580Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-27T23:50:34.584Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2025-10-27T23:50:34.744Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 401
+[debug] [2025-10-27T23:50:34.745Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2025-10-27T23:50:34.747Z] HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[debug] [2025-10-27T23:50:34.752Z] FirebaseError: HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+    at responseToError (/usr/local/lib/node_modules/firebase-tools/lib/responseToError.js:49:12)
+    at RetryOperation._fn (/usr/local/lib/node_modules/firebase-tools/lib/apiv2.js:285:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[error] 
+[error] Error: Failed to list Firebase projects. See firebase-debug.log for more info.
+[debug] [2025-10-27T23:50:49.278Z] ----------------------------------------------------------------------
+[debug] [2025-10-27T23:50:49.284Z] Command:       /Users/pawan/.nvm/versions/node/v20.18.0/bin/node /usr/local/bin/firebase deploy
+[debug] [2025-10-27T23:50:49.285Z] CLI Version:   12.4.6
+[debug] [2025-10-27T23:50:49.286Z] Platform:      darwin
+[debug] [2025-10-27T23:50:49.286Z] Node Version:  v20.18.0
+[debug] [2025-10-27T23:50:49.287Z] Time:          Mon Oct 27 2025 19:50:49 GMT-0400 (Eastern Daylight Time)
+[debug] [2025-10-27T23:50:49.287Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-27T23:50:49.448Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-27T23:50:49.448Z] > authorizing via signed-in user (pawandanani@gmail.com)
+[debug] [2025-10-27T23:50:49.449Z] [iam] checking project portfolio-pawan-danani for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2025-10-27T23:50:49.450Z] > refreshing access token with scopes: []
+[debug] [2025-10-27T23:50:49.454Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-27T23:50:49.454Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-27T23:50:49.696Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-27T23:50:49.697Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-27T23:50:49.697Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/portfolio-pawan-danani:testIamPermissions [none]
+[debug] [2025-10-27T23:50:49.697Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/portfolio-pawan-danani:testIamPermissions x-goog-quota-user=projects/portfolio-pawan-danani
+[debug] [2025-10-27T23:50:49.697Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/portfolio-pawan-danani:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-10-27T23:50:49.925Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/portfolio-pawan-danani:testIamPermissions 401
+[debug] [2025-10-27T23:50:49.926Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/portfolio-pawan-danani:testIamPermissions {"error":{"code":401,"message":"Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.","status":"UNAUTHENTICATED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"ACCESS_TOKEN_TYPE_UNSUPPORTED","metadata":{"service":"cloudresourcemanager.googleapis.com","method":"google.cloudresourcemanager.v1.Projects.TestIamPermissions"}}]}}
+[debug] [2025-10-27T23:50:49.927Z] [iam] error while checking permissions, command may fail: FirebaseError: HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[debug] [2025-10-27T23:50:49.928Z] > refreshing access token with scopes: []
+[debug] [2025-10-27T23:50:49.930Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-27T23:50:49.931Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-27T23:50:49.999Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-27T23:50:49.999Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-27T23:50:50.000Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/portfolio-pawan-danani [none]
+[debug] [2025-10-27T23:50:50.112Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/portfolio-pawan-danani 401
+[debug] [2025-10-27T23:50:50.112Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/portfolio-pawan-danani {"error":{"code":401,"message":"Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.","status":"UNAUTHENTICATED"}}
+[debug] [2025-10-27T23:50:50.113Z] HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[debug] [2025-10-27T23:50:50.114Z] FirebaseError: HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+    at responseToError (/usr/local/lib/node_modules/firebase-tools/lib/responseToError.js:49:12)
+    at RetryOperation._fn (/usr/local/lib/node_modules/firebase-tools/lib/apiv2.js:285:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[error] 
+[error] Error: Failed to get Firebase project portfolio-pawan-danani. Please make sure the project exists and your account has permission to access it.
