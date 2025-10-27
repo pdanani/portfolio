@@ -1,24 +1,45 @@
 import React, { useEffect, useRef } from 'react';
-import * as THREE from 'three';
-import WAVES from 'vanta/dist/vanta.waves.min';
 
 const Layout = ({ children }) => {
-  const vantaRef = useRef(null);
+  const vantaInstance = useRef(null);
+
   useEffect(() => {
-    vantaRef.current = WAVES({
-      el: '#vanta',
-      THREE,
-      mouseControls: false,
-      touchControls: false,
-      color: '#272063',
-      waveSpeed: 0.4,
-      zoom: 1.5,
-    });
+    let mounted = true;
+
+    const loadEffect = async () => {
+      if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return; // Respect reduced motion preference
+      }
+      try {
+        const [threeModule, vantaModule] = await Promise.all([
+          import('three'),
+          import('vanta/dist/vanta.waves.min'),
+        ]);
+
+        if (!mounted) return;
+
+        const WAVES = vantaModule.default;
+        vantaInstance.current = WAVES({
+          el: '#vanta',
+          THREE: threeModule,
+          mouseControls: false,
+          touchControls: false,
+          color: '#272063',
+          waveSpeed: 0.4,
+          zoom: 1.5,
+        });
+      } catch (err) {
+        // Silently fail if dynamic imports fail
+      }
+    };
+
+    loadEffect();
 
     return () => {
-      if (vantaRef.current) {
-        vantaRef.current.destroy();
-      }
+      mounted = false;
+      try {
+        vantaInstance.current?.destroy?.();
+      } catch {}
     };
   }, []);
 
