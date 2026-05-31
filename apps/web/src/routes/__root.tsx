@@ -10,7 +10,11 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
 import appCss from '../styles.css?url'
 
+import { Aurora } from '#/components/backgrounds/aurora'
+import { MotionProvider } from '#/lib/motion/motion-provider'
+
 import type { QueryClient } from '@tanstack/react-query'
+import type { ReactNode } from 'react'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -27,7 +31,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'Pawan Danani — Software Engineer',
       },
     ],
     links: [
@@ -40,14 +44,15 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   shellComponent: RootDocument,
 })
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <HeadContent />
       </head>
       <body>
-        {children}
+        <Aurora />
+        <MotionProvider>{children}</MotionProvider>
         <TanStackDevtools
           config={{
             position: 'bottom-right',
