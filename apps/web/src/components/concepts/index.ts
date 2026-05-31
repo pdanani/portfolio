@@ -21,6 +21,7 @@ import { SunsetHero } from './sunset-hero'
 /** Maps a kit id → its bespoke hero concept (distinct layout, not just colors). */
 export const CONCEPTS: Record<string, ComponentType> = {
   midnight: MidnightHero,
+  neonred: MidnightHero,
   monolux: MonoluxHero,
   blueprint: BlueprintHero,
   bento: BentoHero,
