@@ -1,29 +1,14 @@
-import { useEffect, useState } from 'react'
-import { DEFAULT_KIT, KIT_STORAGE_KEY, KITS } from '#/lib/kits'
+import { useState } from 'react'
+import { KITS } from '#/lib/kits'
+import { useKit } from '#/lib/kit-context'
 
 /**
- * Floating dev tool to flip between theme kits live. Persists the choice to
- * localStorage; a no-flash script in __root applies it before paint.
- * Temporary — once a kit is locked in, this can be removed.
+ * Floating dev tool to flip between theme kits live — each swaps the whole hero
+ * concept (layout + colors + type). Temporary: once a kit is locked in, remove this.
  */
 export function ThemeSwitcher() {
-  const [kit, setKit] = useState(DEFAULT_KIT)
+  const { kit, setKit } = useKit()
   const [open, setOpen] = useState(false)
-
-  useEffect(() => {
-    const stored = localStorage.getItem(KIT_STORAGE_KEY)
-    if (stored) setKit(stored)
-  }, [])
-
-  function choose(id: string) {
-    setKit(id)
-    document.documentElement.setAttribute('data-kit', id)
-    try {
-      localStorage.setItem(KIT_STORAGE_KEY, id)
-    } catch {
-      // ignore (private mode, storage disabled, etc.)
-    }
-  }
 
   return (
     <div className="fixed bottom-4 right-4 z-50 font-sans">
@@ -45,7 +30,7 @@ export function ThemeSwitcher() {
               <button
                 key={k.id}
                 type="button"
-                onClick={() => choose(k.id)}
+                onClick={() => setKit(k.id)}
                 className={`flex items-center gap-3 rounded-md px-2 py-2 text-left transition hover:bg-accent ${
                   kit === k.id ? 'ring-1 ring-ring' : ''
                 }`}

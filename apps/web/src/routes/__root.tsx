@@ -13,6 +13,7 @@ import appCss from '../styles.css?url'
 import { Aurora } from '#/components/backgrounds/aurora'
 import { MotionProvider } from '#/lib/motion/motion-provider'
 import { ThemeSwitcher } from '#/components/theme-switcher'
+import { KitProvider } from '#/lib/kit-context'
 
 import type { QueryClient } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
@@ -58,9 +59,11 @@ function RootDocument({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <Aurora />
-        <MotionProvider>{children}</MotionProvider>
-        <ThemeSwitcher />
+        <KitProvider>
+          <Aurora />
+          <MotionProvider>{children}</MotionProvider>
+          <ThemeSwitcher />
+        </KitProvider>
         <TanStackDevtools
           config={{
             position: 'bottom-right',

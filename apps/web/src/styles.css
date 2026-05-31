@@ -436,6 +436,79 @@
   --aurora-3: oklch(0.65 0.15 80);
 }
 
+/* ================================================================== */
+/* Concept-specific effects (each hero concept uses a few of these).   */
+/* ================================================================== */
+.term-cursor {
+  display: inline-block;
+  width: 0.55ch;
+  height: 1.05em;
+  transform: translateY(0.18em);
+  background: var(--primary);
+  animation: term-blink 1.1s steps(1) infinite;
+}
+@keyframes term-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+}
+.marquee__track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee 24s linear infinite;
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, oklch(1 0 0 / 0.05) 0 1px, transparent 1px 3px);
+}
+
+.neon {
+  text-shadow:
+    0 0 8px color-mix(in oklab, var(--primary) 70%, transparent),
+    0 0 22px color-mix(in oklab, var(--primary) 45%, transparent);
+}
+
+.dropcap::first-letter {
+  font-family: var(--font-display);
+  font-size: 3.4em;
+  line-height: 0.78;
+  float: left;
+  padding: 0.05em 0.12em 0 0;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.cyber-grid {
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to top, black, transparent 72%);
+}
+
 /* ------------------------------------------------------------------ */
 /* Reduced-motion safety net — anything we miss still calms down.      */
 /* ------------------------------------------------------------------ */
