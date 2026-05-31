@@ -12,6 +12,7 @@ import appCss from '../styles.css?url'
 
 import { Aurora } from '#/components/backgrounds/aurora'
 import { MotionProvider } from '#/lib/motion/motion-provider'
+import { ThemeSwitcher } from '#/components/theme-switcher'
 
 import type { QueryClient } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
@@ -48,11 +49,18 @@ function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark">
       <head>
+        {/* Apply the saved theme kit before paint to avoid a flash. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var k=localStorage.getItem('kit');if(k)document.documentElement.setAttribute('data-kit',k);}catch(e){}})();`,
+          }}
+        />
         <HeadContent />
       </head>
       <body>
         <Aurora />
         <MotionProvider>{children}</MotionProvider>
+        <ThemeSwitcher />
         <TanStackDevtools
           config={{
             position: 'bottom-right',
