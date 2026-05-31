@@ -2,29 +2,15 @@
   "name": "portfolio",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.14.0",
-    "autoprefixer": "^10.4.14",
-    "eslint": "8.45.0",
-    "eslint-config-next": "13.4.10",
-    "next": "13.4.10",
-    "postcss": "^8.4.26",
-    "react": "18.2.0",
-    "react-bootstrap": "^2.8.0",
-    "react-dom": "18.2.0",
-    "react-feather": "^2.0.10",
-    "react-modal": "^3.16.1",
-    "styled-components": "^6.0.4",
-    "tailwindcss": "^3.3.3",
-    "three": "^0.154.0",
-    "vanta": "^0.5.24"
+    "dev": "npm run dev -w apps/web",
+    "build": "npm run build -w apps/web",
+    "preview": "npm run preview -w apps/web",
+    "lint": "npm run lint -w apps/web",
+    "format": "npm run format -w apps/web"
   }
 }
