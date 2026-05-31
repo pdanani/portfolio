@@ -20,6 +20,8 @@ export const KITS: Array<Kit> = [
   { id: 'swiss', label: 'Swiss', blurb: 'Intl. typographic grid', swatch: 'oklch(0.55 0.2 27)', mode: 'light' },
   { id: 'pixel', label: 'Pixel', blurb: '8/16-bit retro game UI', swatch: 'oklch(0.84 0.16 85)', mode: 'dark' },
   { id: 'mario', label: 'Mario', blurb: 'Platformer homage · sky/blocks', swatch: 'oklch(0.58 0.21 27)', mode: 'light' },
+  { id: 'arcade', label: 'Arcade', blurb: 'Full-screen retro arcade', swatch: 'oklch(0.78 0.16 215)', mode: 'dark' },
+  { id: 'zelda', label: 'Zelda', blurb: '16-bit overworld quest', swatch: 'oklch(0.55 0.13 145)', mode: 'dark' },
   { id: 'aurora', label: 'Aurora Violet', blurb: 'Violet/cyan glass', swatch: 'oklch(0.7 0.19 292)', mode: 'dark' },
   { id: 'terminal', label: 'Terminal', blurb: 'Mono · phosphor green', swatch: 'oklch(0.82 0.22 145)', mode: 'dark' },
   { id: 'cyber', label: 'Cyber Neon (v1)', blurb: 'Original neon trio', swatch: 'oklch(0.7 0.27 330)', mode: 'dark' },
