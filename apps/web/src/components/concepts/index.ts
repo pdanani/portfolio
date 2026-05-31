@@ -8,6 +8,9 @@ import { SwissHero } from './swiss-hero'
 import { PixelHero } from './pixel-hero'
 import { MarioHero } from './mario-hero'
 import { ZeldaHero } from './zelda-hero'
+import { StarWarsHero } from './starwars-hero'
+import { PokemonHero } from './pokemon-hero'
+import { SonicHero } from './sonic-hero'
 import { AuroraHero } from './aurora-hero'
 import { TerminalHero } from './terminal-hero'
 import { CyberHero } from './cyber-hero'
@@ -26,6 +29,9 @@ export const CONCEPTS: Record<string, ComponentType> = {
   pixel: PixelHero,
   mario: MarioHero,
   zelda: ZeldaHero,
+  starwars: StarWarsHero,
+  pokemon: PokemonHero,
+  sonic: SonicHero,
   aurora: AuroraHero,
   terminal: TerminalHero,
   cyber: CyberHero,
