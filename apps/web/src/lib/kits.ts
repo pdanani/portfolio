@@ -25,6 +25,7 @@ export const KITS: Array<Kit> = [
   { id: 'starwars', label: 'Star Wars', blurb: 'Opening crawl · starfield', swatch: 'oklch(0.82 0.15 90)', mode: 'dark' },
   { id: 'pokemon', label: 'Pokémon', blurb: 'Overworld town · explore', swatch: '#3aa655', mode: 'light' },
   { id: 'sonic', label: 'Sonic', blurb: 'Green-hill speed zone', swatch: 'oklch(0.56 0.19 250)', mode: 'light' },
+  { id: 'jukebox', label: 'Jukebox', blurb: 'Retro diner jukebox + neon', swatch: 'oklch(0.66 0.26 350)', mode: 'dark' },
   { id: 'noirneon', label: 'Neo-Noir Neon', blurb: 'Rainy neon night city', swatch: 'oklch(0.68 0.27 4)', mode: 'dark' },
   { id: 'noir', label: 'Neo-Noir Mono', blurb: 'B&W film-noir drama', swatch: 'oklch(0.09 0 0)', mode: 'dark' },
   { id: 'aurora', label: 'Aurora Violet', blurb: 'Violet/cyan glass', swatch: 'oklch(0.7 0.19 292)', mode: 'dark' },
