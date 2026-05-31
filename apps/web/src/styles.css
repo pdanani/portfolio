@@ -1,5 +1,5 @@
 /* Fonts via Google Fonts CDN (not self-hosted). */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&family=Space+Grotesk:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&family=Space+Grotesk:wght@300..700&family=Fraunces:opsz,wght@9..144,400..700&family=Syne:wght@400..800&display=swap');
 
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
@@ -8,11 +8,24 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ------------------------------------------------------------------ */
-/* Design tokens — OKLCH. Site ships in dark (.dark on <html>); :root  */
-/* is a sane light fallback so the theme toggle (Phase 2) has both.    */
+/* Design tokens — OKLCH. Default kit = "Aurora Violet". The site ships */
+/* .dark on <html>; :root is a light fallback. Other kits override via  */
+/* :root[data-kit="..."] (see KITS section) so they always win.         */
 /* ------------------------------------------------------------------ */
 :root {
   --radius: 0.75rem;
+
+  /* font families (indirection so kits can swap them) */
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* surface / treatment (glass by default) */
+  --surface-opacity: 62%;
+  --kit-blur: 12px;
+  --kit-border-width: 1px;
+  --kit-shadow: 0 18px 40px oklch(0 0 0 / 0.3);
+  --aurora-opacity: 0.45;
 
   --background: oklch(0.98 0.005 285);
   --foreground: oklch(0.2 0.03 285);
@@ -34,12 +47,10 @@
   --input: oklch(0.9 0.01 285);
   --ring: oklch(0.55 0.22 292 / 0.5);
 
-  /* brand accents (used by custom UI, gradients, aurora) */
   --brand: oklch(0.55 0.22 292);
   --brand-cyan: oklch(0.6 0.13 210);
   --brand-amber: oklch(0.7 0.15 75);
 
-  /* aurora background gradient stops */
   --aurora-1: oklch(0.7 0.16 292);
   --aurora-2: oklch(0.65 0.14 250);
   --aurora-3: oklch(0.72 0.12 205);
@@ -76,9 +87,9 @@
 }
 
 @theme inline {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-sans: var(--ff-sans);
+  --font-display: var(--ff-display);
+  --font-mono: var(--ff-mono);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -132,9 +143,19 @@
   }
 }
 
+/* Reusable surface treatment driven by per-kit tokens (glass vs flat). */
+.surface {
+  background: color-mix(in oklab, var(--card) var(--surface-opacity), transparent);
+  border: var(--kit-border-width) solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(var(--kit-blur));
+  -webkit-backdrop-filter: blur(var(--kit-blur));
+  box-shadow: var(--kit-shadow);
+}
+
 /* ------------------------------------------------------------------ */
-/* Aurora background — pure CSS, GPU transforms only. Sits behind all  */
-/* content. Drift freezes under prefers-reduced-motion (safety net).   */
+/* Aurora background — pure CSS, GPU transforms only. Freezes under     */
+/* prefers-reduced-motion (safety net below).                          */
 /* ------------------------------------------------------------------ */
 .aurora {
   position: fixed;
@@ -151,7 +172,7 @@
   height: 55vmax;
   border-radius: 9999px;
   filter: blur(90px);
-  opacity: 0.45;
+  opacity: var(--aurora-opacity);
   will-change: transform;
   mix-blend-mode: screen;
 }
@@ -175,7 +196,6 @@
   animation: aurora-drift-3 25s ease-in-out infinite;
 }
 
-/* faint dot grid for texture / to kill gradient banding */
 .aurora__grain {
   position: absolute;
   inset: 0;
@@ -213,6 +233,207 @@
   50% {
     transform: translate3d(6%, -8%, 0) scale(1.1);
   }
+}
+
+/* ================================================================== */
+/* KITS — each overrides the full token set. :root[data-kit] beats     */
+/* .dark on specificity, so kits apply regardless of the dark class.   */
+/* (Aurora Violet is the default above; no block needed.)              */
+/* ================================================================== */
+
+/* Terminal — mono, phosphor green, sharp. */
+:root[data-kit='terminal'] {
+  --radius: 0rem;
+  --ff-sans: 'JetBrains Mono', ui-monospace, monospace;
+  --ff-display: 'JetBrains Mono', ui-monospace, monospace;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --surface-opacity: 100%;
+  --kit-blur: 0px;
+  --kit-border-width: 1px;
+  --kit-shadow: 0 0 0 1px oklch(0.8 0.22 145 / 0.12);
+  --aurora-opacity: 0.18;
+
+  --background: oklch(0.15 0.012 155);
+  --foreground: oklch(0.9 0.05 150);
+  --card: oklch(0.19 0.015 155);
+  --card-foreground: oklch(0.9 0.05 150);
+  --popover: oklch(0.18 0.015 155);
+  --popover-foreground: oklch(0.9 0.05 150);
+  --primary: oklch(0.82 0.22 145);
+  --primary-foreground: oklch(0.15 0.02 150);
+  --secondary: oklch(0.25 0.02 155);
+  --secondary-foreground: oklch(0.9 0.05 150);
+  --muted: oklch(0.22 0.015 155);
+  --muted-foreground: oklch(0.62 0.05 150);
+  --accent: oklch(0.28 0.03 150);
+  --accent-foreground: oklch(0.92 0.05 150);
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(0.95 0.02 150);
+  --border: oklch(0.4 0.06 150 / 0.5);
+  --input: oklch(0.4 0.06 150 / 0.4);
+  --ring: oklch(0.82 0.22 145 / 0.6);
+  --brand: oklch(0.82 0.22 145);
+  --brand-cyan: oklch(0.85 0.16 180);
+  --brand-amber: oklch(0.85 0.16 95);
+  --aurora-1: oklch(0.55 0.18 150);
+  --aurora-2: oklch(0.5 0.12 175);
+  --aurora-3: oklch(0.45 0.1 140);
+}
+
+/* Cyber Neon — magenta/cyan/lime glow on near-black indigo. */
+:root[data-kit='cyber'] {
+  --radius: 0.5rem;
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Syne', ui-sans-serif, system-ui, sans-serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --surface-opacity: 70%;
+  --kit-blur: 8px;
+  --kit-border-width: 1px;
+  --kit-shadow: 0 0 30px oklch(0.7 0.27 330 / 0.35);
+  --aurora-opacity: 0.55;
+
+  --background: oklch(0.14 0.04 285);
+  --foreground: oklch(0.95 0.02 305);
+  --card: oklch(0.18 0.05 285);
+  --card-foreground: oklch(0.95 0.02 305);
+  --popover: oklch(0.17 0.05 285);
+  --popover-foreground: oklch(0.95 0.02 305);
+  --primary: oklch(0.7 0.27 330);
+  --primary-foreground: oklch(0.12 0.03 300);
+  --secondary: oklch(0.26 0.05 285);
+  --secondary-foreground: oklch(0.95 0.02 305);
+  --muted: oklch(0.22 0.04 285);
+  --muted-foreground: oklch(0.72 0.06 300);
+  --accent: oklch(0.3 0.06 320);
+  --accent-foreground: oklch(0.95 0.02 305);
+  --destructive: oklch(0.65 0.25 18);
+  --destructive-foreground: oklch(0.97 0.02 305);
+  --border: oklch(0.6 0.2 330 / 0.4);
+  --input: oklch(0.5 0.12 300 / 0.5);
+  --ring: oklch(0.7 0.27 330 / 0.6);
+  --brand: oklch(0.7 0.27 330);
+  --brand-cyan: oklch(0.82 0.18 195);
+  --brand-amber: oklch(0.88 0.22 130);
+  --aurora-1: oklch(0.55 0.27 330);
+  --aurora-2: oklch(0.6 0.18 200);
+  --aurora-3: oklch(0.7 0.2 135);
+}
+
+/* Editorial — light, warm paper, serif display, flat & minimal. */
+:root[data-kit='editorial'] {
+  --radius: 0.25rem;
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Fraunces', Georgia, serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --surface-opacity: 100%;
+  --kit-blur: 0px;
+  --kit-border-width: 1px;
+  --kit-shadow: 0 10px 30px oklch(0.4 0.05 60 / 0.1);
+  --aurora-opacity: 0.16;
+
+  --background: oklch(0.97 0.012 85);
+  --foreground: oklch(0.22 0.02 60);
+  --card: oklch(0.99 0.008 85);
+  --card-foreground: oklch(0.22 0.02 60);
+  --popover: oklch(0.99 0.008 85);
+  --popover-foreground: oklch(0.22 0.02 60);
+  --primary: oklch(0.45 0.13 25);
+  --primary-foreground: oklch(0.98 0.01 85);
+  --secondary: oklch(0.93 0.012 85);
+  --secondary-foreground: oklch(0.28 0.02 60);
+  --muted: oklch(0.93 0.012 85);
+  --muted-foreground: oklch(0.5 0.02 60);
+  --accent: oklch(0.92 0.02 60);
+  --accent-foreground: oklch(0.28 0.02 60);
+  --destructive: oklch(0.55 0.2 27);
+  --destructive-foreground: oklch(0.98 0.01 85);
+  --border: oklch(0.85 0.015 75);
+  --input: oklch(0.85 0.015 75);
+  --ring: oklch(0.45 0.13 25 / 0.4);
+  --brand: oklch(0.45 0.13 25);
+  --brand-cyan: oklch(0.45 0.07 220);
+  --brand-amber: oklch(0.6 0.12 70);
+  --aurora-1: oklch(0.8 0.08 60);
+  --aurora-2: oklch(0.82 0.06 30);
+  --aurora-3: oklch(0.85 0.05 90);
+}
+
+/* Brutalist — stark, thick black borders, hard offset shadow. */
+:root[data-kit='brutalist'] {
+  --radius: 0rem;
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --surface-opacity: 100%;
+  --kit-blur: 0px;
+  --kit-border-width: 2px;
+  --kit-shadow: 6px 6px 0 0 var(--foreground);
+  --aurora-opacity: 0;
+
+  --background: oklch(0.97 0 0);
+  --foreground: oklch(0.15 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0 0);
+  --primary: oklch(0.55 0.25 265);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.92 0 0);
+  --secondary-foreground: oklch(0.15 0 0);
+  --muted: oklch(0.93 0 0);
+  --muted-foreground: oklch(0.4 0 0);
+  --accent: oklch(0.9 0 0);
+  --accent-foreground: oklch(0.15 0 0);
+  --destructive: oklch(0.58 0.24 27);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.15 0 0);
+  --input: oklch(0.15 0 0);
+  --ring: oklch(0.55 0.25 265 / 0.5);
+  --brand: oklch(0.55 0.25 265);
+  --brand-cyan: oklch(0.7 0.2 50);
+  --brand-amber: oklch(0.85 0.2 100);
+  --aurora-1: oklch(0.9 0 0);
+  --aurora-2: oklch(0.9 0 0);
+  --aurora-3: oklch(0.9 0 0);
+}
+
+/* Sunset — warm dark, amber/rose/gold, soft & rounded. */
+:root[data-kit='sunset'] {
+  --radius: 1rem;
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --surface-opacity: 60%;
+  --kit-blur: 14px;
+  --kit-border-width: 1px;
+  --kit-shadow: 0 18px 44px oklch(0.1 0.04 40 / 0.45);
+  --aurora-opacity: 0.5;
+
+  --background: oklch(0.18 0.03 35);
+  --foreground: oklch(0.96 0.02 60);
+  --card: oklch(0.23 0.04 35);
+  --card-foreground: oklch(0.96 0.02 60);
+  --popover: oklch(0.21 0.04 35);
+  --popover-foreground: oklch(0.96 0.02 60);
+  --primary: oklch(0.72 0.18 45);
+  --primary-foreground: oklch(0.16 0.03 35);
+  --secondary: oklch(0.3 0.04 35);
+  --secondary-foreground: oklch(0.96 0.02 60);
+  --muted: oklch(0.27 0.035 35);
+  --muted-foreground: oklch(0.75 0.04 50);
+  --accent: oklch(0.33 0.05 30);
+  --accent-foreground: oklch(0.96 0.02 60);
+  --destructive: oklch(0.62 0.22 22);
+  --destructive-foreground: oklch(0.97 0.02 60);
+  --border: oklch(0.4 0.05 40 / 0.5);
+  --input: oklch(0.4 0.05 40 / 0.4);
+  --ring: oklch(0.72 0.18 45 / 0.6);
+  --brand: oklch(0.72 0.18 45);
+  --brand-cyan: oklch(0.65 0.2 10);
+  --brand-amber: oklch(0.85 0.16 85);
+  --aurora-1: oklch(0.6 0.18 45);
+  --aurora-2: oklch(0.55 0.2 15);
+  --aurora-3: oklch(0.65 0.15 80);
 }
 
 /* ------------------------------------------------------------------ */
