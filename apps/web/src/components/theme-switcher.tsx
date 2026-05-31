@@ -13,8 +13,8 @@ export function ThemeSwitcher() {
   return (
     <div className="fixed bottom-4 right-4 z-50 font-sans">
       {open && (
-        <div className="surface mb-2 w-64 p-2">
-          <div className="flex items-center justify-between px-2 pb-2 pt-1">
+        <div className="surface mb-2 flex max-h-[75vh] w-64 flex-col p-2">
+          <div className="flex shrink-0 items-center justify-between px-2 pb-2 pt-1">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
               Theme kit
             </span>
@@ -25,7 +25,7 @@ export function ThemeSwitcher() {
               style guide →
             </a>
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex min-h-0 flex-col gap-1 overflow-y-auto pr-1">
             {KITS.map((k) => (
               <button
                 key={k.id}
