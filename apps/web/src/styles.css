@@ -1670,200 +1670,373 @@
   --surface-opacity: 100%;
   --kit-blur: 0px;
   --kit-border-width: 3px;
-  --kit-shadow: 4px 4px 0 oklch(0.27 0.03 250 / 0.9);
+  --kit-shadow: 4px 4px 0 oklch(0.32 0.04 150 / 0.85);
   --aurora-opacity: 0;
 
-  --background: oklch(0.9 0.06 200);
-  --foreground: oklch(0.27 0.03 250);
-  --card: oklch(0.975 0.008 95);
-  --card-foreground: oklch(0.27 0.03 250);
-  --popover: oklch(0.975 0.008 95);
-  --popover-foreground: oklch(0.27 0.03 250);
-  --primary: oklch(0.55 0.2 27);
+  --background: oklch(0.82 0.11 145);
+  --foreground: oklch(0.3 0.04 150);
+  --card: oklch(0.97 0.012 95);
+  --card-foreground: oklch(0.3 0.04 150);
+  --popover: oklch(0.97 0.012 95);
+  --popover-foreground: oklch(0.32 0.035 150);
+  --primary: oklch(0.56 0.19 27);
   --primary-foreground: oklch(0.98 0.01 95);
-  --secondary: oklch(0.66 0.17 150);
+  --secondary: oklch(0.6 0.16 150);
   --secondary-foreground: oklch(0.99 0.02 150);
-  --muted: oklch(0.93 0.025 110);
-  --muted-foreground: oklch(0.45 0.04 250);
-  --accent: oklch(0.62 0.13 240);
-  --accent-foreground: oklch(0.98 0.01 240);
-  --destructive: oklch(0.55 0.2 27);
+  --muted: oklch(0.93 0.04 110);
+  --muted-foreground: oklch(0.46 0.05 150);
+  --accent: oklch(0.6 0.13 235);
+  --accent-foreground: oklch(0.98 0.01 235);
+  --destructive: oklch(0.56 0.19 27);
   --destructive-foreground: oklch(0.98 0.01 95);
-  --border: oklch(0.27 0.03 250 / 0.9);
-  --input: oklch(0.27 0.03 250 / 0.4);
-  --ring: oklch(0.55 0.2 27 / 0.6);
+  --border: oklch(0.32 0.04 150 / 0.9);
+  --input: oklch(0.32 0.04 150 / 0.4);
+  --ring: oklch(0.56 0.19 27 / 0.55);
 
-  --brand: oklch(0.55 0.2 27);
-  --brand-cyan: oklch(0.62 0.13 240);
-  --brand-amber: oklch(0.72 0.16 55);
+  --brand: oklch(0.6 0.16 150);
+  --brand-cyan: oklch(0.6 0.13 235);
+  --brand-amber: oklch(0.74 0.15 70);
 
-  --aurora-1: oklch(0.66 0.17 150);
-  --aurora-2: oklch(0.62 0.13 240);
-  --aurora-3: oklch(0.72 0.16 55);
+  --aurora-1: oklch(0.6 0.16 150);
+  --aurora-2: oklch(0.6 0.13 235);
+  --aurora-3: oklch(0.74 0.15 70);
 }
 
-/* ---- Pokemon battle-UI scenery (original geometric art, id-prefixed) ---- */
-.pokemon-route {
-  position: absolute;
-  inset: 0;
+/* ---- Pokemon overworld scenery (original geometric CSS art, id-prefixed) ---- */
+/* base grass field — two harmonious greens as a soft vertical wash */
+.pokemon-grass {
   background:
-    linear-gradient(
-      180deg,
-      oklch(0.92 0.055 215) 0%,
-      oklch(0.9 0.06 205) 42%,
-      oklch(0.84 0.085 165) 58%,
-      oklch(0.78 0.11 150) 100%
-    );
+    linear-gradient(180deg, oklch(0.85 0.1 150) 0%, oklch(0.79 0.12 145) 100%);
 }
-/* faint scanline overlay for a handheld-screen feel; readable resting state */
-.pokemon-scan {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    oklch(0.27 0.03 250 / 0.05) 0 2px,
-    transparent 2px 4px
-  );
+/* checker / tile pattern of two greens layered over the wash */
+.pokemon-tiles {
+  background-image:
+    linear-gradient(45deg, oklch(0.74 0.13 148 / 0.55) 25%, transparent 25%),
+    linear-gradient(-45deg, oklch(0.74 0.13 148 / 0.55) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, oklch(0.74 0.13 148 / 0.55) 75%),
+    linear-gradient(-45deg, transparent 75%, oklch(0.74 0.13 148 / 0.55) 75%);
+  background-size: 56px 56px;
+  background-position: 0 0, 0 28px, 28px -28px, -28px 0;
   opacity: 0.5;
 }
-.pokemon-hill {
+
+/* winding dirt path (tan) — a horizontal band + a crossing vertical band */
+.pokemon-path {
   position: absolute;
-  border-radius: 50%;
-  border: 3px solid oklch(0.34 0.07 150 / 0.5);
-  background: radial-gradient(
-    ellipse at 50% 35%,
-    oklch(0.82 0.1 150) 0%,
-    oklch(0.74 0.12 150) 70%,
-    oklch(0.68 0.13 150) 100%
-  );
+  left: -4%;
+  right: -4%;
+  top: 50%;
+  height: 130px;
+  transform: translateY(-50%) rotate(-3deg);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      oklch(0.78 0.06 70) 0 18px,
+      oklch(0.75 0.065 68) 18px 36px
+    );
+  border-top: 4px solid oklch(0.62 0.08 65 / 0.7);
+  border-bottom: 4px solid oklch(0.62 0.08 65 / 0.7);
+}
+.pokemon-path--cross {
+  left: auto;
+  right: 30%;
+  top: -4%;
+  bottom: -4%;
+  width: 110px;
+  height: auto;
+  transform: rotate(4deg);
+  border-top: none;
+  border-bottom: none;
+  border-left: 4px solid oklch(0.62 0.08 65 / 0.7);
+  border-right: 4px solid oklch(0.62 0.08 65 / 0.7);
 }
 
-/* battle platforms (elliptical disks the combatants stand on) */
-.pokemon-platform {
+/* small pond */
+.pokemon-pond {
   position: absolute;
+  width: 168px;
+  height: 92px;
   border-radius: 50%;
-  background: radial-gradient(
-    ellipse at 50% 38%,
-    oklch(0.86 0.09 150) 0%,
-    oklch(0.7 0.13 150) 78%,
-    oklch(0.6 0.13 150) 100%
-  );
-  border: 3px solid oklch(0.27 0.03 250 / 0.85);
+  background: radial-gradient(ellipse at 45% 35%, oklch(0.74 0.11 235) 0%, oklch(0.6 0.13 238) 75%, oklch(0.52 0.13 240) 100%);
+  border: 4px solid oklch(0.4 0.07 235 / 0.55);
+  box-shadow: inset 0 6px 0 oklch(0.92 0.04 235 / 0.4);
 }
 
-/* abstract chunky CSS-block "battle creatures" — purely geometric */
-.pokemon-mon {
-  position: relative;
-  border: 3px solid oklch(0.27 0.03 250 / 0.9);
-  box-shadow: inset 0 -8px 0 oklch(0.27 0.03 250 / 0.15), inset 0 7px 0 oklch(0.98 0.02 95 / 0.45);
+/* trees — round canopy block + trunk */
+.pokemon-tree {
+  position: absolute;
+  width: 92px;
+  height: 110px;
 }
-.pokemon-mon::before,
-.pokemon-mon::after {
+.pokemon-tree::before {
   content: '';
   position: absolute;
-  width: 12px;
-  height: 12px;
-  background: oklch(0.27 0.03 250 / 0.9);
-  top: 30%;
+  top: 0;
+  left: 50%;
+  width: 84px;
+  height: 84px;
+  transform: translateX(-50%);
+  border-radius: 22px;
+  background: radial-gradient(circle at 38% 32%, oklch(0.62 0.16 150) 0%, oklch(0.5 0.15 152) 80%);
+  border: 4px solid oklch(0.34 0.07 152 / 0.85);
+  box-shadow: inset 0 8px 0 oklch(0.82 0.1 150 / 0.4);
 }
-.pokemon-mon::before { left: 24%; }
-.pokemon-mon::after { right: 24%; }
-.pokemon-mon-foe {
-  width: 76px;
-  height: 66px;
-  background: linear-gradient(160deg, oklch(0.7 0.15 300) 0%, oklch(0.58 0.16 300) 100%);
-  animation: pokemon-foe-bob 2.6s ease-in-out infinite;
-}
-.pokemon-mon-foe-ear {
+.pokemon-tree::after {
+  content: '';
   position: absolute;
-  width: 18px;
-  height: 24px;
-  top: -20px;
-  background: oklch(0.58 0.16 300);
-  border: 3px solid oklch(0.27 0.03 250 / 0.9);
-}
-.pokemon-mon-hero {
-  width: 88px;
-  height: 76px;
-  background: linear-gradient(160deg, oklch(0.74 0.13 55) 0%, oklch(0.64 0.16 45) 100%);
-  animation: pokemon-hero-bob 2.6s ease-in-out infinite 0.4s;
-}
-.pokemon-mon-hero-fin {
-  position: absolute;
+  bottom: 0;
+  left: 50%;
   width: 26px;
-  height: 18px;
-  top: -16px;
-  left: 31px;
-  background: oklch(0.64 0.16 45);
-  border: 3px solid oklch(0.27 0.03 250 / 0.9);
+  height: 40px;
+  transform: translateX(-50%);
+  background: oklch(0.52 0.07 65);
+  border: 4px solid oklch(0.36 0.06 60 / 0.85);
 }
 
-/* HP / XP bar track + fill */
-.pokemon-bar {
+/* houses — body block + colored roof, generic (no logos) */
+.pokemon-house {
+  position: absolute;
+  width: 150px;
+}
+.pokemon-house-roof {
+  width: 0;
+  height: 0;
+  margin: 0 auto;
+  border-left: 86px solid transparent;
+  border-right: 86px solid transparent;
+  border-bottom: 50px solid oklch(0.56 0.19 27);
+  filter: drop-shadow(0 -2px 0 oklch(0.4 0.13 27 / 0.6));
+  margin-bottom: -2px;
+}
+.pokemon-house-body {
   position: relative;
-  height: 9px;
-  background: oklch(0.27 0.03 250 / 0.85);
-  padding: 2px;
-  overflow: hidden;
+  height: 96px;
+  background: oklch(0.93 0.025 95);
+  border: 4px solid oklch(0.34 0.05 150 / 0.85);
+  box-shadow: inset 0 -10px 0 oklch(0.34 0.05 150 / 0.12);
 }
-.pokemon-bar-fill {
-  height: 100%;
-  background: linear-gradient(
-    180deg,
-    oklch(0.78 0.17 150) 0%,
-    oklch(0.66 0.17 150) 55%,
-    oklch(0.56 0.16 150) 100%
-  );
+.pokemon-house--blue .pokemon-house-roof {
+  border-bottom-color: oklch(0.55 0.14 240);
+  filter: drop-shadow(0 -2px 0 oklch(0.4 0.1 240 / 0.6));
 }
-.pokemon-bar-fill--xp {
-  background: linear-gradient(
-    180deg,
-    oklch(0.74 0.14 240) 0%,
-    oklch(0.62 0.13 240) 55%,
-    oklch(0.52 0.12 240) 100%
-  );
+.pokemon-house-door {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 34px;
+  height: 46px;
+  transform: translateX(-50%);
+  background: oklch(0.5 0.07 65);
+  border: 4px solid oklch(0.34 0.05 150 / 0.85);
+  border-bottom: none;
+}
+.pokemon-house-window {
+  position: absolute;
+  top: 16px;
+  width: 24px;
+  height: 24px;
+  background: oklch(0.78 0.1 235);
+  border: 4px solid oklch(0.34 0.05 150 / 0.85);
 }
 
-/* surface panels get the chunky offset shadow */
-.pokemon-panel {
-  border: 3px solid var(--border);
+/* simple wooden fence run */
+.pokemon-fence {
+  position: absolute;
+  width: 150px;
+  height: 34px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      oklch(0.62 0.07 65) 0 8px,
+      transparent 8px 34px
+    ),
+    linear-gradient(180deg, transparent 40%, oklch(0.62 0.07 65) 40% 56%, transparent 56%);
+  opacity: 0.9;
+}
+
+/* tall-grass encounter tufts — four darker-green blades in a block */
+.pokemon-tuft {
+  position: absolute;
+  width: 52px;
+  height: 30px;
+  transform-origin: bottom center;
+}
+.pokemon-tuft span {
+  position: absolute;
+  bottom: 0;
+  width: 11px;
+  height: 26px;
+  background: linear-gradient(180deg, oklch(0.5 0.16 152) 0%, oklch(0.4 0.15 154) 100%);
+  border: 3px solid oklch(0.3 0.08 154 / 0.8);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  animation: pokemon-sway 3.2s ease-in-out infinite;
+}
+.pokemon-tuft span:nth-child(1) { left: 0; }
+.pokemon-tuft span:nth-child(2) { left: 13px; height: 30px; animation-delay: 0.4s; }
+.pokemon-tuft span:nth-child(3) { left: 26px; height: 28px; animation-delay: 0.8s; }
+.pokemon-tuft span:nth-child(4) { left: 39px; animation-delay: 1.2s; }
+
+/* tiny NPC block figure */
+.pokemon-npc {
+  position: absolute;
+  width: 30px;
+  height: 48px;
+}
+.pokemon-npc-head {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 22px;
+  height: 20px;
+  transform: translateX(-50%);
+  background: oklch(0.78 0.06 60);
+  border: 3px solid oklch(0.3 0.04 150 / 0.85);
+}
+.pokemon-npc-body {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 28px;
+  height: 26px;
+  transform: translateX(-50%);
+  background: oklch(0.6 0.13 235);
+  border: 3px solid oklch(0.3 0.04 150 / 0.85);
+}
+
+/* trainer avatar — chunky original figure: cap + head + torso + legs */
+.pokemon-trainer {
+  position: relative;
+  width: 56px;
+  height: 86px;
+  animation: pokemon-idle 2.6s ease-in-out infinite;
+}
+.pokemon-trainer-cap {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 40px;
+  height: 16px;
+  transform: translateX(-50%);
+  background: oklch(0.56 0.19 27);
+  border: 3px solid oklch(0.3 0.04 150 / 0.9);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+}
+.pokemon-trainer-head {
+  position: absolute;
+  top: 13px;
+  left: 50%;
+  width: 30px;
+  height: 22px;
+  transform: translateX(-50%);
+  background: oklch(0.82 0.06 60);
+  border: 3px solid oklch(0.3 0.04 150 / 0.9);
+}
+.pokemon-trainer-torso {
+  position: absolute;
+  top: 34px;
+  left: 50%;
+  width: 44px;
+  height: 30px;
+  transform: translateX(-50%);
+  background: oklch(0.6 0.13 235);
+  border: 3px solid oklch(0.3 0.04 150 / 0.9);
+  box-shadow: inset 0 6px 0 oklch(0.98 0.02 235 / 0.35);
+}
+.pokemon-trainer-legs {
+  position: absolute;
+  top: 62px;
+  left: 50%;
+  width: 36px;
+  height: 22px;
+  transform: translateX(-50%);
+  background: oklch(0.4 0.05 250);
+  border: 3px solid oklch(0.3 0.04 150 / 0.9);
+}
+.pokemon-trainer-shadow {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  width: 48px;
+  height: 12px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: oklch(0.3 0.04 150 / 0.28);
+}
+
+/* sign / panel — chunky border + hard pixel shadow for legibility */
+.pokemon-sign {
+  border: var(--kit-border-width) solid var(--border);
   box-shadow: var(--kit-shadow);
 }
-
-/* type chips */
+.pokemon-pin {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border: 2px solid var(--border);
+}
+.pokemon-title {
+  text-shadow: 2px 2px 0 oklch(0.82 0.11 145 / 0.6);
+}
 .pokemon-chip {
+  border: 2px solid var(--border);
+}
+.pokemon-prompt {
+  display: inline-block;
+  animation: pokemon-prompt 1.1s steps(1) infinite;
+}
+.pokemon-cursor {
+  margin-right: 6px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+/* wooden signpost navigation */
+.pokemon-post {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+}
+.pokemon-post-board {
   display: inline-flex;
   align-items: center;
-  border: 3px solid oklch(0.27 0.03 250 / 0.9);
-  box-shadow: 2px 2px 0 oklch(0.27 0.03 250 / 0.85);
+  background: linear-gradient(180deg, oklch(0.7 0.07 65) 0%, oklch(0.6 0.08 62) 100%);
+  color: oklch(0.99 0.01 95);
+  padding: 0.7rem 1rem;
+  border: var(--kit-border-width) solid var(--border);
+  box-shadow: var(--kit-shadow);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.pokemon-post-leg {
+  width: 12px;
+  height: 18px;
+  background: oklch(0.5 0.07 62);
+  border: 3px solid var(--border);
+  border-top: none;
+}
+.pokemon-post:hover .pokemon-post-board,
+.pokemon-post:focus-visible .pokemon-post-board {
+  transform: translateY(-2px);
+  background: linear-gradient(180deg, oklch(0.74 0.08 65) 0%, oklch(0.64 0.09 62) 100%);
+}
+.pokemon-post:hover .pokemon-cursor,
+.pokemon-post:focus-visible .pokemon-cursor {
+  opacity: 1;
 }
 
-/* command menu items */
-.pokemon-cmd {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: color 0.1s ease, transform 0.08s ease;
+@keyframes pokemon-sway {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
 }
-.pokemon-cmd:hover { transform: translateX(2px); }
-.pokemon-cursor {
-  color: oklch(0.55 0.2 27);
-  animation: pokemon-blink 1s steps(1) infinite;
-}
-
-.pokemon-prompt {
-  animation: pokemon-blink 1s steps(1) infinite;
-}
-
-@keyframes pokemon-foe-bob {
+@keyframes pokemon-idle {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  50% { transform: translateY(-3px); }
 }
-@keyframes pokemon-hero-bob {
-  0%, 100% { transform: translateY(0) scaleY(1); }
-  50% { transform: translateY(2px) scaleY(0.97); }
-}
-@keyframes pokemon-blink {
+@keyframes pokemon-prompt {
   0%, 60% { opacity: 1; }
   61%, 100% { opacity: 0; }
 }
@@ -2117,6 +2290,462 @@
   --aurora-1: oklch(0.5 0.22 25);
   --aurora-2: oklch(0.5 0.18 12);
   --aurora-3: oklch(0.55 0.16 40);
+}
+
+/* ===== KIT: noirneon — Neo-Noir Neon ===== */
+:root[data-kit='noirneon'] {
+  --radius: 0.25rem;
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --surface-opacity: 100%;
+  --kit-blur: 0px;
+  --kit-border-width: 1px;
+  --kit-shadow: 0 24px 60px oklch(0.04 0.03 270 / 0.7);
+  --aurora-opacity: 0;
+
+  --background: oklch(0.12 0.035 268);
+  --foreground: oklch(0.95 0.015 250);
+  --card: oklch(0.16 0.04 268);
+  --card-foreground: oklch(0.95 0.015 250);
+  --popover: oklch(0.15 0.04 268);
+  --popover-foreground: oklch(0.95 0.015 250);
+  --primary: oklch(0.68 0.27 4);
+  --primary-foreground: oklch(0.99 0.01 320);
+  --secondary: oklch(0.22 0.05 268);
+  --secondary-foreground: oklch(0.92 0.02 250);
+  --muted: oklch(0.2 0.04 268);
+  --muted-foreground: oklch(0.68 0.04 252);
+  --accent: oklch(0.28 0.08 320);
+  --accent-foreground: oklch(0.95 0.015 250);
+  --destructive: oklch(0.62 0.24 22);
+  --destructive-foreground: oklch(0.98 0.01 320);
+  --border: oklch(0.62 0.22 4 / 0.35);
+  --input: oklch(0.5 0.14 268 / 0.5);
+  --ring: oklch(0.68 0.27 4 / 0.55);
+
+  --brand: oklch(0.68 0.27 4);
+  --brand-cyan: oklch(0.82 0.16 200);
+  --brand-amber: oklch(0.82 0.16 70);
+
+  --aurora-1: oklch(0.5 0.24 4);
+  --aurora-2: oklch(0.6 0.15 200);
+  --aurora-3: oklch(0.45 0.12 268);
+}
+
+/* ---- Backdrop / night sky ---- */
+.noirneon-sky {
+  background:
+    radial-gradient(120% 80% at 50% 0%, oklch(0.22 0.07 290 / 0.55) 0%, oklch(0.12 0.035 268 / 0) 60%),
+    radial-gradient(90% 60% at 15% 22%, oklch(0.32 0.16 4 / 0.28) 0%, oklch(0.12 0.035 268 / 0) 55%),
+    radial-gradient(90% 60% at 86% 30%, oklch(0.34 0.12 200 / 0.24) 0%, oklch(0.12 0.035 268 / 0) 55%),
+    linear-gradient(180deg, oklch(0.1 0.03 270) 0%, oklch(0.13 0.045 274) 55%, oklch(0.1 0.035 280) 100%);
+}
+
+/* Soft glow rising off the cityscape */
+.noirneon-haze {
+  background: linear-gradient(0deg, oklch(0.32 0.12 320 / 0.28) 0%, oklch(0.12 0.035 268 / 0) 70%);
+}
+
+/* ---- Neon signs ---- */
+.noirneon-sign {
+  border: 2px solid currentColor;
+  border-radius: 0.25rem;
+  padding: 0.4rem 0.7rem;
+  opacity: 0.9;
+}
+.noirneon-sign span {
+  display: block;
+}
+.noirneon-sign-a {
+  color: var(--primary);
+  box-shadow: 0 0 18px oklch(0.68 0.27 4 / 0.55), inset 0 0 10px oklch(0.68 0.27 4 / 0.3);
+  text-shadow: 0 0 8px oklch(0.68 0.27 4 / 0.9);
+  transform: rotate(-3deg);
+  animation: noirneon-buzz 6.5s steps(1, end) infinite;
+}
+.noirneon-sign-b {
+  color: var(--brand-cyan);
+  box-shadow: 0 0 16px oklch(0.82 0.16 200 / 0.5), inset 0 0 8px oklch(0.82 0.16 200 / 0.28);
+  text-shadow: 0 0 7px oklch(0.82 0.16 200 / 0.85);
+  transform: rotate(2deg);
+}
+.noirneon-ring {
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  border: 2px solid var(--brand-cyan);
+  box-shadow: 0 0 16px oklch(0.82 0.16 200 / 0.55), inset 0 0 10px oklch(0.82 0.16 200 / 0.3);
+  opacity: 0.7;
+}
+.noirneon-ring-c {
+  transform: rotate(0deg);
+}
+
+/* ---- City skyline silhouettes ---- */
+.noirneon-building {
+  background: linear-gradient(180deg, oklch(0.16 0.04 272) 0%, oklch(0.09 0.03 270) 100%);
+  border-top: 1px solid oklch(0.4 0.1 290 / 0.25);
+  border-left: 1px solid oklch(0.4 0.1 290 / 0.12);
+  border-right: 1px solid oklch(0.05 0.02 270 / 0.5);
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+.noirneon-window {
+  position: absolute;
+  width: 18%;
+  height: 8%;
+  min-width: 3px;
+  min-height: 3px;
+  background: var(--brand-amber);
+  box-shadow: 0 0 6px oklch(0.82 0.16 70 / 0.7);
+  opacity: 0.55;
+  border-radius: 1px;
+}
+.noirneon-window-cyan {
+  background: var(--brand-cyan);
+  box-shadow: 0 0 6px oklch(0.82 0.16 200 / 0.7);
+  opacity: 0.6;
+}
+.noirneon-window-off {
+  background: oklch(0.3 0.04 270);
+  box-shadow: none;
+  opacity: 0.35;
+}
+
+/* ---- Rain ---- */
+.noirneon-rain {
+  background-image: repeating-linear-gradient(
+    74deg,
+    oklch(0.85 0.04 250 / 0.07) 0px,
+    oklch(0.85 0.04 250 / 0.07) 1px,
+    transparent 1px,
+    transparent 9px
+  );
+  background-size: 100% 220px;
+  opacity: 0.5;
+  animation: noirneon-fall 0.9s linear infinite;
+}
+
+/* ---- Wet street + reflections ---- */
+.noirneon-street {
+  background: linear-gradient(
+    180deg,
+    oklch(0.14 0.045 274) 0%,
+    oklch(0.1 0.035 270) 45%,
+    oklch(0.07 0.025 268) 100%
+  );
+}
+.noirneon-streetline {
+  background: linear-gradient(90deg, transparent, oklch(0.6 0.16 290 / 0.4) 50%, transparent);
+}
+.noirneon-reflect {
+  width: 120px;
+  height: 80%;
+  border-radius: 9999px;
+  filter: blur(10px);
+  transform: scaleY(-1);
+  opacity: 0.45;
+  animation: noirneon-shimmer 5s ease-in-out infinite;
+}
+.noirneon-reflect-a {
+  background: linear-gradient(180deg, oklch(0.68 0.27 4 / 0.55), transparent 80%);
+}
+.noirneon-reflect-b {
+  background: linear-gradient(180deg, oklch(0.82 0.16 200 / 0.5), transparent 80%);
+  animation-delay: 1.4s;
+}
+.noirneon-reflect-c {
+  width: 80px;
+  background: linear-gradient(180deg, oklch(0.82 0.16 70 / 0.4), transparent 80%);
+  animation-delay: 2.6s;
+}
+
+/* ---- Fog + vignette ---- */
+.noirneon-vignette {
+  background:
+    radial-gradient(110% 90% at 50% 48%, transparent 52%, oklch(0.06 0.02 270 / 0.55) 100%),
+    linear-gradient(180deg, oklch(0.08 0.03 270 / 0.35) 0%, transparent 25%);
+}
+
+/* ---- Title neon ---- */
+.noirneon-neon {
+  color: oklch(0.97 0.02 320);
+  text-shadow:
+    0 0 6px oklch(0.78 0.2 4 / 0.9),
+    0 0 18px oklch(0.68 0.27 4 / 0.7),
+    0 0 38px oklch(0.62 0.26 350 / 0.5),
+    0 0 70px oklch(0.6 0.18 320 / 0.35);
+  animation: noirneon-flicker 7s ease-in-out infinite;
+}
+
+/* ---- Accents / buttons ---- */
+.noirneon-dot {
+  background: var(--brand-cyan);
+  box-shadow: 0 0 8px oklch(0.82 0.16 200 / 0.9);
+}
+.noirneon-btn {
+  transition: box-shadow 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+}
+.noirneon-btn-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 0 22px oklch(0.68 0.27 4 / 0.55);
+}
+.noirneon-btn-primary:hover {
+  box-shadow: 0 0 32px oklch(0.68 0.27 4 / 0.85);
+}
+.noirneon-btn-ghost {
+  color: var(--brand-cyan);
+  border: 1px solid oklch(0.82 0.16 200 / 0.6);
+  box-shadow: inset 0 0 14px oklch(0.82 0.16 200 / 0.12), 0 0 14px oklch(0.82 0.16 200 / 0.18);
+}
+.noirneon-btn-ghost:hover {
+  background: oklch(0.82 0.16 200 / 0.1);
+  box-shadow: inset 0 0 18px oklch(0.82 0.16 200 / 0.25), 0 0 22px oklch(0.82 0.16 200 / 0.35);
+}
+
+/* ---- Keyframes (all rest in a fully-lit / visible state) ---- */
+@keyframes noirneon-flicker {
+  0%, 100% { opacity: 1; }
+  3% { opacity: 0.86; }
+  6% { opacity: 1; }
+  72% { opacity: 1; }
+  74% { opacity: 0.9; }
+  76% { opacity: 1; }
+}
+@keyframes noirneon-buzz {
+  0%, 100% { opacity: 0.9; }
+  48% { opacity: 0.9; }
+  49% { opacity: 0.62; }
+  50% { opacity: 0.9; }
+}
+@keyframes noirneon-fall {
+  0% { background-position: 0 0; }
+  100% { background-position: 60px 220px; }
+}
+@keyframes noirneon-shimmer {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .noirneon-neon,
+  .noirneon-sign-a,
+  .noirneon-rain,
+  .noirneon-reflect {
+    animation-duration: 0.01s !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* ===== KIT: noir — Neo-Noir Mono ===== */
+:root[data-kit='noir'] {
+  --radius: 0rem;
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  --surface-opacity: 100%;
+  --kit-blur: 0px;
+  --kit-border-width: 1px;
+  --kit-shadow: 0 30px 80px oklch(0 0 0 / 0.7);
+  --aurora-opacity: 0;
+
+  --background: oklch(0.09 0 0);
+  --foreground: oklch(0.96 0 0);
+  --card: oklch(0.12 0 0);
+  --card-foreground: oklch(0.96 0 0);
+  --popover: oklch(0.12 0 0);
+  --popover-foreground: oklch(0.96 0 0);
+  --primary: oklch(0.5 0.16 25);
+  --primary-foreground: oklch(0.97 0 0);
+  --secondary: oklch(0.17 0 0);
+  --secondary-foreground: oklch(0.94 0 0);
+  --muted: oklch(0.2 0 0);
+  --muted-foreground: oklch(0.66 0 0);
+  --accent: oklch(0.24 0 0);
+  --accent-foreground: oklch(0.96 0 0);
+  --destructive: oklch(0.5 0.16 25);
+  --destructive-foreground: oklch(0.97 0 0);
+  --border: oklch(0.3 0 0);
+  --input: oklch(0.3 0 0);
+  --ring: oklch(0.7 0 0 / 0.5);
+  --brand: oklch(0.96 0 0);
+  --brand-cyan: oklch(0.8 0 0);
+  --brand-amber: oklch(0.85 0.015 80);
+  --aurora-1: oklch(0.3 0 0);
+  --aurora-2: oklch(0.2 0 0);
+  --aurora-3: oklch(0.15 0 0);
+}
+
+/* Chiaroscuro key-light: a soft tungsten radial from the upper-left. */
+.noir-keylight {
+  background:
+    radial-gradient(
+      120% 90% at 22% 18%,
+      oklch(0.78 0.01 80 / 0.22) 0%,
+      oklch(0.4 0.005 80 / 0.1) 26%,
+      transparent 58%
+    );
+}
+
+/* Venetian-blind shadow stripes cast diagonally, masked to a region. */
+.noir-blinds {
+  background-image: repeating-linear-gradient(
+    -28deg,
+    oklch(0 0 0 / 0.66) 0px,
+    oklch(0 0 0 / 0.66) 17px,
+    transparent 17px,
+    transparent 40px
+  );
+  -webkit-mask-image: radial-gradient(
+    90% 80% at 30% 22%,
+    black 0%,
+    oklch(0 0 0 / 0.55) 42%,
+    transparent 72%
+  );
+  mask-image: radial-gradient(
+    90% 80% at 30% 22%,
+    black 0%,
+    oklch(0 0 0 / 0.55) 42%,
+    transparent 72%
+  );
+}
+
+/* Heavy cinematic vignette darkening the edges. */
+.noir-vignette {
+  background: radial-gradient(
+    130% 110% at 50% 42%,
+    transparent 38%,
+    oklch(0 0 0 / 0.5) 76%,
+    oklch(0 0 0 / 0.92) 100%
+  );
+}
+
+/* Faint film grain. */
+.noir-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.06;
+  mix-blend-mode: screen;
+  animation: noir-flicker 6s steps(3) infinite;
+}
+
+@keyframes noir-flicker {
+  0%, 100% { opacity: 0.06; }
+  50% { opacity: 0.045; }
+}
+
+/* Title gets a subtle filmic light-bloom and crisp shadow. */
+.noir-title {
+  text-shadow:
+    0 1px 0 oklch(0 0 0 / 0.9),
+    0 0 38px oklch(0.85 0.01 80 / 0.12);
+}
+
+/* Thin accent underline drawing itself in. */
+.noir-rule {
+  transform-origin: left center;
+  animation: noir-draw 1s ease-out 0.6s both;
+}
+
+@keyframes noir-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* A slow drifting glint along the key-light side; rests visible. */
+.noir-glint {
+  animation: noir-breathe 9s ease-in-out infinite;
+}
+
+@keyframes noir-breathe {
+  0%, 100% { opacity: 0.22; }
+  50% { opacity: 0.34; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .noir-grain,
+  .noir-rule,
+  .noir-glint {
+    animation-duration: 0.01s;
+    animation-iteration-count: 1;
+  }
+  .noir-rule { transform: scaleX(1); }
+}
+
+/* ===== Neon Sign hero — shared by Neon Green + Neon Red (token-driven) ===== */
+.neonsign-wall {
+  background-color: var(--background);
+  background-image:
+    repeating-linear-gradient(0deg, oklch(0 0 0 / 0.45) 0 2px, transparent 2px 48px),
+    repeating-linear-gradient(90deg, oklch(0 0 0 / 0.32) 0 2px, transparent 2px 96px),
+    linear-gradient(180deg, oklch(0 0 0 / 0.35) 0%, transparent 30%, oklch(0 0 0 / 0.45) 100%);
+}
+.neonsign-vignette {
+  background: radial-gradient(125% 95% at 50% 40%, transparent 42%, oklch(0 0 0 / 0.68) 100%);
+}
+.neonsign-floor {
+  height: 32%;
+  background: radial-gradient(60% 120% at 50% 100%, color-mix(in oklab, var(--primary) 42%, transparent) 0%, transparent 72%);
+  filter: blur(10px);
+  opacity: 0.55;
+}
+.neonsign-tube {
+  color: color-mix(in oklab, var(--primary) 18%, white);
+  text-shadow:
+    0 0 2px color-mix(in oklab, var(--primary) 55%, white),
+    0 0 8px var(--primary),
+    0 0 20px var(--primary),
+    0 0 44px color-mix(in oklab, var(--primary) 85%, transparent),
+    0 0 90px color-mix(in oklab, var(--primary) 60%, transparent);
+}
+.neonsign-tube-accent {
+  color: color-mix(in oklab, var(--brand-cyan) 26%, white);
+  text-shadow:
+    0 0 4px var(--brand-cyan),
+    0 0 12px color-mix(in oklab, var(--brand-cyan) 80%, transparent),
+    0 0 26px color-mix(in oklab, var(--brand-cyan) 55%, transparent);
+}
+.neonsign-flicker {
+  animation: neonsign-flicker 8s linear infinite;
+}
+@keyframes neonsign-flicker {
+  0%, 100% { opacity: 1; }
+  38%, 41% { opacity: 1; }
+  39% { opacity: 0.45; }
+  40% { opacity: 0.85; }
+  72% { opacity: 1; }
+  73% { opacity: 0.5; }
+  74% { opacity: 0.92; }
+  75% { opacity: 1; }
+}
+.neonsign-btn {
+  border: 2px solid var(--primary);
+  color: color-mix(in oklab, var(--primary) 22%, white);
+  text-shadow: 0 0 6px var(--primary);
+  box-shadow:
+    0 0 12px color-mix(in oklab, var(--primary) 70%, transparent),
+    inset 0 0 12px color-mix(in oklab, var(--primary) 35%, transparent);
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
+}
+.neonsign-btn:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 26px var(--primary),
+    inset 0 0 18px color-mix(in oklab, var(--primary) 55%, transparent);
+}
+.neonsign-btn-accent {
+  border-color: var(--brand-cyan);
+  color: color-mix(in oklab, var(--brand-cyan) 26%, white);
+  text-shadow: 0 0 6px var(--brand-cyan);
+  box-shadow:
+    0 0 12px color-mix(in oklab, var(--brand-cyan) 65%, transparent),
+    inset 0 0 12px color-mix(in oklab, var(--brand-cyan) 30%, transparent);
+}
+.neonsign-btn-accent:hover {
+  box-shadow:
+    0 0 26px var(--brand-cyan),
+    inset 0 0 18px color-mix(in oklab, var(--brand-cyan) 50%, transparent);
 }
 
 /* ------------------------------------------------------------------ */
