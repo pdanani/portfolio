@@ -1,19 +1,30 @@
 import { m, useReducedMotion } from 'motion/react'
 import { EASE } from '#/lib/motion/variants'
 
-/** Pokemon — original turn-based battle UI homage. CSS art only, no trademarks. */
-const types = [
-  { k: 'spring', label: 'Spring Boot', el: 'GRASS', cls: 'bg-secondary text-secondary-foreground' },
-  { k: 'pg', label: 'Postgres', el: 'WATER', cls: 'bg-accent text-accent-foreground' },
-  { k: 'redis', label: 'Redis', el: 'FIRE', cls: 'bg-brand-amber text-foreground' },
-  { k: 'kafka', label: 'Kafka', el: 'WATER', cls: 'bg-accent text-accent-foreground' },
+/** Pokemon — top-down overworld town/route. Original geometric CSS art, no trademarks. */
+const stack = [
+  { k: 'spring', label: 'SPRING BOOT' },
+  { k: 'pg', label: 'POSTGRES' },
+  { k: 'redis', label: 'REDIS' },
+  { k: 'kafka', label: 'KAFKA' },
 ] as const
 
-const commands = [
+const signs = [
   { k: 'projects', label: 'PROJECTS' },
-  { k: 'skills', label: 'SKILLS' },
   { k: 'about', label: 'ABOUT' },
   { k: 'contact', label: 'CONTACT' },
+] as const
+
+// scattered tall-grass encounter patches (top/left in %, scale)
+const tufts = [
+  { k: 't1', top: 16, left: 9, s: 1 },
+  { k: 't2', top: 22, left: 20, s: 0.85 },
+  { k: 't3', top: 70, left: 13, s: 1.1 },
+  { k: 't4', top: 78, left: 26, s: 0.9 },
+  { k: 't5', top: 30, left: 80, s: 1 },
+  { k: 't6', top: 64, left: 86, s: 0.85 },
+  { k: 't7', top: 84, left: 72, s: 1.05 },
+  { k: 't8', top: 12, left: 64, s: 0.8 },
 ] as const
 
 export function PokemonHero() {
@@ -23,140 +34,161 @@ export function PokemonHero() {
     animate: { opacity: 1, y: 0 },
     transition: { duration: reduce ? 0.01 : 0.6, ease: EASE, delay },
   })
-  const slideFrom = (x: number, delay: number) => ({
-    initial: reduce ? { opacity: 0 } : { opacity: 0, x },
-    animate: { opacity: 1, x: 0 },
-    transition: { duration: reduce ? 0.01 : 0.6, ease: EASE, delay },
+  const pop = (delay: number) => ({
+    initial: reduce ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: 10 },
+    animate: { opacity: 1, scale: 1, y: 0 },
+    transition: { duration: reduce ? 0.01 : 0.5, ease: EASE, delay },
   })
 
   return (
-    <main className="relative isolate flex min-h-screen flex-col overflow-hidden">
-      {/* Route backdrop (original CSS art, behind content) */}
+    <main className="pokemon-grass relative isolate min-h-screen overflow-hidden">
+      {/* Overworld scenery (original CSS art, behind content) */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="pokemon-route" />
-        <div className="pokemon-hill" style={{ top: '34%', right: '-6%', width: 360, height: 150 }} />
-        <div className="pokemon-hill" style={{ bottom: '20%', left: '-8%', width: 420, height: 170 }} />
-        <div className="pokemon-scan" />
+        {/* tiled grass + checker pattern fills via .pokemon-grass on <main> */}
+        <div className="pokemon-tiles absolute inset-0" />
+
+        {/* winding dirt path crossing the scene */}
+        <div className="pokemon-path" />
+        <div className="pokemon-path pokemon-path--cross" />
+
+        {/* pond, lower-left */}
+        <div className="pokemon-pond" style={{ bottom: '7%', left: '4%' }} />
+
+        {/* trees */}
+        <div className="pokemon-tree" style={{ top: '8%', left: '40%' }} />
+        <div className="pokemon-tree" style={{ bottom: '20%', right: '6%' }} />
+
+        {/* houses */}
+        <div className="pokemon-house" style={{ top: '11%', right: '9%' }}>
+          <div className="pokemon-house-roof" />
+          <div className="pokemon-house-body">
+            <span className="pokemon-house-door" />
+            <span className="pokemon-house-window" style={{ left: 10 }} />
+            <span className="pokemon-house-window" style={{ right: 10 }} />
+          </div>
+        </div>
+        <div className="pokemon-house pokemon-house--blue" style={{ bottom: '24%', left: '20%' }}>
+          <div className="pokemon-house-roof" />
+          <div className="pokemon-house-body">
+            <span className="pokemon-house-door" />
+            <span className="pokemon-house-window" style={{ left: 10 }} />
+            <span className="pokemon-house-window" style={{ right: 10 }} />
+          </div>
+        </div>
+
+        {/* fence run near top path */}
+        <div className="pokemon-fence" style={{ top: '46%', left: '6%' }} />
+
+        {/* tall-grass encounter patches */}
+        {tufts.map((t) => (
+          <div
+            key={t.k}
+            className="pokemon-tuft"
+            style={{ top: `${t.top}%`, left: `${t.left}%`, transform: `scale(${t.s})` }}
+          >
+            <span /><span /><span /><span />
+          </div>
+        ))}
+
+        {/* a small NPC standing by the blue house */}
+        <div className="pokemon-npc" style={{ bottom: '30%', left: '33%' }}>
+          <span className="pokemon-npc-head" />
+          <span className="pokemon-npc-body" />
+        </div>
       </div>
 
-      {/* HUD bar */}
+      {/* Top sign / HUD */}
       <m.div
         {...rise(0)}
-        className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-6 pt-8 font-display text-foreground"
+        className="relative mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-6 pt-8"
       >
-        <span className="text-[10px] uppercase tracking-[0.12em] sm:text-xs">Battle Mode</span>
-        <div className="flex items-center gap-3 text-[9px] uppercase tracking-[0.1em] text-foreground/80 sm:text-[11px]">
-          <span>$ <span className="text-primary">∞ exp</span></span>
-          <span aria-hidden className="hidden sm:inline">/</span>
-          <span className="hidden sm:inline">Route 1</span>
-        </div>
+        <span className="surface pokemon-sign inline-flex items-center gap-2 bg-card px-3 py-2 font-display text-[9px] uppercase tracking-[0.12em] text-card-foreground sm:text-[10px]">
+          <span aria-hidden className="pokemon-pin" />
+          PALLET ROUTE
+        </span>
+        <span className="surface pokemon-sign hidden items-center bg-card px-3 py-2 font-display text-[9px] uppercase tracking-[0.1em] text-muted-foreground sm:inline-flex sm:text-[10px]">
+          <span className="text-secondary">EXPLORE</span>
+          <span aria-hidden className="mx-2 text-border">/</span>
+          <span className="text-accent">ROUTE&nbsp;1</span>
+        </span>
       </m.div>
 
-      {/* Battle field */}
-      <div className="relative mx-auto w-full max-w-5xl flex-1 px-6">
-        {/* Opponent stats panel — upper left */}
-        <m.div
-          {...slideFrom(-26, 0.12)}
-          className="pokemon-panel surface absolute left-6 top-6 w-[270px] max-w-[70vw] bg-card p-3 sm:left-6 sm:top-8 sm:w-[300px]"
-        >
-          <div className="flex items-baseline justify-between font-display text-[10px] uppercase text-card-foreground sm:text-[11px]">
-            <span>Wild Bug</span>
-            <span className="text-muted-foreground">Lv99</span>
-          </div>
-          <div className="mt-2 flex items-center gap-2">
-            <span className="font-display text-[8px] tracking-wider text-secondary sm:text-[9px]">HP</span>
-            <div className="pokemon-bar flex-1">
-              <div className="pokemon-bar-fill" style={{ width: '34%' }} />
-            </div>
-          </div>
-          <p className="mt-1 text-right font-mono text-[10px] text-muted-foreground">34 / 100</p>
+      {/* Hero content — readable sign panels over the grass */}
+      <div className="relative mx-auto flex min-h-[calc(100vh-6rem)] w-full max-w-5xl flex-col justify-center px-6 pb-16">
+        <m.div {...rise(0.1)} className="max-w-2xl">
+          <span className="surface pokemon-sign inline-block bg-card px-3 py-2 font-display text-[9px] uppercase tracking-[0.16em] text-secondary-foreground sm:text-[10px]">
+            <span className="bg-secondary px-2 py-1 text-secondary-foreground">SOFTWARE ENGINEER</span>
+          </span>
         </m.div>
 
-        {/* Opponent creature on platform — upper right */}
-        <div aria-hidden className="absolute right-8 top-4 sm:right-16 sm:top-10">
-          <m.div {...rise(0.2)} className="relative grid place-items-center">
-            <div className="pokemon-platform absolute" style={{ width: 150, height: 42, bottom: -10 }} />
-            <div className="pokemon-mon pokemon-mon-foe">
-              <span className="pokemon-mon-foe-ear" style={{ left: 12 }} />
-              <span className="pokemon-mon-foe-ear" style={{ right: 12 }} />
-            </div>
-          </m.div>
-        </div>
-
-        {/* Player creature on platform — lower left */}
-        <div aria-hidden className="absolute bottom-[34%] left-8 sm:bottom-[30%] sm:left-20">
-          <m.div {...rise(0.28)} className="relative grid place-items-center">
-            <div className="pokemon-platform absolute" style={{ width: 176, height: 48, bottom: -12 }} />
-            <div className="pokemon-mon pokemon-mon-hero">
-              <span className="pokemon-mon-hero-fin" />
-            </div>
-          </m.div>
-        </div>
-
-        {/* Player stats panel — lower right */}
         <m.div
-          {...slideFrom(26, 0.2)}
-          className="pokemon-panel surface absolute bottom-[30%] right-6 w-[300px] max-w-[78vw] bg-card p-3 sm:bottom-[26%] sm:right-6 sm:w-[330px]"
+          {...rise(0.18)}
+          className="surface pokemon-sign mt-6 inline-block w-fit bg-card px-5 py-5 sm:px-7 sm:py-6"
         >
-          <div className="flex items-baseline justify-between font-display text-[10px] uppercase text-card-foreground sm:text-[11px]">
-            <span>Pawan Danani</span>
-            <span className="text-primary">Lv.∞</span>
-          </div>
-          <div className="mt-2 flex items-center gap-2">
-            <span className="font-display text-[8px] tracking-wider text-secondary sm:text-[9px]">HP</span>
-            <div className="pokemon-bar flex-1">
-              <div className="pokemon-bar-fill" style={{ width: '88%' }} />
-            </div>
-          </div>
-          <div className="mt-2 flex items-center gap-2">
-            <span className="font-display text-[8px] tracking-wider text-accent sm:text-[9px]">XP</span>
-            <div className="pokemon-bar flex-1">
-              <div className="pokemon-bar-fill pokemon-bar-fill--xp" style={{ width: '72%' }} />
-            </div>
-          </div>
-          <ul className="mt-3 flex flex-wrap gap-1.5">
-            {types.map((t) => (
+          <h1 className="pokemon-title font-display text-2xl leading-[1.35] text-card-foreground sm:text-4xl">
+            Pawan
+            <br />
+            Danani
+          </h1>
+        </m.div>
+
+        <m.div
+          {...rise(0.28)}
+          className="surface pokemon-sign mt-5 max-w-xl bg-card px-5 py-4 sm:px-6 sm:py-5"
+        >
+          <p className="font-display text-[8px] uppercase tracking-[0.1em] text-primary sm:text-[9px]">
+            <span aria-hidden className="pokemon-prompt mr-1">▶</span>
+            Press to explore
+          </p>
+          <p className="mt-3 font-sans text-sm leading-relaxed text-popover-foreground sm:text-base">
+            Building resilient, distributed systems one route at a time — wiring
+            together services and battle-testing them in hands-on labs.
+          </p>
+          <ul className="mt-4 flex flex-wrap gap-1.5">
+            {stack.map((s) => (
               <li
-                key={t.k}
-                className={`pokemon-chip ${t.cls} px-2 py-1 font-display text-[7px] uppercase tracking-wider sm:text-[8px]`}
+                key={s.k}
+                className="pokemon-chip bg-muted px-2 py-1 font-display text-[7px] uppercase tracking-wider text-foreground sm:text-[8px]"
               >
-                {t.label}
+                {s.label}
               </li>
             ))}
           </ul>
         </m.div>
+
+        {/* Wooden signposts = navigation */}
+        <nav className="mt-8 flex flex-wrap gap-4">
+          {signs.map((s, i) => (
+            <m.a
+              key={s.k}
+              {...pop(0.4 + i * 0.08)}
+              href="#"
+              className="pokemon-post group font-display text-[10px] uppercase tracking-wider sm:text-xs"
+            >
+              <span className="pokemon-post-board">
+                <span aria-hidden className="pokemon-cursor">►</span>
+                {s.label}
+              </span>
+              <span aria-hidden className="pokemon-post-leg" />
+            </m.a>
+          ))}
+        </nav>
       </div>
 
-      {/* Message + command box across the bottom */}
+      {/* trainer avatar standing on the path (original chunky figure) */}
       <m.div
-        {...rise(0.36)}
-        className="mx-auto w-full max-w-5xl px-6 pb-8"
+        {...(reduce
+          ? { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.01 } }
+          : { initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6, ease: EASE, delay: 0.34 } })}
+        aria-hidden
+        className="pointer-events-none absolute bottom-[10%] right-[14%] z-0 sm:right-[20%]"
       >
-        <div className="pokemon-panel surface grid grid-cols-1 gap-px bg-card sm:grid-cols-[1.55fr_1fr]">
-          {/* Message */}
-          <div className="border-b-3 border-border p-5 sm:border-b-0 sm:border-r-3 sm:p-6">
-            <p className="font-display text-[9px] uppercase tracking-[0.12em] text-primary sm:text-[10px]">
-              Pawan Danani — Software Engineer
-            </p>
-            <p className="mt-3 max-w-md font-sans text-sm leading-relaxed text-popover-foreground sm:text-base">
-              It&rsquo;s dangerous to ship alone — pick your move. Building
-              resilient, distributed systems with Spring Boot, Postgres, Redis
-              &amp; Kafka, battle-tested through hands-on labs.
-              <span aria-hidden className="pokemon-prompt ml-1 font-display text-primary">▼</span>
-            </p>
-          </div>
-
-          {/* 2x2 command menu — CTAs */}
-          <nav className="grid grid-cols-2 gap-x-2 gap-y-3 p-5 font-display text-[10px] uppercase tracking-wider text-card-foreground sm:p-6 sm:text-xs">
-            {commands.map((c, i) => (
-              <a key={c.k} href="#" className="pokemon-cmd hover:text-primary">
-                <span aria-hidden className={i === 0 ? 'pokemon-cursor' : 'opacity-0'}>
-                  {'►'}
-                </span>
-                {c.label}
-              </a>
-            ))}
-          </nav>
+        <div className="pokemon-trainer">
+          <span className="pokemon-trainer-cap" />
+          <span className="pokemon-trainer-head" />
+          <span className="pokemon-trainer-torso" />
+          <span className="pokemon-trainer-legs" />
+          <span className="pokemon-trainer-shadow" />
         </div>
       </m.div>
     </main>
