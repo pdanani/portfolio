@@ -7,7 +7,6 @@ import { FrostHero } from './frost-hero'
 import { SwissHero } from './swiss-hero'
 import { PixelHero } from './pixel-hero'
 import { MarioHero } from './mario-hero'
-import { ArcadeHero } from './arcade-hero'
 import { ZeldaHero } from './zelda-hero'
 import { AuroraHero } from './aurora-hero'
 import { TerminalHero } from './terminal-hero'
@@ -26,7 +25,6 @@ export const CONCEPTS: Record<string, ComponentType> = {
   swiss: SwissHero,
   pixel: PixelHero,
   mario: MarioHero,
-  arcade: ArcadeHero,
   zelda: ZeldaHero,
   aurora: AuroraHero,
   terminal: TerminalHero,
