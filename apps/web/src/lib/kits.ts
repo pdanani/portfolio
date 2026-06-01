@@ -22,7 +22,7 @@ export const KITS: Array<Kit> = [
   { id: 'pixel', label: 'Pixel', blurb: '8/16-bit retro game UI', swatch: 'oklch(0.84 0.16 85)', mode: 'dark' },
   { id: 'mario', label: 'Mario', blurb: 'Platformer homage · sky/blocks', swatch: 'oklch(0.58 0.21 27)', mode: 'light' },
   { id: 'zelda', label: 'Zelda', blurb: '16-bit overworld quest', swatch: 'oklch(0.55 0.13 145)', mode: 'dark' },
-  { id: 'starwars', label: 'Star Wars', blurb: 'Opening crawl · starfield', swatch: 'oklch(0.82 0.15 90)', mode: 'dark' },
+  { id: 'starwars', label: 'Star Wars', blurb: 'Starship command console', swatch: 'oklch(0.82 0.15 90)', mode: 'dark' },
   { id: 'pokemon', label: 'Pokémon', blurb: 'Overworld town · explore', swatch: '#3aa655', mode: 'light' },
   { id: 'sonic', label: 'Sonic', blurb: 'Green-hill speed zone', swatch: 'oklch(0.56 0.19 250)', mode: 'light' },
   { id: 'jukebox', label: 'Jukebox', blurb: 'Retro diner jukebox + neon', swatch: 'oklch(0.66 0.26 350)', mode: 'dark' },
