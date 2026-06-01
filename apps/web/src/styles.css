@@ -2831,6 +2831,413 @@
     inset 0 0 18px color-mix(in oklab, var(--brand-cyan) 50%, transparent);
 }
 
+/* ===== KIT: csgo — CS:GO Dust II ===== */
+:root[data-kit='csgo'] {
+  --radius: 0.15rem;
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Archivo', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --surface-opacity: 100%;
+  --kit-blur: 0px;
+  --kit-border-width: 1px;
+  --kit-shadow: 0 2px 14px oklch(0.12 0.04 250 / 0.55);
+  --aurora-opacity: 0;
+
+  --background: oklch(0.74 0.06 72);
+  --foreground: oklch(0.96 0.02 230);
+  --card: oklch(0.2 0.035 250 / 0.82);
+  --card-foreground: oklch(0.96 0.02 230);
+  --popover: oklch(0.18 0.035 250 / 0.9);
+  --popover-foreground: oklch(0.96 0.02 230);
+  --primary: oklch(0.7 0.13 230);
+  --primary-foreground: oklch(0.16 0.04 250);
+  --secondary: oklch(0.74 0.18 150);
+  --secondary-foreground: oklch(0.18 0.06 150);
+  --muted: oklch(0.28 0.03 250 / 0.7);
+  --muted-foreground: oklch(0.82 0.04 230);
+  --accent: oklch(0.78 0.15 70);
+  --accent-foreground: oklch(0.24 0.06 60);
+  --destructive: oklch(0.62 0.24 25);
+  --destructive-foreground: oklch(0.97 0.02 25);
+  --border: oklch(0.7 0.13 230 / 0.55);
+  --input: oklch(0.7 0.13 230 / 0.4);
+  --ring: oklch(0.7 0.13 230 / 0.7);
+
+  --brand: oklch(0.7 0.13 230);
+  --brand-cyan: oklch(0.68 0.13 235);
+  --brand-amber: oklch(0.78 0.15 70);
+
+  --aurora-1: oklch(0.7 0.13 230);
+  --aurora-2: oklch(0.78 0.15 70);
+  --aurora-3: oklch(0.74 0.18 150);
+}
+
+/* ---- CS:GO Dust II scenery (original geometric CSS art) ---- */
+.csgo-scene {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    oklch(0.78 0.1 232) 0%,
+    oklch(0.82 0.08 220) 16%,
+    oklch(0.86 0.06 150) 28%,
+    oklch(0.8 0.06 80) 40%,
+    oklch(0.72 0.06 72) 100%
+  );
+}
+.csgo-sun {
+  position: absolute;
+  top: 6%;
+  right: 14%;
+  width: 90px;
+  height: 90px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, oklch(0.97 0.06 95) 0%, oklch(0.92 0.09 90 / 0.5) 55%, transparent 72%);
+}
+.csgo-wall {
+  position: absolute;
+  background: linear-gradient(180deg, oklch(0.82 0.06 74) 0%, oklch(0.7 0.07 68) 100%);
+  border: 2px solid oklch(0.56 0.06 62 / 0.7);
+  box-shadow: inset 0 0 0 4px oklch(0.86 0.05 78 / 0.4);
+}
+.csgo-arch {
+  position: absolute;
+  bottom: 0;
+  width: 200px;
+  height: 320px;
+  background: linear-gradient(180deg, oklch(0.84 0.06 76) 0%, oklch(0.72 0.07 68) 100%);
+  border: 2px solid oklch(0.56 0.06 62 / 0.7);
+}
+.csgo-arch::before {
+  content: '';
+  position: absolute;
+  left: 28%;
+  right: 28%;
+  bottom: 0;
+  top: 30%;
+  background: linear-gradient(180deg, oklch(0.34 0.04 62) 0%, oklch(0.22 0.03 60) 100%);
+  border-radius: 50px 50px 0 0;
+  border: 2px solid oklch(0.5 0.05 60 / 0.6);
+  border-bottom: none;
+}
+.csgo-crate {
+  position: absolute;
+  background:
+    repeating-linear-gradient(90deg, oklch(0.66 0.07 70) 0 22px, oklch(0.58 0.07 66) 22px 24px),
+    oklch(0.64 0.07 68);
+  border: 2px solid oklch(0.42 0.06 60 / 0.8);
+  box-shadow: inset 0 0 0 5px oklch(0.7 0.06 72 / 0.5);
+}
+.csgo-haze {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 80% at 50% 30%, transparent 40%, oklch(0.7 0.07 70 / 0.35) 100%);
+}
+
+/* ---- HUD plates ---- */
+.csgo-plate {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--kit-shadow), inset 0 1px 0 oklch(0.7 0.13 230 / 0.25);
+}
+.csgo-accentbar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--primary);
+}
+.csgo-label {
+  font-family: var(--ff-mono);
+  letter-spacing: 0.16em;
+  color: var(--primary);
+}
+
+/* radar */
+.csgo-radar-grid {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(oklch(0.7 0.13 230 / 0.18) 1px, transparent 1px) 0 0 / 100% 18px,
+    linear-gradient(90deg, oklch(0.7 0.13 230 / 0.18) 1px, transparent 1px) 0 0 / 18px 100%;
+}
+.csgo-radar-room {
+  position: absolute;
+  border: 1px solid oklch(0.7 0.13 230 / 0.55);
+  background: oklch(0.7 0.13 230 / 0.1);
+}
+.csgo-dot {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  box-shadow: 0 0 6px currentColor;
+}
+.csgo-dot--ct {
+  color: var(--brand-cyan);
+  background: var(--brand-cyan);
+  animation: csgo-ping 2.4s ease-in-out infinite;
+}
+.csgo-dot--t {
+  color: var(--brand-amber);
+  background: var(--brand-amber);
+}
+.csgo-sitemark {
+  position: absolute;
+  font-family: var(--ff-display);
+  font-weight: 800;
+  font-size: 11px;
+  color: oklch(0.78 0.15 70);
+}
+
+/* bars */
+.csgo-bar {
+  height: 8px;
+  border-radius: 2px;
+  background: oklch(0.3 0.03 250 / 0.7);
+  overflow: hidden;
+}
+.csgo-bar > span {
+  display: block;
+  height: 100%;
+}
+
+/* crosshair */
+.csgo-cross {
+  position: relative;
+  width: 46px;
+  height: 46px;
+}
+.csgo-cross::before,
+.csgo-cross::after {
+  content: '';
+  position: absolute;
+  background: oklch(0.92 0.16 150);
+  box-shadow: 0 0 5px oklch(0.82 0.2 150 / 0.8);
+}
+.csgo-cross::before {
+  left: 50%;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  transform: translateX(-50%);
+}
+.csgo-cross::after {
+  top: 50%;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  transform: translateY(-50%);
+}
+
+/* nav + price chips */
+.csgo-nav {
+  font-family: var(--ff-display);
+  letter-spacing: 0.12em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: oklch(0.2 0.035 250 / 0.88);
+  color: var(--foreground);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.csgo-nav:hover {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+.csgo-price {
+  font-family: var(--ff-mono);
+  color: var(--secondary);
+}
+.csgo-key {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  background: oklch(0.7 0.13 230 / 0.18);
+  border: 1px solid var(--border);
+  color: var(--primary);
+  font-family: var(--ff-mono);
+  font-size: 10px;
+}
+.csgo-pip {
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--accent);
+  box-shadow: inset 0 -2px 0 oklch(0.24 0.06 60 / 0.4);
+}
+.csgo-pip--off {
+  background: oklch(0.4 0.03 250 / 0.6);
+  box-shadow: none;
+}
+
+@keyframes csgo-ping {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(1.35); }
+}
+@keyframes csgo-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.csgo-bomb {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--destructive);
+  box-shadow: 0 0 6px var(--destructive);
+  animation: csgo-blink 1s steps(2, end) infinite;
+}
+
+/* ===== KIT: csgo2 — CS:GO Scoreboard ===== */
+:root[data-kit='csgo2'] {
+  --background: oklch(0.18 0.02 250);
+  --foreground: oklch(0.96 0.01 240);
+  --card: oklch(0.22 0.02 250);
+  --card-foreground: oklch(0.95 0.01 240);
+  --popover: oklch(0.2 0.02 250);
+  --popover-foreground: oklch(0.95 0.01 240);
+  --primary: oklch(0.66 0.16 240);
+  --primary-foreground: oklch(0.16 0.03 250);
+  --secondary: oklch(0.28 0.02 250);
+  --secondary-foreground: oklch(0.94 0.01 240);
+  --muted: oklch(0.26 0.02 250);
+  --muted-foreground: oklch(0.7 0.02 245);
+  --accent: oklch(0.82 0.14 85);
+  --accent-foreground: oklch(0.2 0.04 80);
+  --destructive: oklch(0.62 0.2 25);
+  --destructive-foreground: oklch(0.98 0.01 25);
+  --border: oklch(0.34 0.02 250);
+  --input: oklch(0.3 0.02 250);
+  --ring: oklch(0.66 0.16 240);
+  --brand: oklch(0.78 0.17 155);
+  --brand-cyan: oklch(0.72 0.13 215);
+  --brand-amber: oklch(0.82 0.14 85);
+  --aurora-1: oklch(0.66 0.16 240);
+  --aurora-2: oklch(0.78 0.17 155);
+  --aurora-3: oklch(0.82 0.14 85);
+  --radius: 0.2rem;
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Archivo', 'Inter', ui-sans-serif, sans-serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --surface-opacity: 1;
+  --kit-blur: 0px;
+  --kit-border-width: 1px;
+  --kit-shadow: 0 1px 0 oklch(1 0 0 / 0.04), 0 18px 40px oklch(0 0 0 / 0.45);
+  --aurora-opacity: 0;
+}
+
+.csgo2-grid {
+  background-image:
+    linear-gradient(to right, oklch(0.66 0.16 240 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.66 0.16 240 / 0.05) 1px, transparent 1px);
+  background-size: 38px 38px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black, transparent 78%);
+}
+.csgo2-glow {
+  background:
+    radial-gradient(60% 50% at 20% 0%, oklch(0.66 0.16 240 / 0.18), transparent 70%),
+    radial-gradient(50% 45% at 90% 10%, oklch(0.82 0.14 85 / 0.12), transparent 70%);
+}
+.csgo2-scan {
+  background: repeating-linear-gradient(
+    to bottom,
+    oklch(1 0 0 / 0.025) 0px,
+    oklch(1 0 0 / 0.025) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+.csgo2-panel {
+  border: var(--kit-border-width) solid var(--border);
+  background: linear-gradient(180deg, oklch(0.24 0.02 250), oklch(0.2 0.02 250));
+  box-shadow: var(--kit-shadow);
+}
+.csgo2-row {
+  border-bottom: 1px solid oklch(0.34 0.02 250 / 0.55);
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+.csgo2-row:hover {
+  background: oklch(0.66 0.16 240 / 0.06);
+}
+.csgo2-row-mvp {
+  background: linear-gradient(90deg, oklch(0.82 0.14 85 / 0.16), oklch(0.82 0.14 85 / 0.02) 60%, transparent);
+  border-left: 3px solid var(--brand-amber);
+}
+.csgo2-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: var(--primary);
+  border-style: solid;
+  opacity: 0.7;
+}
+.csgo2-corner--tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.csgo2-corner--tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+.csgo2-corner--bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+.csgo2-corner--br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+.csgo2-star {
+  filter: drop-shadow(0 0 6px oklch(0.82 0.14 85 / 0.55));
+  animation: csgo2-twinkle 3.2s ease-in-out infinite;
+}
+.csgo2-cta {
+  background: linear-gradient(180deg, oklch(0.7 0.16 240), oklch(0.6 0.16 240));
+  box-shadow: 0 0 0 1px oklch(0.78 0.14 240 / 0.6), 0 8px 22px oklch(0.66 0.16 240 / 0.35);
+  position: relative;
+  overflow: hidden;
+}
+.csgo2-cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, oklch(1 0 0 / 0.22) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: csgo2-sheen 4.5s ease-in-out infinite;
+}
+.csgo2-bar {
+  height: 6px;
+  border-radius: 99px;
+  background: oklch(0.3 0.02 250);
+  overflow: hidden;
+  position: relative;
+}
+.csgo2-bar > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 99px;
+  animation: csgo2-fill 1.1s var(--csgo2-ease, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+.csgo2-tab-active {
+  box-shadow: inset 0 -2px 0 var(--primary);
+  color: var(--foreground);
+}
+.csgo2-tick {
+  animation: csgo2-blink 1.6s steps(2, jump-none) infinite;
+}
+
+@keyframes csgo2-twinkle {
+  0%, 100% { transform: rotate(0deg) scale(1); opacity: 1; }
+  50% { transform: rotate(0deg) scale(1.12); opacity: 0.85; }
+}
+@keyframes csgo2-sheen {
+  0%, 65% { transform: translateX(-120%); }
+  85%, 100% { transform: translateX(120%); }
+}
+@keyframes csgo2-fill {
+  from { width: 0%; }
+}
+@keyframes csgo2-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .csgo2-star, .csgo2-cta::after, .csgo2-tick { animation: none; }
+  .csgo2-bar > span { animation-duration: 0.01s; }
+}
+
 /* ------------------------------------------------------------------ */
 /* Reduced-motion safety net — anything we miss still calms down.      */
 /* ------------------------------------------------------------------ */

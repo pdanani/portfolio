@@ -12,6 +12,9 @@ import { StarWarsHero } from './starwars-hero'
 import { PokemonHero } from './pokemon-hero'
 import { SonicHero } from './sonic-hero'
 import { JukeboxHero } from './jukebox-hero'
+import { CsgoHero } from './csgo-hero'
+import { CsgoTwoHero } from './csgo2-hero'
+import { JukeboxDeluxeHero } from './jukebox2-hero'
 import { NoirNeonHero } from './noirneon-hero'
 import { NoirHero } from './noir-hero'
 import { AuroraHero } from './aurora-hero'
@@ -37,6 +40,9 @@ export const CONCEPTS: Record<string, ComponentType> = {
   pokemon: PokemonHero,
   sonic: SonicHero,
   jukebox: JukeboxHero,
+  csgo: CsgoHero,
+  csgo2: CsgoTwoHero,
+  jukebox2: JukeboxDeluxeHero,
   noirneon: NoirNeonHero,
   noir: NoirHero,
   aurora: AuroraHero,
