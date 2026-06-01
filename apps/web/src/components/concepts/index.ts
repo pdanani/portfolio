@@ -15,6 +15,7 @@ import { JukeboxHero } from './jukebox-hero'
 import { CsgoHero } from './csgo-hero'
 import { CsgoTwoHero } from './csgo2-hero'
 import { JukeboxDeluxeHero } from './jukebox2-hero'
+import { VinylHero } from './vinyl-hero'
 import { NoirNeonHero } from './noirneon-hero'
 import { NoirHero } from './noir-hero'
 import { AuroraHero } from './aurora-hero'
@@ -42,6 +43,7 @@ export const CONCEPTS: Record<string, ComponentType> = {
   csgo: CsgoHero,
   csgo2: CsgoTwoHero,
   jukebox2: JukeboxDeluxeHero,
+  vinyl: VinylHero,
   noirneon: NoirNeonHero,
   noir: NoirHero,
   aurora: AuroraHero,

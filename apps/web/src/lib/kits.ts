@@ -26,6 +26,7 @@ export const KITS: Array<Kit> = [
   { id: 'sonic', label: 'Sonic', blurb: 'Green-hill speed zone', swatch: 'oklch(0.56 0.19 250)', mode: 'light' },
   // { id: 'jukebox', label: 'Jukebox', blurb: 'Retro diner jukebox + neon', swatch: 'oklch(0.66 0.26 350)', mode: 'dark' },
   { id: 'jukebox2', label: 'Jukebox II', blurb: 'Wurlitzer deluxe · bubble tubes', swatch: '#e8408f', mode: 'dark' },
+  { id: 'vinyl', label: 'Vinyl', blurb: 'Spinning record player', swatch: 'oklch(0.78 0.15 65)', mode: 'dark' },
   // { id: 'csgo', label: 'CS:GO Dust II', blurb: 'FPS HUD · de_dust2', swatch: 'oklch(0.7 0.13 230)', mode: 'dark' },
   // { id: 'csgo2', label: 'CS:GO Scoreboard', blurb: 'Match MVP scoreboard', swatch: '#0e1620', mode: 'dark' },
   // { id: 'noirneon', label: 'Neo-Noir Neon', blurb: 'Rainy neon night city', swatch: 'oklch(0.68 0.27 4)', mode: 'dark' },
