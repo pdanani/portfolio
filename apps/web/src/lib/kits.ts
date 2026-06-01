@@ -12,6 +12,9 @@ export interface Kit {
  * `:root[data-kit="<id>"]` and a bespoke hero concept in components/concepts.
  */
 export const KITS: Array<Kit> = [
+  { id: 'vinyl', label: 'Vinyl', blurb: 'Spinning record player', swatch: 'oklch(0.78 0.15 65)', mode: 'dark' },
+  { id: 'zelda', label: 'Zelda', blurb: '16-bit overworld quest', swatch: 'oklch(0.55 0.13 145)', mode: 'dark' },
+  { id: 'mario', label: 'Mario', blurb: 'Platformer homage · sky/blocks', swatch: 'oklch(0.58 0.21 27)', mode: 'light' },
   { id: 'midnight', label: 'Neon Sign', blurb: 'Neon bar sign · pick a color', swatch: 'oklch(0.84 0.22 145)', mode: 'dark' },
   { id: 'monolux', label: 'Monochrome', blurb: 'Near-black luxe minimal', swatch: 'oklch(0.93 0.006 95)', mode: 'dark' },
   // { id: 'blueprint', label: 'Blueprint', blurb: 'Technical drawing · grid', swatch: 'oklch(0.78 0.13 215)', mode: 'dark' },
@@ -19,14 +22,11 @@ export const KITS: Array<Kit> = [
   { id: 'frost', label: 'Frost', blurb: 'Light frosted glass', swatch: 'oklch(0.58 0.13 244)', mode: 'light' },
   { id: 'swiss', label: 'Swiss', blurb: 'Intl. typographic grid', swatch: 'oklch(0.55 0.2 27)', mode: 'light' },
   { id: 'pixel', label: 'Pixel', blurb: '8/16-bit retro game UI', swatch: 'oklch(0.84 0.16 85)', mode: 'dark' },
-  { id: 'mario', label: 'Mario', blurb: 'Platformer homage · sky/blocks', swatch: 'oklch(0.58 0.21 27)', mode: 'light' },
-  { id: 'zelda', label: 'Zelda', blurb: '16-bit overworld quest', swatch: 'oklch(0.55 0.13 145)', mode: 'dark' },
   // { id: 'starwars', label: 'Blue & Yellow', blurb: 'Command HUD · blue/gold', swatch: 'oklch(0.82 0.15 90)', mode: 'dark' },
   { id: 'pokemon', label: 'Pokémon', blurb: 'Overworld town · explore', swatch: '#3aa655', mode: 'light' },
   { id: 'sonic', label: 'Sonic', blurb: 'Green-hill speed zone', swatch: 'oklch(0.56 0.19 250)', mode: 'light' },
   // { id: 'jukebox', label: 'Jukebox', blurb: 'Retro diner jukebox + neon', swatch: 'oklch(0.66 0.26 350)', mode: 'dark' },
   { id: 'jukebox2', label: 'Jukebox II', blurb: 'Wurlitzer deluxe · bubble tubes', swatch: '#e8408f', mode: 'dark' },
-  { id: 'vinyl', label: 'Vinyl', blurb: 'Spinning record player', swatch: 'oklch(0.78 0.15 65)', mode: 'dark' },
   // { id: 'csgo', label: 'CS:GO Dust II', blurb: 'FPS HUD · de_dust2', swatch: 'oklch(0.7 0.13 230)', mode: 'dark' },
   // { id: 'csgo2', label: 'CS:GO Scoreboard', blurb: 'Match MVP scoreboard', swatch: '#0e1620', mode: 'dark' },
   // { id: 'noirneon', label: 'Neo-Noir Neon', blurb: 'Rainy neon night city', swatch: 'oklch(0.68 0.27 4)', mode: 'dark' },
