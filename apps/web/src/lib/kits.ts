@@ -12,8 +12,7 @@ export interface Kit {
  * `:root[data-kit="<id>"]` and a bespoke hero concept in components/concepts.
  */
 export const KITS: Array<Kit> = [
-  { id: 'midnight', label: 'Neon Green', blurb: 'Neon HUD · green', swatch: 'oklch(0.84 0.22 145)', mode: 'dark' },
-  { id: 'neonred', label: 'Neon Red', blurb: 'Neon HUD · red', swatch: 'oklch(0.62 0.25 25)', mode: 'dark' },
+  { id: 'midnight', label: 'Neon Sign', blurb: 'Neon bar sign · pick a color', swatch: 'oklch(0.84 0.22 145)', mode: 'dark' },
   { id: 'monolux', label: 'Monochrome', blurb: 'Near-black luxe minimal', swatch: 'oklch(0.93 0.006 95)', mode: 'dark' },
   // { id: 'blueprint', label: 'Blueprint', blurb: 'Technical drawing · grid', swatch: 'oklch(0.78 0.13 215)', mode: 'dark' },
   // { id: 'bento', label: 'Bento', blurb: 'Modern dashboard grid', swatch: 'oklch(0.72 0.13 195)', mode: 'dark' },
