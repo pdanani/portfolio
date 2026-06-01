@@ -1,13 +1,11 @@
 import { m, useReducedMotion } from 'motion/react'
 import { EASE } from '#/lib/motion/variants'
 
-/** Star Wars — original space-opera homage: gold opening crawl over a starfield. */
-const stack = ['Spring Boot', 'Postgres', 'Redis', 'Kafka'] as const
-
-const crawl = [
-  'Across a galaxy of restless servers, a lone engineer keeps the lights on.',
-  'Pawan Danani builds resilient distributed systems that refuse to fall — fault-tolerant services, self-healing pipelines, and data that survives the dark.',
-  'When traffic surges like a passing fleet, the systems hold. When a node goes dim, another takes the watch.',
+/** Star Wars — in-world starship command console / cockpit HUD (no opening crawl). */
+const readouts = [
+  { sys: 'SHIELDS', label: 'UPTIME', value: '99.99%' },
+  { sys: 'HYPERDRIVE', label: 'LATENCY', value: '12ms' },
+  { sys: 'REACTOR', label: 'THROUGHPUT', value: '8.2k rps' },
 ] as const
 
 export function StarWarsHero() {
@@ -19,8 +17,8 @@ export function StarWarsHero() {
   })
 
   return (
-    <main className="relative isolate min-h-screen overflow-hidden bg-background">
-      {/* Deep-space scenery: void + layered starfield + horizon planet (behind content) */}
+    <main className="starwars-root relative isolate min-h-screen overflow-hidden bg-background text-foreground">
+      {/* Deep-space viewport canopy: void + layered starfield + horizon planet glow */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div className="starwars-space" />
         <div className="starwars-stars" />
@@ -29,56 +27,61 @@ export function StarWarsHero() {
         <div className="starwars-planet" />
       </div>
 
-      {/* Receding gold opening crawl, filling the lower viewport (rests readable) */}
-      <div aria-hidden className="starwars-stage -z-10">
-        <div className="starwars-crawl">
-          <p className="starwars-crawl-eyebrow font-display text-[11px] font-semibold sm:text-sm">
-            A long uptime ago, in a datacenter far, far away…
-          </p>
-          <div className="mt-6 space-y-5">
-            {crawl.map((line, i) => (
-              <p
-                key={`crawl-${i}`}
-                className="font-display text-base font-semibold leading-relaxed sm:text-2xl"
-              >
-                {line}
-              </p>
-            ))}
-            <p className="font-display text-sm font-semibold leading-relaxed sm:text-xl">
-              The stack of the resistance: {stack.join(' · ')}.
-            </p>
-          </div>
+      {/* HUD overlay: scanlines + corner brackets + a slow targeting reticle sweep */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <div className="starwars-scanlines" />
+      </div>
+      <div aria-hidden className="pointer-events-none absolute inset-4 -z-10 sm:inset-6">
+        <span className="starwars-bracket starwars-bracket--tl" />
+        <span className="starwars-bracket starwars-bracket--tr" />
+        <span className="starwars-bracket starwars-bracket--bl" />
+        <span className="starwars-bracket starwars-bracket--br" />
+      </div>
+
+      {/* Slowly-rotating wireframe hologram orb (rests visible, motion-safe) */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-[6%] top-1/2 -z-10 hidden -translate-y-1/2 lg:block"
+      >
+        <div className="starwars-holo">
+          <span className="starwars-holo-ring" />
+          <span className="starwars-holo-ring starwars-holo-ring--b" />
+          <span className="starwars-holo-ring starwars-holo-ring--c" />
+          <span className="starwars-reticle" />
         </div>
       </div>
 
-      {/* HUD bar */}
+      {/* Top STATUS BAR — in-world telemetry */}
       <m.div
         {...rise(0)}
-        className="relative mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 pt-8 text-foreground"
+        className="relative mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 pt-7 sm:pt-9"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <span aria-hidden className="starwars-pip" />
-          <span className="font-display text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/80 sm:text-xs">
+          <span className="font-display text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/85 sm:text-xs">
             Sector 7 · Systems Command
           </span>
         </div>
-        <span className="hidden font-mono text-[10px] uppercase tracking-[0.2em] text-brand-cyan sm:inline">
-          uptime 99.99%
-        </span>
+        <div className="flex items-center gap-2.5">
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-brand-cyan sm:text-xs">
+            Uptime 99.99%
+          </span>
+          <span aria-hidden className="starwars-status-dot" />
+        </div>
       </m.div>
 
-      {/* Centered content sitting above the crawl */}
-      <div className="relative mx-auto flex min-h-[calc(100vh-7rem)] max-w-4xl flex-col justify-center px-6">
+      {/* Centerpiece console content */}
+      <div className="relative mx-auto flex min-h-[calc(100vh-5.5rem)] max-w-6xl flex-col justify-center px-6">
         <m.p
           {...rise(0.08)}
-          className="font-mono text-[11px] uppercase tracking-[0.32em] text-brand-cyan sm:text-xs"
+          className="font-mono text-[11px] uppercase tracking-[0.34em] text-brand-cyan sm:text-xs"
         >
           Episode IV · Software Engineer
         </m.p>
 
         <m.h1
           {...rise(0.16)}
-          className="starwars-title mt-6 font-display text-5xl font-extrabold leading-[0.92] tracking-tight sm:text-8xl"
+          className="starwars-title mt-5 font-display text-5xl font-extrabold leading-[0.9] tracking-tight sm:text-8xl"
         >
           Pawan
           <br />
@@ -97,24 +100,46 @@ export function StarWarsHero() {
           <span className="text-primary">Kafka</span>.
         </m.p>
 
+        {/* Holographic console readouts */}
         <m.div
-          {...rise(0.44)}
-          className="mt-10 flex flex-wrap items-center gap-5 font-display text-xs font-semibold uppercase tracking-[0.16em]"
+          {...rise(0.4)}
+          className="mt-9 grid w-full max-w-xl grid-cols-1 gap-3 sm:grid-cols-3"
         >
-          <a
-            href="#"
-            className="starwars-saber bg-card px-7 py-3.5 text-brand-cyan"
-          >
-            <span aria-hidden className="starwars-pip" />
-            View projects
+          {readouts.map((r) => (
+            <div key={r.sys} className="starwars-panel px-4 py-3">
+              <div className="flex items-center gap-2">
+                <span aria-hidden className="starwars-panel-pip" />
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-brand-cyan">
+                  {r.sys}
+                </span>
+              </div>
+              <p className="mt-2 font-display text-xl font-bold leading-none text-foreground">
+                {r.value}
+              </p>
+              <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.24em] text-muted-foreground">
+                {r.label}
+              </p>
+            </div>
+          ))}
+        </m.div>
+
+        {/* NAV — glowing console buttons, high contrast */}
+        <m.nav
+          {...rise(0.52)}
+          aria-label="Primary"
+          className="mt-10 flex flex-wrap items-center gap-4 font-display text-xs font-semibold uppercase tracking-[0.16em]"
+        >
+          <a href="#projects" className="starwars-btn starwars-btn--primary">
+            <span aria-hidden className="starwars-btn-pip" />
+            View Projects
           </a>
-          <a
-            href="#"
-            className="starwars-saber starwars-saber--gold px-7 py-3.5 text-primary"
-          >
+          <a href="#about" className="starwars-btn">
+            About
+          </a>
+          <a href="#contact" className="starwars-btn">
             Contact
           </a>
-        </m.div>
+        </m.nav>
       </div>
     </main>
   )
