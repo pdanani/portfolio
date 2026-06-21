@@ -236,7 +236,7 @@ export function WavesHero() {
         render(7.5, 1)
       } else {
         const start = performance.now()
-        const ARC_S = 1.0 // length of the noon -> dusk intro
+        const ARC_S = 2.0 // length of the noon -> dusk intro
         const loop = (now: number) => {
           if (disposed) return
           resize()
@@ -263,7 +263,7 @@ export function WavesHero() {
 
   // hold the overlay copy until the sun has (mostly) set, so the noon -> dusk
   // arc plays as the intro/loader and the text fades in once it lands
-  const INTRO = 1.0
+  const INTRO = 2.0
   const rise = (delay: number) => ({
     initial: reduce ? { opacity: 0 } : { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
