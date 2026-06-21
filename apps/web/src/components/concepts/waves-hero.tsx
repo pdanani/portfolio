@@ -15,8 +15,6 @@ precision highp float;
 uniform vec2 u_resolution;
 uniform float u_time;
 uniform float u_fade;
-uniform sampler2D u_text;   // the name rendered to a canvas (used as a cloud mask)
-uniform float u_texAspect;  // text texture width / height
 
 // hash + value noise -> fbm for layered swell
 float hash(vec2 p) {
@@ -78,46 +76,6 @@ void main() {
   float disc = smoothstep(mix(0.045, 0.058, day), mix(0.024, 0.032, day), sunDist);
   skyCol = mix(skyCol, mix(vec3(1.0, 1.0, 0.96), vec3(1.0, 0.86, 0.66), day), disc * step(horizon, uv.y));
 
-  // ---------- NAME WRITTEN IN CLOUDS (sky only) ----------
-  // map screen uv into the text band, preserving the texture's aspect ratio
-  float cloudCx = 0.5, cloudCy = 0.74, cloudW = 0.86;
-  float cloudH = cloudW * aspect / u_texAspect;
-  vec2 tc = (uv - vec2(cloudCx - cloudW * 0.5, cloudCy - cloudH * 0.5)) / vec2(cloudW, cloudH);
-  tc.y = 1.0 - tc.y;                                    // canvas texture is y-down
-  float inBox = step(-0.06, tc.x) * step(tc.x, 1.06) * step(-0.12, tc.y) * step(tc.y, 1.12);
-  float cdrift = t * 0.006;
-
-  // soft, slightly-fattened glyph base (5 taps) -> a feathered, inflated silhouette
-  float e = 0.012;
-  float g  = texture2D(u_text, clamp(tc, 0.0, 1.0)).a * 0.30;
-  g += texture2D(u_text, clamp(tc + vec2(e, 0.0), 0.0, 1.0)).a * 0.20;
-  g += texture2D(u_text, clamp(tc + vec2(-e, 0.0), 0.0, 1.0)).a * 0.20;
-  g += texture2D(u_text, clamp(tc + vec2(0.0, e * 2.4), 0.0, 1.0)).a * 0.15;
-  g += texture2D(u_text, clamp(tc + vec2(0.0, -e * 2.4), 0.0, 1.0)).a * 0.15;
-
-  // rounded cumulus lobes: HIGH horizontal / LOW vertical freq so bumps are round,
-  // not torn vertical streaks (the band is wide and short, so freq must compensate)
-  float lobes  = fbm(tc * vec2(15.0, 5.0) + vec2(cdrift, 0.0));
-  float detail = fbm(tc * vec2(33.0, 11.0) - vec2(0.0, cdrift));
-  float bump = lobes * 0.72 + detail * 0.28;
-
-  // push the silhouette out along the lobes; WIDE threshold -> soft, fluffy edge
-  float field = g + (bump - 0.5) * 0.44;
-  float dens = smoothstep(0.30, 0.72, field);
-
-  // volume from the lobes' upward gradient: bright tops, soft cool-grey undersides
-  // (a fake vertical normal — no hard offset drop-shadow)
-  float above = fbm(tc * vec2(15.0, 5.0) + vec2(cdrift, -0.06));
-  float lit = clamp(0.45 + (bump - above) * 3.2, 0.0, 1.0);
-  vec3 cloudShadow = vec3(0.66, 0.69, 0.79);
-  vec3 cloudBody = vec3(0.99, 0.99, 1.0);
-  vec3 cloudCol = mix(cloudShadow, cloudBody, lit);
-  cloudCol = mix(cloudCol, sunCol, pow(dens, 3.0) * 0.16 * day); // warm kiss as it sets
-
-  // wispy edges read as semi-transparent (dens), solid cores opaque
-  float cloudA = dens * inBox * step(horizon, uv.y) * smoothstep(0.02, 0.2, u_fade);
-  skyCol = mix(skyCol, cloudCol, clamp(cloudA, 0.0, 1.0));
-
   // ---------- SEA (below horizon) ----------
   // perspective: stretch toward the horizon so waves compress with distance
   float depth = (horizon - uv.y) / horizon;          // 0 at horizon -> 1 at bottom
@@ -177,7 +135,6 @@ export function WavesHero() {
     let gl: WebGLRenderingContext | null = null
     let program: WebGLProgram | null = null
     let buffer: WebGLBuffer | null = null
-    let textTex: WebGLTexture | null = null
     let disposed = false
 
     const cleanup = () => {
@@ -185,7 +142,6 @@ export function WavesHero() {
       raf = 0
       if (gl) {
         if (buffer) gl.deleteBuffer(buffer)
-        if (textTex) gl.deleteTexture(textTex)
         if (program) gl.deleteProgram(program)
         const lose = gl.getExtension('WEBGL_lose_context')
         if (lose) lose.loseContext()
@@ -251,48 +207,6 @@ export function WavesHero() {
       const uRes = context.getUniformLocation(program, 'u_resolution')
       const uFade = context.getUniformLocation(program, 'u_fade')
 
-      // render the name to a canvas and upload it as the cloud mask
-      const uText = context.getUniformLocation(program, 'u_text')
-      const uTexAspect = context.getUniformLocation(program, 'u_texAspect')
-      const tcanvas = document.createElement('canvas')
-      tcanvas.width = 1600
-      tcanvas.height = 300
-      const tctx = tcanvas.getContext('2d')
-      if (tctx) {
-        tctx.clearRect(0, 0, tcanvas.width, tcanvas.height)
-        tctx.fillStyle = '#ffffff'
-        tctx.textAlign = 'center'
-        tctx.textBaseline = 'middle'
-        const name = 'Pawan Danani'
-        let size = 240
-        const maxW = tcanvas.width * 0.92
-        do {
-          tctx.font = `800 ${size}px "Arial Black", "Helvetica Neue", Arial, sans-serif`
-          if (tctx.measureText(name).width <= maxW) break
-          size -= 6
-        } while (size > 30)
-        tctx.fillText(name, tcanvas.width / 2, tcanvas.height / 2)
-        textTex = context.createTexture()
-        context.bindTexture(context.TEXTURE_2D, textTex)
-        context.pixelStorei(context.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false)
-        context.texImage2D(
-          context.TEXTURE_2D,
-          0,
-          context.RGBA,
-          context.RGBA,
-          context.UNSIGNED_BYTE,
-          tcanvas,
-        )
-        context.texParameteri(context.TEXTURE_2D, context.TEXTURE_WRAP_S, context.CLAMP_TO_EDGE)
-        context.texParameteri(context.TEXTURE_2D, context.TEXTURE_WRAP_T, context.CLAMP_TO_EDGE)
-        context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MIN_FILTER, context.LINEAR)
-        context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MAG_FILTER, context.LINEAR)
-        context.activeTexture(context.TEXTURE0)
-        context.bindTexture(context.TEXTURE_2D, textTex)
-        context.uniform1i(uText, 0)
-      }
-      context.uniform1f(uTexAspect, tcanvas.width / tcanvas.height)
-
       const resize = () => {
         const dpr = Math.min(window.devicePixelRatio || 1, 2)
         const w = Math.max(1, Math.floor(canvas.clientWidth * dpr))
@@ -322,7 +236,7 @@ export function WavesHero() {
         render(7.5, 1)
       } else {
         const start = performance.now()
-        const ARC_S = 1.5 // length of the noon -> dusk intro
+        const ARC_S = 3.5 // length of the noon -> dusk intro
         const loop = (now: number) => {
           if (disposed) return
           resize()
@@ -349,7 +263,7 @@ export function WavesHero() {
 
   // hold the overlay copy until the sun has (mostly) set, so the noon -> dusk
   // arc plays as the intro/loader and the text fades in once it lands
-  const INTRO = 1.0
+  const INTRO = 3.0
   const rise = (delay: number) => ({
     initial: reduce ? { opacity: 0 } : { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -381,6 +295,91 @@ export function WavesHero() {
         aria-hidden
         className="waves-scrim pointer-events-none absolute inset-0 -z-10"
       />
+
+      {/* the name spelled in soft clouds — SVG "gooey" filter (turbulence ->
+          blur -> alpha-contrast) rounds the letters into puffy blobs, with a
+          haze halo behind and a top-lit white->grey gradient for volume */}
+      <m.div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-[12%] z-[1] flex justify-center px-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: reduce ? 0.01 : 1.6, ease: EASE, delay: reduce ? 0 : 1.8 }}
+      >
+        <svg viewBox="0 0 1200 280" className="w-[min(94vw,1080px)]">
+          <defs>
+            <filter
+              id="waves-cloud"
+              x="-20%"
+              y="-90%"
+              width="140%"
+              height="300%"
+              colorInterpolationFilters="sRGB"
+            >
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.009 0.013"
+                numOctaves={3}
+                seed={6}
+                result="n"
+              />
+              <feDisplacementMap in="SourceGraphic" in2="n" scale={22} result="d" />
+              <feGaussianBlur in="d" stdDeviation={7} result="b" />
+              <feColorMatrix
+                in="b"
+                type="matrix"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -8"
+                result="goo"
+              />
+              <feGaussianBlur in="goo" stdDeviation={2.2} />
+            </filter>
+            <filter
+              id="waves-cloud-haze"
+              x="-40%"
+              y="-160%"
+              width="180%"
+              height="420%"
+              colorInterpolationFilters="sRGB"
+            >
+              <feGaussianBlur stdDeviation={14} />
+            </filter>
+            <linearGradient id="waves-cloud-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="55%" stopColor="#eef2f8" />
+              <stop offset="100%" stopColor="#c1cad9" />
+            </linearGradient>
+          </defs>
+          {/* soft haze halo */}
+          <text
+            x="600"
+            y="196"
+            textAnchor="middle"
+            textLength="1080"
+            lengthAdjust="spacingAndGlyphs"
+            fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+            fontSize="162"
+            fill="#ffffff"
+            opacity="0.4"
+            filter="url(#waves-cloud-haze)"
+          >
+            Pawan Danani
+          </text>
+          {/* puffy cloud body */}
+          <text
+            x="600"
+            y="196"
+            textAnchor="middle"
+            textLength="1080"
+            lengthAdjust="spacingAndGlyphs"
+            fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+            fontSize="162"
+            fill="url(#waves-cloud-fill)"
+            filter="url(#waves-cloud)"
+          >
+            Pawan Danani
+          </text>
+        </svg>
+      </m.div>
 
       <div className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 pb-16 pt-24 sm:pb-24">
         <m.p
