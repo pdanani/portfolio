@@ -298,97 +298,6 @@ export function WavesHero() {
         className="waves-scrim pointer-events-none absolute inset-0 -z-10"
       />
 
-      {/* the name spelled in soft clouds — SVG "gooey" filter (turbulence ->
-          blur -> alpha-contrast) rounds the letters into puffy blobs, with a
-          haze halo behind and a top-lit white->grey gradient for volume */}
-      <m.div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-[12%] z-[1]"
-        initial={
-          reduce
-            ? { opacity: 0 }
-            : { opacity: 0, filter: 'blur(18px)', scale: 1.05, y: 12 }
-        }
-        animate={{ opacity: 1, filter: 'blur(0px)', scale: 1, y: 0 }}
-        transition={{ duration: reduce ? 0.01 : 1.8, ease: EASE, delay: reduce ? 0 : 0.3 }}
-      >
-        <div className="mx-auto max-w-6xl px-6">
-          <svg viewBox="0 0 1200 280" className="w-full">
-          <defs>
-            <filter
-              id="waves-cloud"
-              x="-20%"
-              y="-90%"
-              width="140%"
-              height="300%"
-              colorInterpolationFilters="sRGB"
-            >
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.009 0.013"
-                numOctaves={3}
-                seed={6}
-                result="n"
-              />
-              <feDisplacementMap in="SourceGraphic" in2="n" scale={15} result="d" />
-              <feGaussianBlur in="d" stdDeviation={5} result="b" />
-              <feColorMatrix
-                in="b"
-                type="matrix"
-                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"
-                result="goo"
-              />
-              <feGaussianBlur in="goo" stdDeviation={1} />
-            </filter>
-            <filter
-              id="waves-cloud-haze"
-              x="-40%"
-              y="-160%"
-              width="180%"
-              height="420%"
-              colorInterpolationFilters="sRGB"
-            >
-              <feGaussianBlur stdDeviation={14} />
-            </filter>
-            <linearGradient id="waves-cloud-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="55%" stopColor="#eef2f8" />
-              <stop offset="100%" stopColor="#c1cad9" />
-            </linearGradient>
-          </defs>
-          {/* soft haze halo */}
-          <text
-            x="600"
-            y="196"
-            textAnchor="middle"
-            textLength="1080"
-            lengthAdjust="spacingAndGlyphs"
-            fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
-            fontSize="162"
-            fill="#ffffff"
-            opacity="0.3"
-            filter="url(#waves-cloud-haze)"
-          >
-            Pawan Danani
-          </text>
-          {/* puffy cloud body */}
-          <text
-            x="600"
-            y="196"
-            textAnchor="middle"
-            textLength="1080"
-            lengthAdjust="spacingAndGlyphs"
-            fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
-            fontSize="162"
-            fill="url(#waves-cloud-fill)"
-            filter="url(#waves-cloud)"
-          >
-            Pawan Danani
-          </text>
-        </svg>
-        </div>
-      </m.div>
-
       <div className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 pb-16 pt-24 sm:pb-24">
         <m.p
           {...rise(0.05)}
@@ -397,8 +306,96 @@ export function WavesHero() {
           Backend Engineer
         </m.p>
 
-        {/* the name is spelled by the clouds in the sky — kept here for a11y/SEO */}
-        <h1 className="sr-only">Pawan Danani</h1>
+        {/* the name, spelled in soft clouds — kept IN the layout flow (the real
+            <h1>) so it reserves space and can never collide with the copy below;
+            the SVG "gooey" filter rounds the letters into puffy blobs */}
+        <m.h1
+          aria-label="Pawan Danani"
+          className="mt-1 mb-1"
+          style={{ transformOrigin: 'left center' }}
+          initial={
+            reduce
+              ? { opacity: 0 }
+              : { opacity: 0, filter: 'blur(18px)', scale: 1.04, y: 12 }
+          }
+          animate={{ opacity: 1, filter: 'blur(0px)', scale: 1, y: 0 }}
+          transition={{ duration: reduce ? 0.01 : 1.5, ease: EASE, delay: reduce ? 0 : 0.2 }}
+        >
+          <span className="sr-only">Pawan Danani</span>
+          <svg aria-hidden viewBox="0 0 1200 240" className="w-full max-w-4xl">
+            <defs>
+              <filter
+                id="waves-cloud"
+                x="-20%"
+                y="-90%"
+                width="140%"
+                height="300%"
+                colorInterpolationFilters="sRGB"
+              >
+                <feTurbulence
+                  type="fractalNoise"
+                  baseFrequency="0.009 0.013"
+                  numOctaves={3}
+                  seed={6}
+                  result="n"
+                />
+                <feDisplacementMap in="SourceGraphic" in2="n" scale={15} result="d" />
+                <feGaussianBlur in="d" stdDeviation={5} result="b" />
+                <feColorMatrix
+                  in="b"
+                  type="matrix"
+                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"
+                  result="goo"
+                />
+                <feGaussianBlur in="goo" stdDeviation={1} />
+              </filter>
+              <filter
+                id="waves-cloud-haze"
+                x="-40%"
+                y="-160%"
+                width="180%"
+                height="420%"
+                colorInterpolationFilters="sRGB"
+              >
+                <feGaussianBlur stdDeviation={14} />
+              </filter>
+              <linearGradient id="waves-cloud-fill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="55%" stopColor="#eef2f8" />
+                <stop offset="100%" stopColor="#c1cad9" />
+              </linearGradient>
+            </defs>
+            {/* soft haze halo */}
+            <text
+              x="30"
+              y="168"
+              textAnchor="start"
+              textLength="1140"
+              lengthAdjust="spacingAndGlyphs"
+              fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+              fontSize="150"
+              fill="#ffffff"
+              opacity="0.3"
+              filter="url(#waves-cloud-haze)"
+            >
+              Pawan Danani
+            </text>
+            {/* puffy cloud body */}
+            <text
+              x="30"
+              y="168"
+              textAnchor="start"
+              textLength="1140"
+              lengthAdjust="spacingAndGlyphs"
+              fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+              fontSize="150"
+              fill="url(#waves-cloud-fill)"
+              filter="url(#waves-cloud)"
+            >
+              Pawan Danani
+            </text>
+          </svg>
+        </m.h1>
 
         <m.p
           {...rise(0.28)}
