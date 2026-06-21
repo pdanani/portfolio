@@ -107,11 +107,14 @@ void main() {
   seaCol += sunCol * column * exp(-depth * 7.0) * 0.5 * day;
 
   // ---------- COMPOSITE ----------
-  float seaMask = step(uv.y, horizon);
+  // subtle wavy waterline: peaks lift a few px and the pattern drifts to the right
+  float waveH = fbm(vec2(uv.x * 8.0 - t * 0.22, 3.1)) * 0.0045;
+  float wavyHorizon = horizon + waveH;
+  float seaMask = step(uv.y, wavyHorizon);
   vec3 col = mix(skyCol, seaCol, seaMask);
 
   // crisp horizon line with a thin warm rim (only as dusk arrives)
-  float hl = smoothstep(0.004, 0.0, abs(uv.y - horizon));
+  float hl = smoothstep(0.004, 0.0, abs(uv.y - wavyHorizon));
   col += sunCol * hl * (0.18 + 0.5 * column) * day;
 
   // gentle vignette for cinematic framing

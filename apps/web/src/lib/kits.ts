@@ -12,10 +12,10 @@ export interface Kit {
  * `:root[data-kit="<id>"]` and a bespoke hero concept in components/concepts.
  */
 export const KITS: Array<Kit> = [
+  { id: 'waves', label: 'Ocean Waves', blurb: 'Sunset sea · name in clouds', swatch: 'oklch(0.72 0.18 50)', mode: 'dark' },
   { id: 'vinyl', label: 'Vinyl', blurb: 'Spinning record player', swatch: 'oklch(0.78 0.15 65)', mode: 'dark' },
   { id: 'zelda', label: 'Zelda', blurb: '16-bit overworld quest', swatch: 'oklch(0.55 0.13 145)', mode: 'dark' },
   { id: 'mario', label: 'Mario', blurb: 'Platformer homage · sky/blocks', swatch: 'oklch(0.58 0.21 27)', mode: 'light' },
-  { id: 'waves', label: 'Ocean Waves', blurb: 'Realistic moving water (WebGL)', swatch: '#1a2a4d', mode: 'dark' },
   { id: 'waves8bit', label: 'Waves 8-Bit', blurb: 'Pixel-art ocean', swatch: '#1b6fd6', mode: 'dark' },
   { id: 'convenience', label: 'Floating Mart', blurb: 'Lit store on still water + mirror reflection', swatch: 'oklch(0.64 0.24 22)', mode: 'dark' },
   { id: 'convenience2', label: 'Floating Mart II', blurb: 'Gritty floating store at dusk', swatch: '#e8242b', mode: 'dark' },
@@ -44,5 +44,5 @@ export const KITS: Array<Kit> = [
   // { id: 'sunset', label: 'Sunset', blurb: 'Warm · amber/rose', swatch: 'oklch(0.72 0.18 45)', mode: 'dark' },
 ]
 
-export const DEFAULT_KIT = 'midnight'
+export const DEFAULT_KIT = 'waves'
 export const KIT_STORAGE_KEY = 'kit'

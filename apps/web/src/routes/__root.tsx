@@ -10,6 +10,7 @@ import { Aurora } from '#/components/backgrounds/aurora'
 import { MotionProvider } from '#/lib/motion/motion-provider'
 import { ThemeSwitcher } from '#/components/theme-switcher'
 import { KitProvider } from '#/lib/kit-context'
+import { DEFAULT_KIT } from '#/lib/kits'
 
 import type { QueryClient } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
@@ -46,10 +47,10 @@ function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark">
       <head>
-        {/* Apply the saved theme kit before paint to avoid a flash. */}
+        {/* Apply the saved kit (or the default) before paint to avoid a flash. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var k=localStorage.getItem('kit');if(k)document.documentElement.setAttribute('data-kit',k);}catch(e){}})();`,
+            __html: `(function(){try{var k=localStorage.getItem('kit')||'${DEFAULT_KIT}';document.documentElement.setAttribute('data-kit',k);}catch(e){document.documentElement.setAttribute('data-kit','${DEFAULT_KIT}');}})();`,
           }}
         />
         <HeadContent />
