@@ -3577,6 +3577,130 @@
   box-shadow: 0 0 8px oklch(0.81 0.15 72 / 0.9);
 }
 
+/* ===== KIT: waves — Waves ===== */
+:root[data-kit='waves'] {
+  --radius: 0.7rem;
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --surface-opacity: 92%;
+  --kit-blur: 0px;
+  --kit-border-width: 1px;
+  --kit-shadow: 0 24px 60px oklch(0.45 0.08 235 / 0.18);
+  --aurora-opacity: 0;
+
+  --background: oklch(0.97 0.018 220);
+  --foreground: oklch(0.3 0.045 240);
+  --card: oklch(0.99 0.008 215);
+  --card-foreground: oklch(0.3 0.045 240);
+  --popover: oklch(0.99 0.008 215);
+  --popover-foreground: oklch(0.3 0.045 240);
+  --primary: oklch(0.55 0.13 235);
+  --primary-foreground: oklch(0.99 0.005 220);
+  --secondary: oklch(0.93 0.025 215);
+  --secondary-foreground: oklch(0.34 0.05 240);
+  --muted: oklch(0.94 0.02 215);
+  --muted-foreground: oklch(0.5 0.04 235);
+  --accent: oklch(0.72 0.1 200);
+  --accent-foreground: oklch(0.25 0.05 235);
+  --destructive: oklch(0.58 0.2 25);
+  --destructive-foreground: oklch(0.99 0.01 80);
+  --border: oklch(0.55 0.08 230 / 0.18);
+  --input: oklch(0.55 0.08 230 / 0.16);
+  --ring: oklch(0.55 0.13 235 / 0.5);
+
+  --brand: oklch(0.55 0.13 235);
+  --brand-cyan: oklch(0.66 0.11 215);
+  --brand-amber: oklch(0.7 0.1 200);
+}
+
+/* ---- Calm ocean backdrop + drifting wave bands ---- */
+.waves-room {
+  background:
+    linear-gradient(180deg, oklch(0.98 0.015 220) 0%, oklch(0.95 0.03 215) 45%, oklch(0.92 0.045 210) 100%);
+}
+.waves-sea {
+  height: clamp(11rem, 34vh, 18rem);
+}
+.waves-band {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  will-change: transform;
+  animation: waves-drift linear infinite;
+}
+/* Back band — palest, slowest. */
+.waves-band-3 {
+  fill: oklch(0.78 0.07 215 / 0.45);
+  height: 76%;
+  animation-duration: 26s;
+}
+/* Middle band — drifts the other way for a natural cross-current. */
+.waves-band-2 {
+  fill: oklch(0.66 0.1 220 / 0.5);
+  height: 88%;
+  animation-duration: 18s;
+  animation-direction: reverse;
+}
+/* Front band — deepest ocean blue, fastest. */
+.waves-band-1 {
+  fill: oklch(0.5 0.12 235 / 0.85);
+  height: 100%;
+  animation-duration: 12s;
+}
+@keyframes waves-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.waves-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 4px oklch(0.55 0.13 235 / 0.18);
+}
+.waves-chip {
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: oklch(1 0 0 / 0.6);
+  padding: 0.3rem 0.85rem;
+  font-family: var(--ff-mono);
+  font-size: 0.75rem;
+  color: var(--secondary-foreground);
+}
+.waves-btn {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.6rem 1.4rem;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  background: oklch(1 0 0 / 0.7);
+  color: var(--foreground);
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+.waves-btn:hover {
+  transform: translateY(-2px);
+  background: oklch(1 0 0 / 0.9);
+}
+.waves-btn-primary {
+  border-color: transparent;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 12px 28px -12px oklch(0.55 0.13 235 / 0.8);
+}
+.waves-btn-primary:hover {
+  background: oklch(0.5 0.13 235);
+}
+
 /* ------------------------------------------------------------------ */
 /* Reduced-motion safety net — anything we miss still calms down.      */
 /* ------------------------------------------------------------------ */

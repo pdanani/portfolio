@@ -13,6 +13,7 @@ export interface Kit {
  */
 export const KITS: Array<Kit> = [
   { id: 'vinyl', label: 'Vinyl', blurb: 'Spinning record player', swatch: 'oklch(0.78 0.15 65)', mode: 'dark' },
+  { id: 'waves', label: 'Waves', blurb: 'Calm water · drifting waves', swatch: 'oklch(0.62 0.13 230)', mode: 'light' },
   { id: 'zelda', label: 'Zelda', blurb: '16-bit overworld quest', swatch: 'oklch(0.55 0.13 145)', mode: 'dark' },
   { id: 'mario', label: 'Mario', blurb: 'Platformer homage · sky/blocks', swatch: 'oklch(0.58 0.21 27)', mode: 'light' },
   { id: 'midnight', label: 'Neon Sign', blurb: 'Neon bar sign · pick a color', swatch: 'oklch(0.84 0.22 145)', mode: 'dark' },
