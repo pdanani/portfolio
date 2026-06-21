@@ -5761,7 +5761,7 @@ a.jukebox2-strip:focus-visible {
   --card-foreground: oklch(0.97 0.012 240);
   --popover: oklch(0.18 0.045 255);
   --popover-foreground: oklch(0.97 0.012 240);
-  --primary: oklch(0.82 0.15 75);
+  --primary: oklch(0.72 0.18 50);
   --primary-foreground: oklch(0.18 0.05 60);
   --secondary: oklch(0.3 0.05 250);
   --secondary-foreground: oklch(0.97 0.012 240);

@@ -9,120 +9,119 @@ void main() {
   gl_Position = vec4(a_pos, 0.0, 1.0);
 }`
 
-/* Twilight ocean: dusk sky gradient, fbm swell, horizon, warm sun glint. */
+/* Twilight ocean: real Gerstner-style waves (peaked crests), surface normals,
+   Fresnel sky reflection, sun specular glints + foam — not noise blobs. */
 const FRAG = `#version 100
 precision highp float;
 uniform vec2 u_resolution;
 uniform float u_time;
 
-// hash + value noise -> fbm for layered swell
-float hash(vec2 p) {
-  p = fract(p * vec2(123.34, 456.21));
-  p += dot(p, p + 45.32);
-  return fract(p.x * p.y);
-}
-float noise(vec2 p) {
-  vec2 i = floor(p);
-  vec2 f = fract(p);
+float hash(vec2 p){ p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
+float noise(vec2 p){
+  vec2 i = floor(p), f = fract(p);
   vec2 u = f * f * (3.0 - 2.0 * f);
-  float a = hash(i);
-  float b = hash(i + vec2(1.0, 0.0));
-  float c = hash(i + vec2(0.0, 1.0));
-  float d = hash(i + vec2(1.0, 1.0));
-  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+  return mix(mix(hash(i), hash(i + vec2(1.0,0.0)), u.x),
+             mix(hash(i + vec2(0.0,1.0)), hash(i + vec2(1.0,1.0)), u.x), u.y);
 }
-float fbm(vec2 p) {
-  float v = 0.0;
-  float amp = 0.5;
-  mat2 rot = mat2(0.8, 0.6, -0.6, 0.8);
-  for (int i = 0; i < 6; i++) {
-    v += amp * noise(p);
-    p = rot * p * 2.02;
-    amp *= 0.5;
+
+// Sum of directional trochoidal waves -> sharp crests, smooth troughs.
+float waveH(vec2 p, float t){
+  float h = 0.0, amp = 0.6, sum = 0.0, freq = 0.8, sp = 0.9;
+  mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
+  for (int i = 0; i < 5; i++){
+    vec2 dir = vec2(cos(float(i) * 1.7 + 0.6), sin(float(i) * 1.7 + 0.6));
+    float ph = dot(p, dir) * freq + t * sp;
+    float w = exp(sin(ph) - 1.0);                       // peaked crest
+    w *= 0.85 + 0.15 * noise(p * freq * 0.6 + t * 0.1); // a little chop
+    h += w * amp; sum += amp;
+    amp *= 0.62; freq *= 1.7; sp *= 1.18; p = m * p;
   }
-  return v;
+  return h / sum;
 }
 
-void main() {
-  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+void main(){
+  vec2 frag = gl_FragCoord.xy / u_resolution.xy;
   float aspect = u_resolution.x / max(u_resolution.y, 1.0);
+  float t = u_time * 0.8;
+  float horizon = 0.6;
 
-  // horizon ~58% up the screen
-  float horizon = 0.58;
-  float t = u_time;
+  vec2 sunPos = vec2(0.66, horizon + 0.02);
+  vec3 zenith = vec3(0.04, 0.05, 0.16);
+  vec3 violet = vec3(0.16, 0.10, 0.30);
+  vec3 rose   = vec3(0.66, 0.28, 0.34);
+  vec3 sunCol = vec3(1.0, 0.62, 0.32);
 
-  // ---------- SKY (dusk gradient: deep indigo -> rose at horizon) ----------
-  float sky = clamp((uv.y - horizon) / (1.0 - horizon), 0.0, 1.0);
-  vec3 zenith = vec3(0.045, 0.055, 0.16);   // deep indigo
-  vec3 midSky = vec3(0.16, 0.10, 0.30);     // violet
-  vec3 dusk   = vec3(0.62, 0.26, 0.34);     // warm rose band
-  vec3 skyCol = mix(dusk, midSky, smoothstep(0.0, 0.45, sky));
-  skyCol = mix(skyCol, zenith, smoothstep(0.35, 1.0, sky));
+  vec3 col;
 
-  // sun position on the horizon, slightly right of center
-  vec2 sunPos = vec2(0.62, horizon + 0.018);
-  vec2 sd = (uv - sunPos);
-  sd.x *= aspect;
-  float sunDist = length(sd);
-  // warm glow halo in the sky
-  float glow = exp(-sunDist * 6.5) * 1.1 + exp(-sunDist * 2.2) * 0.45;
-  vec3 sunCol = vec3(1.0, 0.72, 0.42);
-  skyCol += sunCol * glow * step(horizon, uv.y);
-  // soft sun disc
-  float disc = smoothstep(0.055, 0.03, sunDist);
-  skyCol = mix(skyCol, vec3(1.0, 0.86, 0.66), disc * step(horizon, uv.y));
+  if (frag.y >= horizon){
+    // ---------- SKY ----------
+    float s = (frag.y - horizon) / (1.0 - horizon);
+    col = mix(rose, violet, smoothstep(0.0, 0.45, s));
+    col = mix(col, zenith, smoothstep(0.35, 1.0, s));
+    vec2 sd = (frag - sunPos); sd.x *= aspect;
+    float sdl = length(sd);
+    col += sunCol * (exp(-sdl * 7.0) * 1.1 + exp(-sdl * 2.2) * 0.4);
+    col = mix(col, vec3(1.0, 0.84, 0.6), smoothstep(0.05, 0.028, sdl));
+  } else {
+    // ---------- SEA (perspective plane) ----------
+    float dy = horizon - frag.y;                 // 0 at horizon -> 0.6 at bottom
+    float dist = 1.0 / (dy + 0.02);
+    vec2 wp = vec2((frag.x - 0.5) * aspect * dist, dist) * 0.35;
+    wp.y -= t * 0.5;                             // swell rolls toward viewer
+    float detail = smoothstep(0.0, 0.14, dy);    // flatten near horizon (anti-alias)
 
-  // ---------- SEA (below horizon) ----------
-  // perspective: stretch toward the horizon so waves compress with distance
-  float depth = (horizon - uv.y) / horizon;          // 0 at horizon -> 1 at bottom
-  depth = max(depth, 0.0001);
-  vec2 sea = vec2(uv.x * aspect, 1.0 / (depth * 3.2 + 0.12));
-  sea.y += t * 0.18;                                  // swell drifting toward viewer
+    // height + analytic-ish normal via finite differences
+    float e = 0.05 * (0.4 + dy);
+    float h  = waveH(wp, t);
+    float hx = waveH(wp + vec2(e, 0.0), t);
+    float hz = waveH(wp + vec2(0.0, e), t);
+    float ns = 2.1 * detail;
+    vec3 N = normalize(vec3((h - hx) / e * ns, 1.0, (h - hz) / e * ns));
 
-  // layered moving waves
-  float w = fbm(sea * 2.2 + vec2(t * 0.12, 0.0));
-  w += 0.5 * fbm(sea * 4.7 - vec2(0.0, t * 0.22));
-  w += 0.22 * fbm(sea * 9.0 + vec2(t * 0.3, t * 0.1));
-  float wave = w * 0.5;
+    vec3 V = normalize(vec3((frag.x - 0.5) * aspect, 0.4, -1.0));
+    vec3 L = normalize(vec3(sunPos.x - 0.5, 0.14, -0.6));
 
-  // deep water palette, lighter toward the horizon
-  vec3 deep = vec3(0.02, 0.05, 0.11);
-  vec3 shallow = vec3(0.06, 0.16, 0.26);
-  vec3 seaCol = mix(deep, shallow, smoothstep(0.0, 1.0, 1.0 - depth));
-  // crests catch a little sky/violet light
-  seaCol += vec3(0.10, 0.09, 0.16) * smoothstep(0.55, 0.95, wave) * (0.4 + 0.6 * (1.0 - depth));
+    float near = smoothstep(0.0, 0.5, dy);
+    vec3 deep = vec3(0.012, 0.045, 0.095);
+    vec3 shallow = vec3(0.05, 0.14, 0.22);
+    vec3 water = mix(shallow, deep, near);
 
-  // reflected dusk band just below the horizon
-  seaCol = mix(seaCol, dusk * 0.7, smoothstep(0.10, 0.0, depth) * 0.7);
+    // Fresnel sky reflection on the wave faces
+    float fres = pow(1.0 - max(dot(N, vec3(0.0, 1.0, 0.0)), 0.0), 3.0);
+    fres = mix(0.04, 1.0, fres);
+    float colDist = length((frag - sunPos));
+    vec3 skyRefl = mix(rose, violet, 0.45) + sunCol * exp(-colDist * 3.0) * 0.6;
+    col = mix(water, skyRefl, clamp(fres * 0.6, 0.0, 1.0));
 
-  // ---------- SUN GLINT on the water (shimmering column) ----------
-  float column = exp(-pow((uv.x - sunPos.x) * aspect * 3.4, 2.0));
-  float fall = smoothstep(0.0, 0.55, depth);                // fade with distance from horizon
-  float shimmer = fbm(vec2(uv.x * aspect * 6.0, uv.y * 26.0 - t * 1.6));
-  float sparkle = smoothstep(0.62, 0.95, shimmer) * column * (1.0 - fall);
-  seaCol += sunCol * sparkle * 1.6;
-  // broad warm reflection right under the sun
-  seaCol += sunCol * column * exp(-depth * 7.0) * 0.5;
+    // sun specular glints on wave faces (Blinn-Phong)
+    vec3 Hn = normalize(L + V);
+    float spec = pow(max(dot(N, Hn), 0.0), 60.0);
+    float column = exp(-pow((frag.x - sunPos.x) * aspect * 2.2, 2.0));
+    col += sunCol * spec * (0.7 + 1.6 * column) * detail;
+    // warm glitter concentrated in the sun column
+    col += sunCol * smoothstep(0.62, 1.0, h) * column * (1.0 - near) * detail;
 
-  // ---------- COMPOSITE ----------
-  float seaMask = step(uv.y, horizon);
-  vec3 col = mix(skyCol, seaCol, seaMask);
+    // foam on the steep crests
+    float foam = smoothstep(0.8, 0.96, h) * (0.35 + 0.65 * near) * detail;
+    col = mix(col, vec3(0.9, 0.92, 0.95), foam * 0.55);
 
-  // crisp horizon line with a thin warm rim
-  float hl = smoothstep(0.004, 0.0, abs(uv.y - horizon));
-  col += sunCol * hl * (0.18 + 0.5 * column);
+    // reflected dusk band hugging the horizon
+    col = mix(col, rose * 0.7, smoothstep(0.07, 0.0, dy) * 0.6);
+  }
 
-  // gentle vignette for cinematic framing
-  vec2 vig = uv - 0.5;
-  col *= 1.0 - dot(vig, vig) * 0.55;
+  // crisp horizon rim
+  float hl = smoothstep(0.004, 0.0, abs(frag.y - horizon));
+  col += sunCol * hl * 0.3;
 
-  // subtle filmic lift + tone
+  // cinematic vignette + tone
+  vec2 vig = frag - 0.5;
+  col *= 1.0 - dot(vig, vig) * 0.5;
   col = pow(max(col, 0.0), vec3(0.92));
 
   gl_FragColor = vec4(col, 1.0);
 }`
 
-/** Ocean Waves — raw WebGL twilight sea (fbm swell + sun glint) behind the overlay. */
+/** Ocean Waves — raw WebGL twilight sea (Gerstner waves + lit normals) behind the overlay. */
 export function WavesHero() {
   const reduce = useReducedMotion()
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -138,7 +137,7 @@ export function WavesHero() {
     let disposed = false
 
     const cleanup = () => {
-      cancelAnimationFrame(raf) // no-op when raf is 0
+      cancelAnimationFrame(raf)
       raf = 0
       if (gl) {
         if (buffer) gl.deleteBuffer(buffer)
@@ -152,10 +151,8 @@ export function WavesHero() {
     try {
       gl =
         canvas.getContext('webgl', { antialias: true, alpha: false }) ??
-        (canvas.getContext(
-          'experimental-webgl',
-        ) as WebGLRenderingContext | null)
-      if (!gl) return // leave canvas hidden -> CSS fallback shows
+        (canvas.getContext('experimental-webgl') as WebGLRenderingContext | null)
+      if (!gl) return
 
       const context = gl
 
@@ -191,7 +188,6 @@ export function WavesHero() {
 
       context.useProgram(program)
 
-      // full-screen triangle
       buffer = context.createBuffer()
       context.bindBuffer(context.ARRAY_BUFFER, buffer)
       context.bufferData(
@@ -225,12 +221,9 @@ export function WavesHero() {
 
       resize()
       window.addEventListener('resize', resize)
-
-      // success: reveal the canvas (CSS fallback stays underneath as a safety net)
       canvas.style.opacity = '1'
 
       if (reduce) {
-        // single static frame, no animation loop
         render(7.5)
       } else {
         const start = performance.now()
@@ -249,7 +242,6 @@ export function WavesHero() {
         cleanup()
       }
     } catch {
-      // any GL failure -> keep canvas hidden so the CSS sea/sky shows
       cleanup()
       return
     }
@@ -263,21 +255,16 @@ export function WavesHero() {
 
   return (
     <main className="relative isolate min-h-screen overflow-hidden bg-background">
-      {/* CSS fallback sea + sky (always rendered, sits behind the canvas) */}
       <div
         aria-hidden
         className="waves-fallback pointer-events-none absolute inset-0 -z-20"
       />
-
-      {/* WebGL ocean — starts hidden, revealed only on successful compile */}
       <canvas
         ref={canvasRef}
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
         style={{ opacity: 0, transition: 'opacity 0.6s ease' }}
       />
-
-      {/* bottom-up scrim for text legibility over the water */}
       <div
         aria-hidden
         className="waves-scrim pointer-events-none absolute inset-0 -z-10"
