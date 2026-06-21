@@ -14,6 +14,7 @@ const FRAG = `#version 100
 precision highp float;
 uniform vec2 u_resolution;
 uniform float u_time;
+uniform float u_fade;
 
 // hash + value noise -> fbm for layered swell
 float hash(vec2 p) {
@@ -47,9 +48,11 @@ void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;
   float aspect = u_resolution.x / max(u_resolution.y, 1.0);
 
-  // horizon ~58% up the screen
-  float horizon = 0.58;
+  // horizon low on the screen so the sky dominates (sea ~bottom 30%)
+  float horizon = 0.30;
   float t = u_time;
+  // load reveal: sky blooms first, sun ignites slightly after
+  float sunFade = smoothstep(0.2, 1.0, u_fade);
 
   // ---------- SKY (dusk gradient: deep indigo -> rose at horizon) ----------
   float sky = clamp((uv.y - horizon) / (1.0 - horizon), 0.0, 1.0);
@@ -67,10 +70,10 @@ void main() {
   // warm glow halo in the sky
   float glow = exp(-sunDist * 6.5) * 1.1 + exp(-sunDist * 2.2) * 0.45;
   vec3 sunCol = vec3(1.0, 0.72, 0.42);
-  skyCol += sunCol * glow * step(horizon, uv.y);
+  skyCol += sunCol * glow * step(horizon, uv.y) * sunFade;
   // soft sun disc
   float disc = smoothstep(0.055, 0.03, sunDist);
-  skyCol = mix(skyCol, vec3(1.0, 0.86, 0.66), disc * step(horizon, uv.y));
+  skyCol = mix(skyCol, vec3(1.0, 0.86, 0.66), disc * step(horizon, uv.y) * sunFade);
 
   // ---------- SEA (below horizon) ----------
   // perspective: stretch toward the horizon so waves compress with distance
@@ -95,14 +98,10 @@ void main() {
   // reflected dusk band just below the horizon
   seaCol = mix(seaCol, dusk * 0.7, smoothstep(0.10, 0.0, depth) * 0.7);
 
-  // ---------- SUN GLINT on the water (shimmering column) ----------
+  // ---------- SUN GLINT on the water (broad warm reflection; no upward sparkle) ----------
   float column = exp(-pow((uv.x - sunPos.x) * aspect * 3.4, 2.0));
-  float fall = smoothstep(0.0, 0.55, depth);                // fade with distance from horizon
-  float shimmer = fbm(vec2(uv.x * aspect * 6.0, uv.y * 26.0 - t * 1.6));
-  float sparkle = smoothstep(0.62, 0.95, shimmer) * column * (1.0 - fall);
-  seaCol += sunCol * sparkle * 1.6;
   // broad warm reflection right under the sun
-  seaCol += sunCol * column * exp(-depth * 7.0) * 0.5;
+  seaCol += sunCol * column * exp(-depth * 7.0) * 0.5 * sunFade;
 
   // ---------- COMPOSITE ----------
   float seaMask = step(uv.y, horizon);
@@ -110,7 +109,7 @@ void main() {
 
   // crisp horizon line with a thin warm rim
   float hl = smoothstep(0.004, 0.0, abs(uv.y - horizon));
-  col += sunCol * hl * (0.18 + 0.5 * column);
+  col += sunCol * hl * (0.18 + 0.5 * column) * sunFade;
 
   // gentle vignette for cinematic framing
   vec2 vig = uv - 0.5;
@@ -118,6 +117,9 @@ void main() {
 
   // subtle filmic lift + tone
   col = pow(max(col, 0.0), vec3(0.92));
+
+  // fade the whole colour scheme up from near-black on load
+  col = mix(vec3(0.015, 0.02, 0.05), col, smoothstep(0.0, 0.9, u_fade));
 
   gl_FragColor = vec4(col, 1.0);
 }`
@@ -205,6 +207,7 @@ export function WavesHero() {
 
       const uTime = context.getUniformLocation(program, 'u_time')
       const uRes = context.getUniformLocation(program, 'u_resolution')
+      const uFade = context.getUniformLocation(program, 'u_fade')
 
       const resize = () => {
         const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -218,8 +221,9 @@ export function WavesHero() {
         context.uniform2f(uRes, canvas.width, canvas.height)
       }
 
-      const render = (seconds: number) => {
+      const render = (seconds: number, fade: number) => {
         context.uniform1f(uTime, seconds)
+        context.uniform1f(uFade, fade)
         context.drawArrays(context.TRIANGLES, 0, 3)
       }
 
@@ -230,14 +234,16 @@ export function WavesHero() {
       canvas.style.opacity = '1'
 
       if (reduce) {
-        // single static frame, no animation loop
-        render(7.5)
+        // single static frame, fully faded in (no animation, no reveal)
+        render(7.5, 1)
       } else {
         const start = performance.now()
+        const FADE_S = 1.9
         const loop = (now: number) => {
           if (disposed) return
           resize()
-          render((now - start) / 1000)
+          const elapsed = (now - start) / 1000
+          render(elapsed, Math.min(1, elapsed / FADE_S))
           raf = requestAnimationFrame(loop)
         }
         raf = requestAnimationFrame(loop)
@@ -274,7 +280,7 @@ export function WavesHero() {
         ref={canvasRef}
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
-        style={{ opacity: 0, transition: 'opacity 0.6s ease' }}
+        style={{ opacity: 0 }}
       />
 
       {/* bottom-up scrim for text legibility over the water */}
