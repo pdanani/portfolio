@@ -63,7 +63,7 @@ void main() {
   skyCol = mix(skyCol, zenith, smoothstep(0.35, 1.0, sky));
 
   // the sun starts behind the name clouds (centre, high) and arcs down to the dusk horizon
-  vec2 sunPos = mix(vec2(0.5, 0.62), vec2(0.62, horizon + 0.018), day);
+  vec2 sunPos = mix(vec2(0.58, 0.62), vec2(0.78, horizon + 0.018), day);
   vec2 sd = (uv - sunPos);
   sd.x *= aspect;
   float sunDist = length(sd);
@@ -107,10 +107,10 @@ void main() {
   seaCol += sunCol * column * exp(-depth * 7.0) * 0.5 * day;
 
   // ---------- COMPOSITE ----------
-  // subtle wavy waterline: peaks lift a few px and the pattern drifts to the right
-  float waveH = fbm(vec2(uv.x * 8.0 - t * 0.22, 3.1)) * 0.0045;
+  // gentle curvy waterline: smooth sines (no jaggedness) rolling to the right
+  float waveH = (sin(uv.x * 11.0 - t * 0.7) * 0.6 + sin(uv.x * 19.0 - t * 1.05) * 0.4) * 0.007;
   float wavyHorizon = horizon + waveH;
-  float seaMask = step(uv.y, wavyHorizon);
+  float seaMask = 1.0 - smoothstep(wavyHorizon - 0.0014, wavyHorizon + 0.0014, uv.y);
   vec3 col = mix(skyCol, seaCol, seaMask);
 
   // crisp horizon line with a thin warm rim (only as dusk arrives)
