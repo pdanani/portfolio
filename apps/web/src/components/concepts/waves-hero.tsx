@@ -67,14 +67,16 @@ void main() {
   vec2 sd = (uv - sunPos);
   sd.x *= aspect;
   float sunDist = length(sd);
-  // warm glow halo in the sky
-  float glow = exp(-sunDist * 6.5) * 1.1 + exp(-sunDist * 2.2) * 0.45;
+  // warm glow halo in the sky — much gentler on load (high-noon) so it isn't harsh,
+  // ramping to full strength by the time it reaches the dusk horizon
+  float glow = exp(-sunDist * 6.5) * 1.0 + exp(-sunDist * 2.2) * 0.42;
+  glow *= 0.38 + 0.62 * day;
   // sun colour warms as it sets: white-hot noon -> warm orange dusk
   vec3 sunCol = mix(vec3(1.0, 0.98, 0.92), vec3(1.0, 0.66, 0.36), day);
   skyCol += sunCol * glow * step(horizon, uv.y);
-  // soft sun disc (swells a touch as it nears the horizon)
+  // soft sun disc (swells a touch as it nears the horizon; softer + dimmer on load)
   float disc = smoothstep(mix(0.045, 0.058, day), mix(0.024, 0.032, day), sunDist);
-  skyCol = mix(skyCol, mix(vec3(1.0, 1.0, 0.96), vec3(1.0, 0.86, 0.66), day), disc * step(horizon, uv.y));
+  skyCol = mix(skyCol, mix(vec3(0.93, 0.94, 0.92), vec3(1.0, 0.86, 0.66), day), disc * step(horizon, uv.y) * (0.5 + 0.5 * day));
 
   // ---------- SEA (below horizon) ----------
   // perspective: stretch toward the horizon so waves compress with distance
@@ -301,12 +303,17 @@ export function WavesHero() {
           haze halo behind and a top-lit white->grey gradient for volume */}
       <m.div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-[12%] z-[1] flex justify-center px-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: reduce ? 0.01 : 1.2, ease: EASE, delay: reduce ? 0 : 0.3 }}
+        className="pointer-events-none absolute inset-x-0 top-[12%] z-[1]"
+        initial={
+          reduce
+            ? { opacity: 0 }
+            : { opacity: 0, filter: 'blur(18px)', scale: 1.05, y: 12 }
+        }
+        animate={{ opacity: 1, filter: 'blur(0px)', scale: 1, y: 0 }}
+        transition={{ duration: reduce ? 0.01 : 1.8, ease: EASE, delay: reduce ? 0 : 0.3 }}
       >
-        <svg viewBox="0 0 1200 280" className="w-[min(94vw,1080px)]">
+        <div className="mx-auto max-w-6xl px-6">
+          <svg viewBox="0 0 1200 280" className="w-full">
           <defs>
             <filter
               id="waves-cloud"
@@ -379,6 +386,7 @@ export function WavesHero() {
             Pawan Danani
           </text>
         </svg>
+        </div>
       </m.div>
 
       <div className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 pb-16 pt-24 sm:pb-24">
