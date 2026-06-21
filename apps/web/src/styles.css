@@ -3969,6 +3969,20 @@
   .convenience-store { width: min(64vw, 340px); top: 72%; }
 }
 
+.convenience-refl {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: convenienceRipple 9s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes convenienceRipple {
+  0%, 100% { transform: skewX(0deg) scaleY(1); }
+  50% { transform: skewX(0.5deg) scaleY(1.012); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .convenience-refl { animation: none; }
+}
+
 .convenience-vignette {
   position: absolute;
   inset: 0;

@@ -462,7 +462,7 @@ export function ConvenienceHero() {
             <stop offset="100%" stopColor="#9fb4d4" stopOpacity={0} />
           </linearGradient>
 
-          {/* ---- water displacement: gentle ripple that plays with the reflection ---- */}
+          {/* ---- water distortion (static noise; gentle ripple comes from a CSS sway) ---- */}
           <filter id={ripple} x="-15%" y="-15%" width="130%" height="130%">
             <feTurbulence
               type="fractalNoise"
@@ -471,17 +471,7 @@ export function ConvenienceHero() {
               seed={11}
               stitchTiles="stitch"
               result="noise"
-            >
-              {!reduce && (
-                <animate
-                  attributeName="baseFrequency"
-                  dur="15s"
-                  values="0.008 0.04;0.012 0.052;0.009 0.045;0.008 0.04"
-                  keyTimes="0;0.4;0.72;1"
-                  repeatCount="indefinite"
-                />
-              )}
-            </feTurbulence>
+            />
             <feDisplacementMap
               in="SourceGraphic"
               in2="noise"
@@ -511,6 +501,7 @@ export function ConvenienceHero() {
         {/* sky + sea come from the Ocean Waves shader behind this SVG */}
 
         {/* ===== REFLECTION (mirrored, displaced, faded) — over the shader water ===== */}
+        <g className="convenience-refl">
         <g mask={`url(#${streakMask})`}>
           <g transform={`translate(0 ${WATER_Y * 2}) scale(1 -1)`}>
             {/* smeared neon streaks under the structural reflection (screen-blended) */}
@@ -537,6 +528,7 @@ export function ConvenienceHero() {
               style={{ mixBlendMode: 'multiply' }}
             />
           </g>
+        </g>
         </g>
 
         {/* water-surface ripple + sheen handled by the shader behind */}
