@@ -63,7 +63,7 @@ void main() {
   skyCol = mix(skyCol, zenith, smoothstep(0.35, 1.0, sky));
 
   // the sun starts behind the name clouds (centre, high) and arcs down to the dusk horizon
-  vec2 sunPos = mix(vec2(0.5, 0.68), vec2(0.62, horizon + 0.018), day);
+  vec2 sunPos = mix(vec2(0.5, 0.62), vec2(0.62, horizon + 0.018), day);
   vec2 sd = (uv - sunPos);
   sd.x *= aspect;
   float sunDist = length(sd);
