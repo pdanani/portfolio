@@ -109,8 +109,8 @@ void main() {
   seaCol += sunCol * column * exp(-depth * 7.0) * 0.5 * day;
 
   // ---------- COMPOSITE ----------
-  // gentle curvy waterline: smooth sines (no jaggedness) rolling to the right
-  float waveH = (sin(uv.x * 24.0 - t * 0.55) * 0.6 + sin(uv.x * 42.0 - t * 0.85) * 0.4) * 0.002;
+  // static curvy waterline: fixed smooth sines (keeps the wavy shape, no drift)
+  float waveH = (sin(uv.x * 24.0) * 0.6 + sin(uv.x * 42.0) * 0.4) * 0.002;
   float wavyHorizon = horizon + waveH;
   float seaMask = 1.0 - smoothstep(wavyHorizon - 0.0014, wavyHorizon + 0.0014, uv.y);
   vec3 col = mix(skyCol, seaCol, seaMask);
