@@ -15,6 +15,8 @@ precision highp float;
 uniform vec2 u_resolution;
 uniform float u_time;
 uniform float u_fade;
+uniform sampler2D u_text;   // the name rendered to a canvas (used as a cloud mask)
+uniform float u_texAspect;  // text texture width / height
 
 // hash + value noise -> fbm for layered swell
 float hash(vec2 p) {
@@ -51,29 +53,60 @@ void main() {
   // horizon low on the screen so the sky dominates (sea ~bottom 30%)
   float horizon = 0.30;
   float t = u_time;
-  // load reveal: sky blooms first, sun ignites slightly after
-  float sunFade = smoothstep(0.2, 1.0, u_fade);
 
-  // ---------- SKY (dusk gradient: deep indigo -> rose at horizon) ----------
+  // ---------- DAY -> DUSK on load (0 = high-noon blue, 1 = dreamy dusk) ----------
+  float day = u_fade;                          // JS eases 0 -> 1 over the intro, then holds at 1
+  // sky palette lerps from a clear noon blue to the dusk
+  vec3 zenith   = mix(vec3(0.16, 0.40, 0.82), vec3(0.045, 0.055, 0.16), day);
+  vec3 midSky   = mix(vec3(0.40, 0.62, 0.90), vec3(0.16, 0.10, 0.30), day);
+  vec3 horizCol = mix(vec3(0.80, 0.88, 0.96), vec3(0.62, 0.26, 0.34), day);
   float sky = clamp((uv.y - horizon) / (1.0 - horizon), 0.0, 1.0);
-  vec3 zenith = vec3(0.045, 0.055, 0.16);   // deep indigo
-  vec3 midSky = vec3(0.16, 0.10, 0.30);     // violet
-  vec3 dusk   = vec3(0.62, 0.26, 0.34);     // warm rose band
-  vec3 skyCol = mix(dusk, midSky, smoothstep(0.0, 0.45, sky));
+  vec3 skyCol = mix(horizCol, midSky, smoothstep(0.0, 0.45, sky));
   skyCol = mix(skyCol, zenith, smoothstep(0.35, 1.0, sky));
 
-  // sun position on the horizon, slightly right of center
-  vec2 sunPos = vec2(0.62, horizon + 0.018);
+  // the sun arcs down from high-noon (centre, high) to the dusk horizon (right)
+  vec2 sunPos = mix(vec2(0.5, 0.95), vec2(0.62, horizon + 0.018), day);
   vec2 sd = (uv - sunPos);
   sd.x *= aspect;
   float sunDist = length(sd);
   // warm glow halo in the sky
   float glow = exp(-sunDist * 6.5) * 1.1 + exp(-sunDist * 2.2) * 0.45;
-  vec3 sunCol = vec3(1.0, 0.72, 0.42);
-  skyCol += sunCol * glow * step(horizon, uv.y) * sunFade;
-  // soft sun disc
-  float disc = smoothstep(0.055, 0.03, sunDist);
-  skyCol = mix(skyCol, vec3(1.0, 0.86, 0.66), disc * step(horizon, uv.y) * sunFade);
+  // sun colour warms as it sets: white-hot noon -> warm orange dusk
+  vec3 sunCol = mix(vec3(1.0, 0.98, 0.92), vec3(1.0, 0.66, 0.36), day);
+  skyCol += sunCol * glow * step(horizon, uv.y);
+  // soft sun disc (swells a touch as it nears the horizon)
+  float disc = smoothstep(mix(0.045, 0.058, day), mix(0.024, 0.032, day), sunDist);
+  skyCol = mix(skyCol, mix(vec3(1.0, 1.0, 0.96), vec3(1.0, 0.86, 0.66), day), disc * step(horizon, uv.y));
+
+  // ---------- NAME WRITTEN IN CLOUDS (sky only) ----------
+  // map screen uv into the text band, preserving the texture's aspect ratio
+  float cloudCx = 0.5, cloudCy = 0.74, cloudW = 0.82;
+  float cloudH = cloudW * aspect / u_texAspect;
+  vec2 tc = (uv - vec2(cloudCx - cloudW * 0.5, cloudCy - cloudH * 0.5)) / vec2(cloudW, cloudH);
+  tc.y = 1.0 - tc.y;                                    // canvas texture is y-down
+  float inBox = step(0.0, tc.x) * step(tc.x, 1.0) * step(0.0, tc.y) * step(tc.y, 1.0);
+  float cdrift = t * 0.01;
+  // billowy warp turns the crisp glyph edges into cloud puffs
+  vec2 wn = tc * vec2(3.2, 9.0);
+  vec2 cwarp = vec2(fbm(wn + vec2(cdrift, 0.0)), fbm(wn + vec2(7.3, cdrift * 0.7))) - 0.5;
+  vec2 stc = clamp(tc + cwarp * vec2(0.045, 0.11), 0.0, 1.0);
+  // multi-scale puff noise eats into the letterforms so they read as cumulus
+  float puff = 0.6 * fbm(tc * vec2(9.0, 22.0) + vec2(cdrift * 2.0, 0.0))
+             + 0.4 * fbm(tc * vec2(3.5, 7.0) - vec2(0.0, cdrift));
+  float g = texture2D(u_text, stc).a;
+  float dens = smoothstep(0.34, 0.66, g * (0.45 + 1.05 * puff));
+  // rim light toward the sun + self-shadow under each puff -> volume
+  float gSun = texture2D(u_text, clamp(stc + vec2((sunPos.x - cloudCx) * 0.02, -0.012), 0.0, 1.0)).a;
+  float crim = clamp(dens - smoothstep(0.34, 0.66, gSun * (0.45 + 1.05 * puff)), 0.0, 1.0);
+  float gBot = texture2D(u_text, clamp(stc + vec2(0.0, 0.02), 0.0, 1.0)).a;
+  float cshade = clamp(dens - smoothstep(0.34, 0.66, gBot * (0.45 + 1.05 * puff)), 0.0, 1.0);
+  vec3 cloudShadow = vec3(0.40, 0.41, 0.52);            // cool under-shadow
+  vec3 cloudBody = vec3(0.87, 0.87, 0.93);              // soft white body
+  vec3 cloudCol = mix(cloudShadow, cloudBody, clamp(0.58 - 0.7 * cshade, 0.0, 1.0));
+  cloudCol = mix(cloudCol, vec3(1.0, 0.97, 0.92), crim * 0.8);
+  cloudCol += sunCol * crim * 0.7;                      // warm sunset edge toward the sun
+  float cloudA = dens * inBox * step(horizon, uv.y) * smoothstep(0.03, 0.22, u_fade);
+  skyCol = mix(skyCol, cloudCol, clamp(cloudA, 0.0, 1.0));
 
   // ---------- SEA (below horizon) ----------
   // perspective: stretch toward the horizon so waves compress with distance
@@ -88,28 +121,28 @@ void main() {
   w += 0.22 * fbm(sea * 9.0 + vec2(t * 0.3, t * 0.1));
   float wave = w * 0.5;
 
-  // deep water palette, lighter toward the horizon
-  vec3 deep = vec3(0.02, 0.05, 0.11);
-  vec3 shallow = vec3(0.06, 0.16, 0.26);
+  // deep water palette lerps from bright noon blue to deep dusk
+  vec3 deep = mix(vec3(0.06, 0.20, 0.36), vec3(0.02, 0.05, 0.11), day);
+  vec3 shallow = mix(vec3(0.22, 0.44, 0.62), vec3(0.06, 0.16, 0.26), day);
   vec3 seaCol = mix(deep, shallow, smoothstep(0.0, 1.0, 1.0 - depth));
-  // crests catch a little sky/violet light
+  // crests catch a little sky light
   seaCol += vec3(0.10, 0.09, 0.16) * smoothstep(0.55, 0.95, wave) * (0.4 + 0.6 * (1.0 - depth));
 
-  // reflected dusk band just below the horizon
-  seaCol = mix(seaCol, dusk * 0.7, smoothstep(0.10, 0.0, depth) * 0.7);
+  // reflected horizon band just below the waterline
+  seaCol = mix(seaCol, horizCol * 0.7, smoothstep(0.10, 0.0, depth) * 0.7);
 
   // ---------- SUN GLINT on the water (broad warm reflection; no upward sparkle) ----------
   float column = exp(-pow((uv.x - sunPos.x) * aspect * 3.4, 2.0));
   // broad warm reflection right under the sun
-  seaCol += sunCol * column * exp(-depth * 7.0) * 0.5 * sunFade;
+  seaCol += sunCol * column * exp(-depth * 7.0) * 0.5 * day;
 
   // ---------- COMPOSITE ----------
   float seaMask = step(uv.y, horizon);
   vec3 col = mix(skyCol, seaCol, seaMask);
 
-  // crisp horizon line with a thin warm rim
+  // crisp horizon line with a thin warm rim (only as dusk arrives)
   float hl = smoothstep(0.004, 0.0, abs(uv.y - horizon));
-  col += sunCol * hl * (0.18 + 0.5 * column) * sunFade;
+  col += sunCol * hl * (0.18 + 0.5 * column) * day;
 
   // gentle vignette for cinematic framing
   vec2 vig = uv - 0.5;
@@ -117,9 +150,6 @@ void main() {
 
   // subtle filmic lift + tone
   col = pow(max(col, 0.0), vec3(0.92));
-
-  // fade the whole colour scheme up from near-black on load
-  col = mix(vec3(0.015, 0.02, 0.05), col, smoothstep(0.0, 0.9, u_fade));
 
   gl_FragColor = vec4(col, 1.0);
 }`
@@ -137,6 +167,7 @@ export function WavesHero() {
     let gl: WebGLRenderingContext | null = null
     let program: WebGLProgram | null = null
     let buffer: WebGLBuffer | null = null
+    let textTex: WebGLTexture | null = null
     let disposed = false
 
     const cleanup = () => {
@@ -144,6 +175,7 @@ export function WavesHero() {
       raf = 0
       if (gl) {
         if (buffer) gl.deleteBuffer(buffer)
+        if (textTex) gl.deleteTexture(textTex)
         if (program) gl.deleteProgram(program)
         const lose = gl.getExtension('WEBGL_lose_context')
         if (lose) lose.loseContext()
@@ -209,6 +241,48 @@ export function WavesHero() {
       const uRes = context.getUniformLocation(program, 'u_resolution')
       const uFade = context.getUniformLocation(program, 'u_fade')
 
+      // render the name to a canvas and upload it as the cloud mask
+      const uText = context.getUniformLocation(program, 'u_text')
+      const uTexAspect = context.getUniformLocation(program, 'u_texAspect')
+      const tcanvas = document.createElement('canvas')
+      tcanvas.width = 1600
+      tcanvas.height = 300
+      const tctx = tcanvas.getContext('2d')
+      if (tctx) {
+        tctx.clearRect(0, 0, tcanvas.width, tcanvas.height)
+        tctx.fillStyle = '#ffffff'
+        tctx.textAlign = 'center'
+        tctx.textBaseline = 'middle'
+        const name = 'Pawan Danani'
+        let size = 240
+        const maxW = tcanvas.width * 0.92
+        do {
+          tctx.font = `800 ${size}px "Arial Black", "Helvetica Neue", Arial, sans-serif`
+          if (tctx.measureText(name).width <= maxW) break
+          size -= 6
+        } while (size > 30)
+        tctx.fillText(name, tcanvas.width / 2, tcanvas.height / 2)
+        textTex = context.createTexture()
+        context.bindTexture(context.TEXTURE_2D, textTex)
+        context.pixelStorei(context.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false)
+        context.texImage2D(
+          context.TEXTURE_2D,
+          0,
+          context.RGBA,
+          context.RGBA,
+          context.UNSIGNED_BYTE,
+          tcanvas,
+        )
+        context.texParameteri(context.TEXTURE_2D, context.TEXTURE_WRAP_S, context.CLAMP_TO_EDGE)
+        context.texParameteri(context.TEXTURE_2D, context.TEXTURE_WRAP_T, context.CLAMP_TO_EDGE)
+        context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MIN_FILTER, context.LINEAR)
+        context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MAG_FILTER, context.LINEAR)
+        context.activeTexture(context.TEXTURE0)
+        context.bindTexture(context.TEXTURE_2D, textTex)
+        context.uniform1i(uText, 0)
+      }
+      context.uniform1f(uTexAspect, tcanvas.width / tcanvas.height)
+
       const resize = () => {
         const dpr = Math.min(window.devicePixelRatio || 1, 2)
         const w = Math.max(1, Math.floor(canvas.clientWidth * dpr))
@@ -234,16 +308,18 @@ export function WavesHero() {
       canvas.style.opacity = '1'
 
       if (reduce) {
-        // single static frame, fully faded in (no animation, no reveal)
+        // settle straight into dusk, skip the noon -> dusk arc
         render(7.5, 1)
       } else {
         const start = performance.now()
-        const FADE_S = 1.9
+        const ARC_S = 3.6 // length of the noon -> dusk intro
         const loop = (now: number) => {
           if (disposed) return
           resize()
           const elapsed = (now - start) / 1000
-          render(elapsed, Math.min(1, elapsed / FADE_S))
+          const p = Math.min(1, elapsed / ARC_S)
+          const day = p * p * (3 - 2 * p) // smoothstep easing of the sun's descent
+          render(elapsed, day)
           raf = requestAnimationFrame(loop)
         }
         raf = requestAnimationFrame(loop)
@@ -261,10 +337,17 @@ export function WavesHero() {
     }
   }, [reduce])
 
+  // hold the overlay copy until the sun has (mostly) set, so the noon -> dusk
+  // arc plays as the intro/loader and the text fades in once it lands
+  const INTRO = 2.7
   const rise = (delay: number) => ({
     initial: reduce ? { opacity: 0 } : { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: reduce ? 0.01 : 0.7, ease: EASE, delay },
+    transition: {
+      duration: reduce ? 0.01 : 0.7,
+      ease: EASE,
+      delay: reduce ? 0 : INTRO + delay,
+    },
   })
 
   return (
@@ -297,12 +380,8 @@ export function WavesHero() {
           Backend Engineer
         </m.p>
 
-        <m.h1
-          {...rise(0.16)}
-          className="waves-title mt-5 font-display text-6xl font-semibold tracking-tight text-foreground sm:text-8xl"
-        >
-          Pawan Danani
-        </m.h1>
+        {/* the name is spelled by the clouds in the sky — kept here for a11y/SEO */}
+        <h1 className="sr-only">Pawan Danani</h1>
 
         <m.p
           {...rise(0.28)}
