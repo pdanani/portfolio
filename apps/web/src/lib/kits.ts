@@ -17,7 +17,7 @@ export const KITS: Array<Kit> = [
   { id: 'mario', label: 'Mario', blurb: 'Platformer homage · sky/blocks', swatch: 'oklch(0.58 0.21 27)', mode: 'light' },
   { id: 'waves', label: 'Ocean Waves', blurb: 'Realistic moving water (WebGL)', swatch: '#1a2a4d', mode: 'dark' },
   { id: 'waves8bit', label: 'Waves 8-Bit', blurb: 'Pixel-art ocean', swatch: '#1b6fd6', mode: 'dark' },
-  { id: 'convenience', label: 'Floating Mart', blurb: 'Lit store on water + ripple reflection', swatch: 'oklch(0.64 0.24 22)', mode: 'dark' },
+  { id: 'convenience', label: 'Floating Mart', blurb: 'Lit store on still water + mirror reflection', swatch: 'oklch(0.64 0.24 22)', mode: 'dark' },
   { id: 'space', label: 'Deep Space', blurb: 'Tasteful animated cosmos: a parallax starfield, a slowly rotating amber gas giant with a tilted orbiting ring and moon, and a drifting nebula.', swatch: '#0a0b1a', mode: 'dark' },
   { id: 'midnight', label: 'Neon Sign', blurb: 'Neon bar sign · pick a color', swatch: 'oklch(0.84 0.22 145)', mode: 'dark' },
   { id: 'monolux', label: 'Monochrome', blurb: 'Near-black luxe minimal', swatch: 'oklch(0.93 0.006 95)', mode: 'dark' },
