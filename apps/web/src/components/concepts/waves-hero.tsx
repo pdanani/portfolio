@@ -110,7 +110,7 @@ void main() {
 
   // ---------- COMPOSITE ----------
   // gentle curvy waterline: smooth sines (no jaggedness) rolling to the right
-  float waveH = (sin(uv.x * 11.0 - t * 0.7) * 0.6 + sin(uv.x * 19.0 - t * 1.05) * 0.4) * 0.0035;
+  float waveH = (sin(uv.x * 11.0 - t * 0.7) * 0.6 + sin(uv.x * 19.0 - t * 1.05) * 0.4) * 0.002;
   float wavyHorizon = horizon + waveH;
   float seaMask = 1.0 - smoothstep(wavyHorizon - 0.0014, wavyHorizon + 0.0014, uv.y);
   vec3 col = mix(skyCol, seaCol, seaMask);
