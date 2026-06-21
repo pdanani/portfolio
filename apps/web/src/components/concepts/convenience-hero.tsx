@@ -379,10 +379,11 @@ export function ConvenienceHero() {
         <defs>
           {/* ---- gradients ---- */}
           <linearGradient id={skyGrad} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#1a2438" />
-            <stop offset="42%" stopColor="#243149" />
-            <stop offset="74%" stopColor="#3a4763" />
-            <stop offset="100%" stopColor="#5a5f72" />
+            <stop offset="0%" stopColor="#0c0e2c" />
+            <stop offset="38%" stopColor="#281a4e" />
+            <stop offset="70%" stopColor="#5e2f55" />
+            <stop offset="88%" stopColor="#9c4a55" />
+            <stop offset="100%" stopColor="#c66b54" />
           </linearGradient>
           <radialGradient id={haze} cx="50%" cy="100%" r="70%">
             <stop offset="0%" stopColor="#c98a4e" stopOpacity={0.4} />
@@ -499,6 +500,12 @@ export function ConvenienceHero() {
         <ellipse cx={300} cy={110} rx={140} ry={18} fill="#465372" opacity={0.3} />
         <rect x="0" y="220" width="420" height={WATER_Y - 220} fill={`url(#${haze})`} />
 
+        {/* sunset sun — warm glow + disc low on the horizon, right of centre */}
+        <ellipse cx={302} cy={350} rx={230} ry={140} fill={`url(#${softGlow})`} opacity={0.4} />
+        <ellipse cx={302} cy={348} rx={110} ry={66} fill={`url(#${softGlow})`} opacity={0.55} />
+        <circle cx={302} cy={344} r={23} fill="#ffe0ad" />
+        <circle cx={302} cy={344} r={23} fill="#fff6e2" opacity={0.5} />
+
         {/* distant shoreline tree-line */}
         <g opacity={0.9}>
           <rect x="0" y={WATER_Y - 14} width="420" height="14" fill="#141d2b" />
@@ -510,6 +517,10 @@ export function ConvenienceHero() {
 
         {/* ===== WATER ===== */}
         <rect x="0" y={WATER_Y} width="420" height={760 - WATER_Y} fill={`url(#${waterGrad})`} />
+
+        {/* warm sunset glint reflected on the water under the sun */}
+        <ellipse cx={302} cy={WATER_Y + 64} rx={74} ry={96} fill={`url(#${softGlow})`} opacity={0.26} />
+        <ellipse cx={302} cy={WATER_Y + 20} rx={34} ry={54} fill="#ffd9a0" opacity={0.2} />
 
         {/* ===== REFLECTION (mirrored, displaced, faded) ===== */}
         <g mask={`url(#${streakMask})`}>
