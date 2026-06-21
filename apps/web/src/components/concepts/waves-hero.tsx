@@ -62,8 +62,8 @@ void main() {
   vec3 skyCol = mix(horizCol, midSky, smoothstep(0.0, 0.45, sky));
   skyCol = mix(skyCol, zenith, smoothstep(0.35, 1.0, sky));
 
-  // the sun arcs down from high-noon (centre, high) to the dusk horizon (right)
-  vec2 sunPos = mix(vec2(0.5, 0.95), vec2(0.62, horizon + 0.018), day);
+  // the sun starts behind the name clouds (centre, high) and arcs down to the dusk horizon
+  vec2 sunPos = mix(vec2(0.5, 0.76), vec2(0.62, horizon + 0.018), day);
   vec2 sd = (uv - sunPos);
   sd.x *= aspect;
   float sunDist = length(sd);
@@ -304,7 +304,7 @@ export function WavesHero() {
         className="pointer-events-none absolute inset-x-0 top-[12%] z-[1] flex justify-center px-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: reduce ? 0.01 : 1.6, ease: EASE, delay: reduce ? 0 : 1.8 }}
+        transition={{ duration: reduce ? 0.01 : 1.2, ease: EASE, delay: reduce ? 0 : 0.3 }}
       >
         <svg viewBox="0 0 1200 280" className="w-[min(94vw,1080px)]">
           <defs>
@@ -323,15 +323,15 @@ export function WavesHero() {
                 seed={6}
                 result="n"
               />
-              <feDisplacementMap in="SourceGraphic" in2="n" scale={22} result="d" />
-              <feGaussianBlur in="d" stdDeviation={7} result="b" />
+              <feDisplacementMap in="SourceGraphic" in2="n" scale={15} result="d" />
+              <feGaussianBlur in="d" stdDeviation={5} result="b" />
               <feColorMatrix
                 in="b"
                 type="matrix"
-                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -8"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"
                 result="goo"
               />
-              <feGaussianBlur in="goo" stdDeviation={2.2} />
+              <feGaussianBlur in="goo" stdDeviation={1} />
             </filter>
             <filter
               id="waves-cloud-haze"
@@ -359,7 +359,7 @@ export function WavesHero() {
             fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
             fontSize="162"
             fill="#ffffff"
-            opacity="0.4"
+            opacity="0.3"
             filter="url(#waves-cloud-haze)"
           >
             Pawan Danani
