@@ -16,6 +16,10 @@ import { CsgoHero } from './csgo-hero'
 import { CsgoTwoHero } from './csgo2-hero'
 import { JukeboxDeluxeHero } from './jukebox2-hero'
 import { VinylHero } from './vinyl-hero'
+import { Waves8BitHero } from './waves8bit-hero'
+import { ConvenienceHero } from './convenience-hero'
+import { SpaceHero } from './space-hero'
+import { WavesHero } from './waves-hero'
 import { NoirNeonHero } from './noirneon-hero'
 import { NoirHero } from './noir-hero'
 import { AuroraHero } from './aurora-hero'
@@ -44,6 +48,10 @@ export const CONCEPTS: Record<string, ComponentType> = {
   csgo2: CsgoTwoHero,
   jukebox2: JukeboxDeluxeHero,
   vinyl: VinylHero,
+  waves8bit: Waves8BitHero,
+  convenience: ConvenienceHero,
+  space: SpaceHero,
+  waves: WavesHero,
   noirneon: NoirNeonHero,
   noir: NoirHero,
   aurora: AuroraHero,

@@ -3577,6 +3577,1218 @@
   box-shadow: 0 0 8px oklch(0.81 0.15 72 / 0.9);
 }
 
+/* ===== KIT: waves8bit — Waves 8-Bit ===== */
+:root[data-kit='waves8bit'] {
+  --radius: 0rem;
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Press Start 2P', ui-monospace, monospace;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --surface-opacity: 100%;
+  --kit-blur: 0px;
+  --kit-border-width: 3px;
+  --kit-shadow: 4px 4px 0 oklch(0.16 0.07 250 / 0.9);
+  --aurora-opacity: 0;
+
+  --background: oklch(0.28 0.085 245);
+  --foreground: oklch(0.97 0.015 230);
+  --card: oklch(0.21 0.08 250);
+  --card-foreground: oklch(0.97 0.015 230);
+  --popover: oklch(0.21 0.08 250);
+  --popover-foreground: oklch(0.97 0.015 230);
+  --primary: oklch(0.82 0.14 75);
+  --primary-foreground: oklch(0.24 0.07 60);
+  --secondary: oklch(0.22 0.08 250);
+  --secondary-foreground: oklch(0.95 0.02 220);
+  --muted: oklch(0.34 0.07 245);
+  --muted-foreground: oklch(0.82 0.05 225);
+  --accent: oklch(0.66 0.13 230);
+  --accent-foreground: oklch(0.99 0.01 220);
+  --destructive: oklch(0.58 0.2 27);
+  --destructive-foreground: oklch(0.98 0.02 90);
+  --border: oklch(0.16 0.07 250 / 0.9);
+  --input: oklch(0.16 0.07 250 / 0.5);
+  --ring: oklch(0.82 0.14 75 / 0.6);
+
+  --brand: oklch(0.55 0.14 240);
+  --brand-cyan: oklch(0.7 0.12 215);
+  --brand-amber: oklch(0.82 0.14 75);
+
+  --aurora-1: oklch(0.6 0.13 240);
+  --aurora-2: oklch(0.7 0.12 215);
+  --aurora-3: oklch(0.82 0.14 75);
+}
+
+/* ---- Waves 8-Bit pixel-art ocean (original CSS art, id-prefixed) ---- */
+.waves8bit-sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    oklch(0.78 0.09 230) 0%,
+    oklch(0.7 0.11 232) 30%,
+    oklch(0.6 0.12 238) 52%,
+    oklch(0.46 0.11 244) 64%
+  );
+}
+
+/* Dithered checkerboard band where sky meets sea — pure pixel stipple */
+.waves8bit-dither {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 64px;
+  image-rendering: pixelated;
+  background-color: oklch(0.55 0.12 240);
+  background-image:
+    linear-gradient(45deg, oklch(0.46 0.11 244) 25%, transparent 25%, transparent 75%, oklch(0.46 0.11 244) 75%),
+    linear-gradient(45deg, oklch(0.46 0.11 244) 25%, transparent 25%, transparent 75%, oklch(0.46 0.11 244) 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  opacity: 0.7;
+  -webkit-mask-image: linear-gradient(180deg, transparent, oklch(0 0 0) 60%);
+  mask-image: linear-gradient(180deg, transparent, oklch(0 0 0) 60%);
+}
+
+/* Stepped pixel sun built from concentric box-shadow rings (no anti-aliasing) */
+.waves8bit-sun {
+  position: absolute;
+  top: 14%;
+  right: 12%;
+  width: 34px;
+  height: 34px;
+  image-rendering: pixelated;
+  background: oklch(0.88 0.13 80);
+  box-shadow:
+    0 0 0 8px oklch(0.84 0.14 76),
+    0 0 0 16px oklch(0.8 0.14 72 / 0.85),
+    0 0 0 26px oklch(0.78 0.13 70 / 0.45);
+  animation: waves8bit-pulse 2.4s steps(2, jump-none) infinite;
+}
+
+/* Chunky pixel clouds (stacked hard blocks via box-shadow offsets) */
+.waves8bit-cloud {
+  position: absolute;
+  width: 30px;
+  height: 14px;
+  image-rendering: pixelated;
+  background: oklch(0.95 0.02 225);
+  box-shadow:
+    -28px 0 0 0 oklch(0.95 0.02 225),
+    -14px -10px 0 0 oklch(0.95 0.02 225),
+    14px -10px 0 0 oklch(0.95 0.02 225),
+    28px 0 0 0 oklch(0.95 0.02 225),
+    0 -10px 0 0 oklch(0.95 0.02 225);
+  animation: waves8bit-drift 14s steps(28, end) infinite;
+}
+.waves8bit-cloud--sm {
+  transform: scale(0.72);
+  opacity: 0.85;
+  animation-duration: 20s;
+  animation-direction: reverse;
+}
+
+/* Tiny pixel sailboat sitting on the horizon */
+.waves8bit-boat {
+  position: absolute;
+  top: calc(50% - 26px);
+  left: 62%;
+  width: 36px;
+  height: 12px;
+  image-rendering: pixelated;
+  background: oklch(0.36 0.06 40);
+  border-bottom: 4px solid oklch(0.26 0.05 38);
+  box-shadow:
+    /* mast */
+    -1px -22px 0 0 oklch(0.3 0.04 40),
+    /* sail blocks (stepped triangle) */
+    4px -10px 0 0 oklch(0.94 0.03 90),
+    4px -16px 0 -2px oklch(0.94 0.03 90),
+    8px -10px 0 0 oklch(0.94 0.03 90);
+  animation: waves8bit-bobboat 2.8s steps(4, jump-none) infinite alternate;
+}
+
+.waves8bit-sea {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 56%;
+  overflow: hidden;
+  background: linear-gradient(180deg, oklch(0.4 0.1 244) 0%, oklch(0.24 0.085 250) 100%);
+}
+
+/*
+ * Each wave band is one tall block wider than the viewport. The repeating
+ * linear-gradient paints HARD stepped crests (no blur), and the band scrolls
+ * horizontally with steps() so the tile snaps like a retro sprite sheet.
+ * They rest at translateX(0) — a valid crest position — under reduced motion.
+ */
+.waves8bit-wave {
+  position: absolute;
+  left: -120px;
+  right: -120px;
+  width: calc(100% + 240px);
+  image-rendering: pixelated;
+  background-repeat: repeat-x;
+  background-position: bottom;
+  will-change: transform;
+}
+
+/* Far band — palest blue, slow scroll */
+.waves8bit-wave--1 {
+  bottom: 58%;
+  height: 46%;
+  background-image:
+    repeating-linear-gradient(90deg,
+      oklch(0.58 0.12 236) 0 12px, transparent 12px 24px),
+    repeating-linear-gradient(90deg,
+      oklch(0.52 0.12 238) 0 24px, oklch(0.46 0.11 240) 24px 48px);
+  background-size: 48px 28px, 48px 100%;
+  animation: waves8bit-scroll-a 9s steps(12, end) infinite;
+}
+
+/* Mid band */
+.waves8bit-wave--2 {
+  bottom: 40%;
+  height: 44%;
+  background-image:
+    repeating-linear-gradient(90deg,
+      oklch(0.5 0.12 240) 0 16px, transparent 16px 32px),
+    repeating-linear-gradient(90deg,
+      oklch(0.44 0.11 242) 0 32px, oklch(0.38 0.1 244) 32px 64px);
+  background-size: 64px 34px, 64px 100%;
+  animation: waves8bit-scroll-b 7s steps(16, end) infinite;
+}
+
+/* Near-mid band */
+.waves8bit-wave--3 {
+  bottom: 20%;
+  height: 42%;
+  background-image:
+    repeating-linear-gradient(90deg,
+      oklch(0.42 0.11 244) 0 20px, transparent 20px 40px),
+    repeating-linear-gradient(90deg,
+      oklch(0.35 0.1 246) 0 40px, oklch(0.3 0.09 248) 40px 80px);
+  background-size: 80px 40px, 80px 100%;
+  animation: waves8bit-scroll-a 5s steps(20, end) infinite;
+}
+
+/* Foreground band — deepest navy with white pixel foam crest, fastest */
+.waves8bit-wave--4 {
+  bottom: 0;
+  height: 36%;
+  background-image:
+    repeating-linear-gradient(90deg,
+      oklch(0.95 0.02 220) 0 8px, transparent 8px 26px),
+    repeating-linear-gradient(90deg,
+      oklch(0.34 0.1 247) 0 26px, transparent 26px 52px),
+    repeating-linear-gradient(90deg,
+      oklch(0.26 0.085 250) 0 52px, oklch(0.2 0.075 252) 52px 104px);
+  background-size: 52px 14px, 52px 30px, 104px 100%;
+  background-position: bottom 26px left, bottom, bottom;
+  animation: waves8bit-scroll-b 3.4s steps(26, end) infinite;
+}
+
+/* ---- Overlay panels & type ---- */
+.waves8bit-eyebrow {
+  background: oklch(0.66 0.13 230);
+  border: 3px solid oklch(0.16 0.07 250 / 0.9);
+  box-shadow: 4px 4px 0 oklch(0.16 0.07 250 / 0.9);
+}
+
+.waves8bit-sign {
+  background: oklch(0.18 0.075 251 / 0.94);
+  border: 4px solid oklch(0.95 0.02 220 / 0.92);
+  box-shadow:
+    0 0 0 4px oklch(0.16 0.07 250 / 0.9),
+    8px 8px 0 oklch(0.16 0.07 250 / 0.7);
+}
+
+.waves8bit-title {
+  color: oklch(0.97 0.015 230);
+  text-shadow:
+    3px 0 0 oklch(0.55 0.14 240),
+    -3px 0 0 oklch(0.55 0.14 240),
+    0 3px 0 oklch(0.55 0.14 240),
+    0 -3px 0 oklch(0.55 0.14 240),
+    5px 5px 0 oklch(0.16 0.07 250 / 0.9);
+  letter-spacing: 0.02em;
+}
+
+.waves8bit-body {
+  background: oklch(0.2 0.075 251 / 0.78);
+  border-left: 4px solid oklch(0.82 0.14 75);
+}
+
+.waves8bit-chip {
+  background: oklch(0.22 0.08 250);
+  border: 3px solid oklch(0.16 0.07 250 / 0.9);
+  box-shadow: 3px 3px 0 oklch(0.16 0.07 250 / 0.8);
+}
+
+.waves8bit-btn {
+  display: inline-block;
+  border: 3px solid oklch(0.16 0.07 250 / 0.9);
+  box-shadow: 4px 4px 0 oklch(0.16 0.07 250 / 0.9);
+  transition: transform 0.08s steps(2, end), box-shadow 0.08s steps(2, end);
+}
+.waves8bit-btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 oklch(0.16 0.07 250 / 0.9);
+}
+.waves8bit-btn:focus-visible {
+  outline: 3px solid oklch(0.82 0.14 75);
+  outline-offset: 3px;
+}
+.waves8bit-btn--ghost {
+  background: oklch(0.22 0.08 250);
+}
+
+@keyframes waves8bit-scroll-a {
+  from { transform: translateX(0); }
+  to { transform: translateX(-48px); }
+}
+@keyframes waves8bit-scroll-b {
+  from { transform: translateX(0); }
+  to { transform: translateX(-52px); }
+}
+@keyframes waves8bit-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(70px); }
+}
+@keyframes waves8bit-bobboat {
+  from { transform: translateY(0); }
+  to { transform: translateY(4px); }
+}
+@keyframes waves8bit-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+/* Reduced motion — freeze every looping ocean effect in a visible crest state */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-kit='waves8bit'] .waves8bit-wave,
+  :root[data-kit='waves8bit'] .waves8bit-cloud,
+  :root[data-kit='waves8bit'] .waves8bit-boat,
+  :root[data-kit='waves8bit'] .waves8bit-sun {
+    animation: none !important;
+    transform: none;
+  }
+}
+
+/* ===== KIT: convenience — Floating Mart ===== */
+:root[data-kit='convenience'] {
+  --radius: 0.5rem;
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Archivo', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --surface-opacity: 60%;
+  --kit-blur: 14px;
+  --kit-border-width: 1px;
+  --kit-shadow: 0 24px 60px oklch(0.08 0.04 265 / 0.55);
+  --aurora-opacity: 0;
+
+  --background: oklch(0.16 0.035 265);
+  --foreground: oklch(0.96 0.018 80);
+  --card: oklch(0.21 0.04 262);
+  --card-foreground: oklch(0.96 0.018 80);
+  --popover: oklch(0.19 0.04 262);
+  --popover-foreground: oklch(0.96 0.018 80);
+  --primary: oklch(0.78 0.16 65);
+  --primary-foreground: oklch(0.18 0.05 60);
+  --secondary: oklch(0.28 0.04 258);
+  --secondary-foreground: oklch(0.95 0.018 80);
+  --muted: oklch(0.24 0.035 260);
+  --muted-foreground: oklch(0.74 0.035 250);
+  --accent: oklch(0.32 0.05 250);
+  --accent-foreground: oklch(0.96 0.018 80);
+  --destructive: oklch(0.64 0.24 22);
+  --destructive-foreground: oklch(0.97 0.02 60);
+  --border: oklch(0.5 0.05 255 / 0.34);
+  --input: oklch(0.5 0.05 255 / 0.3);
+  --ring: oklch(0.78 0.16 65 / 0.55);
+  --brand: oklch(0.64 0.24 22);
+  --brand-cyan: oklch(0.82 0.15 165);
+  --brand-amber: oklch(0.86 0.15 85);
+  --aurora-1: oklch(0.5 0.1 265);
+  --aurora-2: oklch(0.5 0.1 230);
+  --aurora-3: oklch(0.55 0.09 200);
+}
+
+/* ===== KIT: convenience — Floating Mart ===== */
+.convenience-root {
+  background:
+    radial-gradient(120% 80% at 50% 120%, oklch(0.2 0.05 230 / 0.6), transparent 60%),
+    linear-gradient(180deg, oklch(0.14 0.04 270) 0%, oklch(0.16 0.04 262) 38%, oklch(0.2 0.045 240) 64%, oklch(0.17 0.04 248) 100%);
+  color: var(--foreground);
+}
+.convenience-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* --- Sky, shore, stars --- */
+.convenience-sky {
+  position: absolute;
+  inset: 0 0 42% 0;
+  background:
+    linear-gradient(180deg, oklch(0.13 0.045 272) 0%, oklch(0.17 0.045 258) 46%, oklch(0.26 0.05 232) 86%, oklch(0.32 0.055 222) 100%);
+}
+.convenience-glow-sky {
+  position: absolute;
+  left: 50%;
+  bottom: 40%;
+  width: min(70vw, 760px);
+  height: 46vh;
+  transform: translateX(-50%);
+  background: radial-gradient(60% 70% at 50% 100%, oklch(0.6 0.13 60 / 0.34), oklch(0.4 0.1 40 / 0.12) 45%, transparent 72%);
+  filter: blur(8px);
+}
+.convenience-shore {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 42%;
+  height: 10px;
+  background: linear-gradient(180deg, oklch(0.3 0.05 230 / 0.85), oklch(0.22 0.045 235 / 0.4));
+  box-shadow: 0 -1px 10px oklch(0.4 0.06 230 / 0.35);
+}
+.convenience-shore::before {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 100%;
+  height: 14px;
+  background:
+    radial-gradient(8px 12px at 18% 100%, oklch(0.24 0.04 250) 60%, transparent 62%),
+    radial-gradient(10px 14px at 42% 100%, oklch(0.22 0.04 250) 60%, transparent 62%),
+    radial-gradient(7px 11px at 70% 100%, oklch(0.24 0.04 250) 60%, transparent 62%),
+    radial-gradient(9px 13px at 88% 100%, oklch(0.22 0.04 250) 60%, transparent 62%);
+  opacity: 0.7;
+}
+.convenience-star {
+  position: absolute;
+  border-radius: 50%;
+  background: oklch(0.97 0.02 90);
+  box-shadow: 0 0 4px oklch(0.95 0.03 90 / 0.9);
+  animation: convenience-twinkle 4s ease-in-out infinite;
+}
+.convenience-star--still {
+  animation: none;
+  opacity: 0.85;
+}
+@keyframes convenience-twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* --- Stage: holds upright store + waterline + reflection --- */
+.convenience-stage {
+  position: absolute;
+  left: 50%;
+  bottom: 4%;
+  width: min(86vw, 560px);
+  height: min(72vh, 620px);
+  transform: translateX(-50%);
+}
+.convenience-scene {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+.convenience-waterline {
+  position: absolute;
+  left: -14%;
+  right: -14%;
+  bottom: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, oklch(0.7 0.1 60 / 0.5) 30%, oklch(0.8 0.12 60 / 0.7) 50%, oklch(0.7 0.1 60 / 0.5) 70%, transparent);
+  z-index: 3;
+}
+
+/* --- The store (also reused, mirrored, as the reflection) --- */
+.convenience-store {
+  position: relative;
+  width: 240px;
+}
+.convenience-sign {
+  position: relative;
+  margin: 0 auto 6px;
+  width: 216px;
+  height: 40px;
+  border-radius: 4px;
+  background: oklch(0.97 0.01 95);
+  border: 2px solid oklch(0.85 0.02 90);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 22px oklch(0.64 0.24 22 / 0.55),
+    0 0 8px oklch(0.97 0.01 95 / 0.6);
+}
+.convenience-sign-text {
+  font-family: var(--ff-display);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  color: oklch(0.55 0.26 25);
+  text-shadow:
+    0 0 6px oklch(0.64 0.27 22 / 0.85),
+    0 0 14px oklch(0.6 0.26 20 / 0.55);
+}
+.convenience-open {
+  position: absolute;
+  top: -14px;
+  right: -6px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: oklch(0.97 0.02 165);
+  background: oklch(0.24 0.05 200 / 0.7);
+  border: 1px solid oklch(0.82 0.15 165 / 0.8);
+  box-shadow: 0 0 10px oklch(0.82 0.15 165 / 0.7);
+  text-shadow: 0 0 6px oklch(0.86 0.16 165 / 0.9);
+  animation: convenience-neonpulse 3.2s ease-in-out infinite;
+}
+.convenience-roof {
+  height: 12px;
+  margin: 0 6px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, oklch(0.3 0.04 250), oklch(0.22 0.035 252));
+  box-shadow: inset 0 1px 0 oklch(0.42 0.05 250 / 0.6);
+}
+.convenience-body {
+  position: relative;
+  height: 116px;
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(180deg, oklch(0.25 0.035 252), oklch(0.2 0.03 254));
+  border: 1px solid oklch(0.34 0.04 250 / 0.7);
+  border-top: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 14px 12px 0;
+  box-shadow: 0 14px 34px oklch(0.06 0.03 260 / 0.55);
+}
+.convenience-window {
+  position: relative;
+  width: 60px;
+  height: 78px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, oklch(0.9 0.12 88), oklch(0.82 0.15 78));
+  border: 2px solid oklch(0.4 0.04 250 / 0.8);
+  box-shadow:
+    0 0 22px oklch(0.86 0.15 82 / 0.7),
+    inset 0 0 14px oklch(0.98 0.08 95 / 0.5);
+  overflow: hidden;
+}
+.convenience-shelf {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 4px;
+  border-radius: 1px;
+  background: oklch(0.5 0.07 60 / 0.55);
+}
+.convenience-window .convenience-shelf:nth-child(1) { top: 24px; }
+.convenience-window .convenience-shelf:nth-child(2) { top: 48px; }
+.convenience-window--l { transform: translateY(0); }
+.convenience-window--r { transform: translateY(0); }
+.convenience-door {
+  position: relative;
+  width: 46px;
+  height: 92px;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, oklch(0.86 0.13 85 / 0.92), oklch(0.7 0.13 72 / 0.85));
+  border: 2px solid oklch(0.42 0.04 250 / 0.85);
+  box-shadow: 0 0 20px oklch(0.84 0.14 80 / 0.6);
+  overflow: hidden;
+}
+.convenience-door-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, oklch(0.98 0.08 92 / 0.5), transparent 60%);
+}
+.convenience-door::after {
+  content: '';
+  position: absolute;
+  top: 44px;
+  right: 6px;
+  width: 4px;
+  height: 10px;
+  border-radius: 2px;
+  background: oklch(0.4 0.04 250);
+}
+.convenience-crate {
+  position: absolute;
+  bottom: 0;
+  width: 16px;
+  height: 14px;
+  border-radius: 2px;
+}
+.convenience-crate--a {
+  left: 6px;
+  background: oklch(0.55 0.13 30);
+  box-shadow: inset 0 0 0 1px oklch(0.4 0.1 30 / 0.6);
+}
+.convenience-crate--b {
+  left: 22px;
+  height: 11px;
+  background: oklch(0.62 0.12 150);
+  box-shadow: inset 0 0 0 1px oklch(0.45 0.1 150 / 0.6);
+}
+.convenience-flowers {
+  position: absolute;
+  bottom: 12px;
+  left: 9px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background:
+    radial-gradient(3px 3px at 30% 30%, oklch(0.78 0.2 350), transparent 60%),
+    radial-gradient(3px 3px at 70% 40%, oklch(0.82 0.18 60), transparent 60%),
+    radial-gradient(3px 3px at 45% 70%, oklch(0.74 0.22 12), transparent 60%);
+}
+.convenience-dock {
+  height: 14px;
+  margin: 0 -22px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, oklch(0.26 0.03 256), oklch(0.18 0.025 258));
+  box-shadow: 0 8px 18px oklch(0.06 0.03 260 / 0.5);
+}
+.convenience-piling {
+  position: absolute;
+  top: 100%;
+  width: 10px;
+  height: 30px;
+  background: linear-gradient(180deg, oklch(0.2 0.03 258), oklch(0.12 0.02 260));
+  border-radius: 0 0 2px 2px;
+}
+.convenience-piling--l { left: 2px; }
+.convenience-piling--r { right: 2px; }
+
+/* --- Reflection: mirrored + rippled copy of the store --- */
+.convenience-reflection {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) scaleY(-1);
+  z-index: 1;
+  opacity: 0.6;
+  -webkit-mask-image: linear-gradient(180deg, oklch(0 0 0) 0%, oklch(0 0 0 / 0.65) 32%, transparent 86%);
+  mask-image: linear-gradient(180deg, oklch(0 0 0) 0%, oklch(0 0 0 / 0.65) 32%, transparent 86%);
+}
+.convenience-reflection-inner {
+  filter: url(#convenience-ripple) blur(0.6px) saturate(1.15) brightness(0.92);
+  -webkit-filter: url(#convenience-ripple) blur(0.6px) saturate(1.15) brightness(0.92);
+}
+.convenience-shimmer {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  height: 2px;
+  border-radius: 2px;
+  z-index: 4;
+  background: linear-gradient(90deg, transparent, oklch(0.8 0.1 60 / 0.4) 25%, oklch(0.88 0.12 60 / 0.6) 50%, oklch(0.8 0.1 60 / 0.4) 75%, transparent);
+  opacity: 0.55;
+  animation: convenience-shimmer 7s ease-in-out infinite;
+}
+.convenience-shimmer--1 { top: 56%; animation-delay: 0s; }
+.convenience-shimmer--2 { top: 64%; opacity: 0.4; animation-delay: 1.6s; }
+.convenience-shimmer--3 { top: 72%; opacity: 0.3; animation-delay: 3.1s; }
+.convenience-water-tint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50%;
+  background: linear-gradient(180deg, oklch(0.18 0.04 245 / 0.2), oklch(0.13 0.04 255 / 0.7));
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* --- Overlay content --- */
+.convenience-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--brand-amber);
+  text-shadow: 0 1px 12px oklch(0.12 0.04 260 / 0.9);
+}
+.convenience-eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brand-cyan);
+  box-shadow: 0 0 10px var(--brand-cyan);
+  animation: convenience-neonpulse 2.6s ease-in-out infinite;
+}
+.convenience-title {
+  color: oklch(0.98 0.012 90);
+  text-shadow:
+    0 2px 2px oklch(0.08 0.03 260 / 0.85),
+    0 8px 40px oklch(0.06 0.03 260 / 0.7);
+}
+.convenience-tagline {
+  color: oklch(0.9 0.02 80);
+  text-shadow: 0 1px 14px oklch(0.1 0.03 260 / 0.85);
+}
+.convenience-cta {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius);
+  padding: 0.85rem 1.5rem;
+  font-weight: 600;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+.convenience-cta--primary {
+  color: oklch(0.18 0.05 60);
+  background: linear-gradient(180deg, oklch(0.9 0.15 84), oklch(0.82 0.16 76));
+  box-shadow: 0 0 24px oklch(0.86 0.15 82 / 0.5), 0 8px 22px oklch(0.06 0.03 260 / 0.5);
+}
+.convenience-cta--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px oklch(0.86 0.15 82 / 0.7), 0 12px 28px oklch(0.06 0.03 260 / 0.55);
+}
+.convenience-cta--ghost {
+  color: oklch(0.97 0.02 80);
+  background: oklch(0.2 0.04 258 / 0.5);
+  border: 1px solid oklch(0.82 0.12 70 / 0.7);
+  box-shadow: inset 0 0 14px oklch(0.7 0.1 60 / 0.18);
+}
+.convenience-cta--ghost:hover {
+  transform: translateY(-2px);
+  background: oklch(0.24 0.04 258 / 0.6);
+  border-color: oklch(0.86 0.13 72 / 0.9);
+}
+
+@keyframes convenience-neonpulse {
+  0%, 100% { opacity: 1; }
+  48% { opacity: 0.7; }
+  52% { opacity: 0.95; }
+}
+@keyframes convenience-shimmer {
+  0%, 100% { transform: translateX(-4%); opacity: 0.2; }
+  50% { transform: translateX(4%); opacity: 0.6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .convenience-star,
+  .convenience-open,
+  .convenience-eyebrow-dot,
+  .convenience-shimmer {
+    animation: none !important;
+  }
+  .convenience-shimmer { opacity: 0.4; }
+  .convenience-reflection { opacity: 0.5; }
+}
+
+/* ===== KIT: space — Deep Space ===== */
+:root[data-kit='space'] {
+  --radius: 0.4rem;
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  --surface-opacity: 72%;
+  --kit-blur: 14px;
+  --kit-border-width: 1px;
+  --kit-shadow: 0 24px 70px -28px oklch(0.04 0.04 275 / 0.9);
+  --aurora-opacity: 0;
+
+  --background: oklch(0.13 0.05 275);
+  --foreground: oklch(0.97 0.012 250);
+  --card: oklch(0.17 0.05 274 / 0.72);
+  --card-foreground: oklch(0.97 0.012 250);
+  --popover: oklch(0.16 0.05 274);
+  --popover-foreground: oklch(0.97 0.012 250);
+  --primary: oklch(0.78 0.15 68);
+  --primary-foreground: oklch(0.2 0.06 60);
+  --secondary: oklch(0.82 0.09 205);
+  --secondary-foreground: oklch(0.2 0.05 250);
+  --muted: oklch(0.24 0.045 272);
+  --muted-foreground: oklch(0.74 0.035 255);
+  --accent: oklch(0.7 0.13 330);
+  --accent-foreground: oklch(0.98 0.01 330);
+  --destructive: oklch(0.62 0.2 22);
+  --destructive-foreground: oklch(0.98 0.01 22);
+  --border: oklch(0.97 0.012 250 / 0.12);
+  --input: oklch(0.97 0.012 250 / 0.16);
+  --ring: oklch(0.82 0.09 205 / 0.6);
+
+  --brand: oklch(0.78 0.15 68);
+  --brand-cyan: oklch(0.84 0.09 205);
+  --brand-amber: oklch(0.82 0.14 75);
+
+  --aurora-1: oklch(0.7 0.13 330);
+  --aurora-2: oklch(0.62 0.12 285);
+  --aurora-3: oklch(0.78 0.15 68);
+}
+
+/* ============ Deep Space — hand-rendered cosmos (id-prefixed) ============ */
+
+.space-void {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 78% 30%, oklch(0.2 0.07 285 / 0.65) 0%, transparent 58%),
+    radial-gradient(140% 120% at 12% 88%, oklch(0.16 0.06 300 / 0.55) 0%, transparent 60%),
+    linear-gradient(180deg, oklch(0.1 0.045 278) 0%, oklch(0.13 0.05 275) 48%, oklch(0.09 0.04 280) 100%);
+}
+
+/* ---- drifting nebula blobs (behind the stars) ---- */
+.space-nebula {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.55;
+  will-change: transform;
+}
+.space-nebula--a {
+  width: 46vw;
+  height: 46vw;
+  top: -8vw;
+  right: -6vw;
+  background: radial-gradient(circle, oklch(0.62 0.16 330 / 0.55) 0%, transparent 68%);
+  animation: space-drift-a 46s ease-in-out infinite alternate;
+}
+.space-nebula--b {
+  width: 52vw;
+  height: 52vw;
+  bottom: -14vw;
+  left: -10vw;
+  background: radial-gradient(circle, oklch(0.5 0.15 285 / 0.5) 0%, transparent 70%);
+  animation: space-drift-b 58s ease-in-out infinite alternate;
+}
+.space-nebula--c {
+  width: 30vw;
+  height: 30vw;
+  top: 38%;
+  left: 30%;
+  opacity: 0.4;
+  background: radial-gradient(circle, oklch(0.66 0.14 70 / 0.4) 0%, transparent 70%);
+  animation: space-drift-c 52s ease-in-out infinite alternate;
+}
+
+/* ---- parallax starfields (three layers via box-shadow dots) ---- */
+.space-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: transparent;
+  will-change: transform;
+}
+.space-stars::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: inherit;
+  height: inherit;
+  border-radius: inherit;
+}
+/* far: tiny, dim, slowest */
+.space-stars--far {
+  background: oklch(0.85 0.02 255 / 0.55);
+  box-shadow:
+    40px 320px oklch(0.85 0.02 255 / 0.5), 180px 80px oklch(0.85 0.02 255 / 0.45),
+    320px 540px oklch(0.85 0.02 255 / 0.5), 520px 200px oklch(0.8 0.02 255 / 0.4),
+    700px 460px oklch(0.85 0.02 255 / 0.5), 860px 120px oklch(0.85 0.02 255 / 0.45),
+    980px 600px oklch(0.8 0.02 255 / 0.4), 1180px 300px oklch(0.85 0.02 255 / 0.5),
+    1320px 540px oklch(0.85 0.02 255 / 0.45), 1480px 90px oklch(0.8 0.02 255 / 0.4),
+    1640px 420px oklch(0.85 0.02 255 / 0.5), 120px 700px oklch(0.85 0.02 255 / 0.45),
+    420px 760px oklch(0.8 0.02 255 / 0.4), 760px 720px oklch(0.85 0.02 255 / 0.5),
+    1040px 800px oklch(0.85 0.02 255 / 0.45), 1380px 760px oklch(0.8 0.02 255 / 0.4);
+  animation: space-rise 150s linear infinite;
+}
+.space-stars--far::after {
+  background: inherit;
+  box-shadow: inherit;
+  transform: translateY(-860px);
+}
+/* mid: medium, medium speed */
+.space-stars--mid {
+  width: 2px;
+  height: 2px;
+  background: oklch(0.92 0.015 250 / 0.8);
+  box-shadow:
+    90px 160px oklch(0.92 0.015 250 / 0.75), 260px 440px oklch(0.9 0.02 250 / 0.7),
+    470px 60px oklch(0.92 0.015 250 / 0.8), 610px 380px oklch(0.9 0.02 250 / 0.7),
+    820px 560px oklch(0.92 0.015 250 / 0.75), 1010px 220px oklch(0.9 0.02 250 / 0.7),
+    1240px 480px oklch(0.92 0.015 250 / 0.8), 1450px 140px oklch(0.9 0.02 250 / 0.7),
+    1600px 520px oklch(0.92 0.015 250 / 0.75), 200px 620px oklch(0.9 0.02 250 / 0.7),
+    540px 700px oklch(0.92 0.015 250 / 0.8), 900px 660px oklch(0.9 0.02 250 / 0.7),
+    1300px 620px oklch(0.92 0.015 250 / 0.75), 1540px 700px oklch(0.9 0.02 250 / 0.7);
+  animation: space-rise 95s linear infinite;
+}
+.space-stars--mid::after {
+  background: inherit;
+  box-shadow: inherit;
+  transform: translateY(-780px);
+}
+/* near: larger, brightest, fastest */
+.space-stars--near {
+  width: 3px;
+  height: 3px;
+  background: oklch(0.98 0.01 250 / 0.95);
+  box-shadow:
+    150px 240px oklch(0.98 0.01 250 / 0.9), 380px 80px oklch(0.96 0.015 250 / 0.85),
+    640px 300px oklch(0.98 0.01 250 / 0.9), 900px 140px oklch(0.96 0.015 250 / 0.85),
+    1180px 360px oklch(0.98 0.01 250 / 0.9), 1460px 200px oklch(0.96 0.015 250 / 0.85),
+    1620px 80px oklch(0.98 0.01 250 / 0.9), 300px 520px oklch(0.96 0.015 250 / 0.85),
+    720px 580px oklch(0.98 0.01 250 / 0.9), 1120px 540px oklch(0.96 0.015 250 / 0.85),
+    1500px 600px oklch(0.98 0.01 250 / 0.9);
+  animation: space-rise 62s linear infinite;
+}
+.space-stars--near::after {
+  background: inherit;
+  box-shadow: inherit;
+  transform: translateY(-700px);
+}
+
+/* ---- brighter twinkling stars ---- */
+.space-twinkle {
+  position: absolute;
+  border-radius: 50%;
+  background: oklch(0.99 0.008 250);
+  box-shadow: 0 0 6px 1px oklch(0.95 0.02 250 / 0.8);
+  animation: space-twinkle 4.5s ease-in-out infinite;
+}
+
+/* ---- occasional slow shooting star ---- */
+.space-shoot {
+  position: absolute;
+  top: 16%;
+  left: 70%;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: oklch(0.99 0.01 250);
+  box-shadow: 0 0 8px 2px oklch(0.95 0.02 250 / 0.7);
+  opacity: 0;
+  transform: rotate(28deg);
+  animation: space-shoot 14s ease-in 5s infinite;
+}
+.space-shoot::after {
+  content: '';
+  position: absolute;
+  right: 1px;
+  top: 50%;
+  width: 120px;
+  height: 1px;
+  transform: translateY(-50%);
+  background: linear-gradient(270deg, oklch(0.97 0.01 250 / 0.9), transparent);
+}
+
+/* ---- planet system container ---- */
+.space-system {
+  position: absolute;
+  top: 50%;
+  right: -7vw;
+  width: clamp(360px, 46vw, 720px);
+  height: clamp(360px, 46vw, 720px);
+  transform: translateY(-50%);
+}
+@media (max-width: 768px) {
+  .space-system {
+    top: 16%;
+    right: -22vw;
+    width: 84vw;
+    height: 84vw;
+    transform: none;
+  }
+}
+
+/* distant star that lights the scene (off to the right) */
+.space-sun {
+  position: absolute;
+  top: 6%;
+  right: -8%;
+  width: 26%;
+  height: 26%;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(0.96 0.07 80 / 0.9) 0%, oklch(0.85 0.13 70 / 0.35) 40%, transparent 72%);
+  filter: blur(2px);
+}
+
+/* the gas giant */
+.space-planet {
+  position: absolute;
+  inset: 14%;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 60px 10px oklch(0.06 0.04 285 / 0.55),
+    0 30px 90px -20px oklch(0.05 0.05 60 / 0.5);
+  background: oklch(0.4 0.1 60);
+}
+
+/* slowly rotating banded surface (oversized so rotation never reveals an edge) */
+.space-bands {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  border-radius: 50%;
+  will-change: transform;
+  background:
+    repeating-linear-gradient(
+      8deg,
+      oklch(0.82 0.12 78 / 0.0) 0px,
+      oklch(0.86 0.13 80 / 0.55) 14px,
+      oklch(0.62 0.13 55 / 0.55) 30px,
+      oklch(0.74 0.13 68 / 0.0) 48px,
+      oklch(0.55 0.12 48 / 0.5) 70px,
+      oklch(0.82 0.12 78 / 0.0) 92px
+    ),
+    radial-gradient(circle at 38% 40%, oklch(0.86 0.13 80) 0%, oklch(0.66 0.13 58) 52%, oklch(0.46 0.11 46) 100%);
+}
+
+/* fixed day/night terminator + form shading (over the spinning bands) */
+.space-terminator {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(120% 120% at 30% 32%, transparent 0%, transparent 40%, oklch(0.08 0.04 285 / 0.78) 78%, oklch(0.06 0.035 288 / 0.92) 100%),
+    linear-gradient(108deg, transparent 38%, oklch(0.1 0.045 282 / 0.7) 66%, oklch(0.07 0.04 285 / 0.9) 100%);
+}
+
+/* thin atmospheric rim light on the lit edge */
+.space-rim {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(
+    from 200deg,
+    transparent 0deg,
+    oklch(0.9 0.1 78 / 0.85) 40deg,
+    oklch(0.96 0.06 90 / 0.95) 70deg,
+    oklch(0.85 0.12 70 / 0.7) 100deg,
+    transparent 150deg,
+    transparent 360deg
+  );
+  -webkit-mask: radial-gradient(circle, transparent calc(50% - 2.5px), #000 calc(50% - 1.5px));
+  mask: radial-gradient(circle, transparent calc(50% - 2.5px), #000 calc(50% - 1.5px));
+}
+
+/* inner contact glow facing the star */
+.space-planet-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(60% 60% at 26% 28%, oklch(0.95 0.08 82 / 0.32) 0%, transparent 60%);
+}
+
+/* tilted orbit ring + moon */
+.space-orbit {
+  position: absolute;
+  inset: -4%;
+  border-radius: 50%;
+  transform: rotateX(74deg) rotateZ(-18deg);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.space-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid oklch(0.84 0.06 80 / 0.28);
+  box-shadow:
+    inset 0 0 0 6px oklch(0.78 0.08 72 / 0.06),
+    0 0 24px oklch(0.7 0.1 70 / 0.12);
+}
+.space-moon-track {
+  position: absolute;
+  inset: 0;
+}
+.space-moon {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, oklch(0.9 0.02 250) 0%, oklch(0.62 0.02 255) 60%, oklch(0.4 0.02 258) 100%);
+  box-shadow: 0 0 10px oklch(0.85 0.03 250 / 0.5);
+}
+
+/* faint orbital HUD arc */
+.space-hud {
+  position: absolute;
+  inset: 2%;
+  width: 96%;
+  height: 96%;
+  opacity: 0.5;
+  overflow: visible;
+}
+.space-hud-ring {
+  stroke: oklch(0.84 0.07 205 / 0.22);
+  stroke-width: 1;
+  stroke-dasharray: 2 9;
+}
+.space-hud-tick {
+  stroke: oklch(0.86 0.08 205 / 0.45);
+  stroke-width: 1.4;
+}
+
+/* vignette to seat the overlay text */
+.space-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, oklch(0.09 0.04 280 / 0.82) 0%, oklch(0.1 0.04 280 / 0.34) 42%, transparent 66%),
+    radial-gradient(120% 100% at 50% 120%, oklch(0.07 0.035 282 / 0.6) 0%, transparent 60%);
+}
+
+/* ---- overlay accents ---- */
+.space-eyebrow-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brand-cyan);
+  box-shadow: 0 0 10px 1px oklch(0.84 0.09 205 / 0.7);
+}
+
+.space-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: var(--radius);
+  padding: 0.8rem 1.4rem;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.space-cta:hover {
+  transform: translateY(-2px);
+}
+.space-cta:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+.space-cta--primary {
+  background: linear-gradient(180deg, oklch(0.84 0.14 76) 0%, oklch(0.74 0.15 64) 100%);
+  color: var(--primary-foreground);
+  box-shadow: 0 10px 28px -10px oklch(0.74 0.15 64 / 0.6), inset 0 1px 0 oklch(0.98 0.04 90 / 0.5);
+}
+.space-cta--primary:hover {
+  box-shadow: 0 16px 36px -10px oklch(0.78 0.15 68 / 0.7), inset 0 1px 0 oklch(0.98 0.04 90 / 0.55);
+}
+.space-cta--ghost {
+  color: var(--foreground);
+  border: 1px solid oklch(0.84 0.07 205 / 0.4);
+  background: oklch(0.5 0.06 250 / 0.16);
+  backdrop-filter: blur(6px);
+}
+.space-cta--ghost:hover {
+  border-color: oklch(0.84 0.09 205 / 0.7);
+  background: oklch(0.5 0.06 250 / 0.24);
+}
+.space-cta-arrow {
+  display: inline-block;
+  transform: translateX(0);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.space-cta-arrow--on {
+  transform: translateX(4px);
+}
+
+/* ---- reduced motion: freeze every looping effect, rest in a visible state ---- */
+.space-paused {
+  animation: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .space-nebula,
+  .space-stars,
+  .space-twinkle,
+  .space-shoot {
+    animation: none !important;
+  }
+  .space-shoot {
+    opacity: 0;
+  }
+  .space-cta,
+  .space-cta-arrow {
+    transition: none;
+  }
+}
+
+/* ---- keyframes (all id-prefixed) ---- */
+@keyframes space-rise {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(780px);
+  }
+}
+@keyframes space-twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+}
+@keyframes space-drift-a {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(-4vw, 3vw, 0) scale(1.08);
+  }
+}
+@keyframes space-drift-b {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(5vw, -3vw, 0) scale(1.1);
+  }
+}
+@keyframes space-drift-c {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3vw, 4vw, 0) scale(0.92);
+  }
+}
+@keyframes space-shoot {
+  0%,
+  92% {
+    opacity: 0;
+    transform: rotate(28deg) translateX(0);
+  }
+  93% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(28deg) translateX(-420px);
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Reduced-motion safety net — anything we miss still calms down.      */
 /* ------------------------------------------------------------------ */
@@ -4529,4 +5741,85 @@ a.jukebox2-strip:focus-visible {
   border-radius: 0 0 0.4rem 0.4rem;
   background: linear-gradient(180deg, oklch(0.52 0.01 80), oklch(0.28 0.01 80));
   box-shadow: 0 3px 8px oklch(0 0 0 / 0.5);
+}
+
+/* ===== KIT: waves — Ocean Waves (WebGL twilight sea) ===== */
+:root[data-kit='waves'] {
+  --radius: 0.4rem;
+  --ff-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --ff-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --ff-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --surface-opacity: 50%;
+  --kit-blur: 14px;
+  --kit-border-width: 1px;
+  --kit-shadow: 0 22px 60px oklch(0.05 0.04 250 / 0.6);
+  --aurora-opacity: 0;
+
+  --background: oklch(0.16 0.04 255);
+  --foreground: oklch(0.97 0.012 240);
+  --card: oklch(0.21 0.045 255 / 0.55);
+  --card-foreground: oklch(0.97 0.012 240);
+  --popover: oklch(0.18 0.045 255);
+  --popover-foreground: oklch(0.97 0.012 240);
+  --primary: oklch(0.82 0.15 75);
+  --primary-foreground: oklch(0.18 0.05 60);
+  --secondary: oklch(0.3 0.05 250);
+  --secondary-foreground: oklch(0.97 0.012 240);
+  --muted: oklch(0.26 0.045 252);
+  --muted-foreground: oklch(0.8 0.03 240);
+  --accent: oklch(0.34 0.06 250 / 0.6);
+  --accent-foreground: oklch(0.97 0.012 240);
+  --destructive: oklch(0.64 0.2 18);
+  --destructive-foreground: oklch(0.97 0.01 240);
+  --border: oklch(0.7 0.06 240 / 0.28);
+  --input: oklch(0.7 0.06 240 / 0.24);
+  --ring: oklch(0.82 0.15 75 / 0.55);
+  --brand: oklch(0.82 0.15 75);
+  --brand-cyan: oklch(0.82 0.1 210);
+  --brand-amber: oklch(0.85 0.15 78);
+  --aurora-1: oklch(0.5 0.12 260);
+  --aurora-2: oklch(0.55 0.14 20);
+  --aurora-3: oklch(0.7 0.13 80);
+}
+
+/* CSS fallback "sea + sky" — visible if WebGL is unavailable or a shader fails */
+.waves-fallback {
+  background:
+    radial-gradient(
+      120% 70% at 62% 58%,
+      oklch(0.78 0.13 70 / 0.55) 0%,
+      transparent 42%
+    ),
+    linear-gradient(
+      to bottom,
+      oklch(0.12 0.05 270) 0%,
+      oklch(0.2 0.07 285) 30%,
+      oklch(0.5 0.14 25) 55%,
+      oklch(0.58 0.13 30) 58%,
+      oklch(0.18 0.06 250) 60%,
+      oklch(0.1 0.05 245) 78%,
+      oklch(0.06 0.04 245) 100%
+    );
+}
+
+/* bottom-up scrim so the headline + CTAs stay AA over the bright water */
+.waves-scrim {
+  background: linear-gradient(
+    to top,
+    oklch(0.08 0.04 250 / 0.85) 0%,
+    oklch(0.1 0.04 250 / 0.55) 24%,
+    oklch(0.12 0.04 250 / 0.12) 48%,
+    transparent 70%
+  );
+}
+
+.waves-title {
+  text-shadow:
+    0 2px 18px oklch(0.06 0.04 250 / 0.7),
+    0 0 36px oklch(0.82 0.15 75 / 0.18);
+}
+
+.waves-glass {
+  background: color-mix(in oklab, var(--card) 60%, transparent);
+  backdrop-filter: blur(var(--kit-blur));
 }
