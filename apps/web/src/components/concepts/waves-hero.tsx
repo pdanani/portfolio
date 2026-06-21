@@ -63,7 +63,9 @@ void main() {
   skyCol = mix(skyCol, zenith, smoothstep(0.35, 1.0, sky));
 
   // the sun starts behind the name clouds (centre, high) and arcs down to the dusk horizon
-  vec2 sunPos = mix(vec2(0.58, 0.62), vec2(0.78, horizon + 0.018), day);
+  // same arc as before (Δx = 0.12, same descent), just translated right so it
+  // starts further right and therefore lands further right (clears the mobile button)
+  vec2 sunPos = mix(vec2(0.66, 0.62), vec2(0.78, horizon + 0.018), day);
   vec2 sd = (uv - sunPos);
   sd.x *= aspect;
   float sunDist = length(sd);
@@ -108,7 +110,7 @@ void main() {
 
   // ---------- COMPOSITE ----------
   // gentle curvy waterline: smooth sines (no jaggedness) rolling to the right
-  float waveH = (sin(uv.x * 11.0 - t * 0.7) * 0.6 + sin(uv.x * 19.0 - t * 1.05) * 0.4) * 0.005;
+  float waveH = (sin(uv.x * 11.0 - t * 0.7) * 0.6 + sin(uv.x * 19.0 - t * 1.05) * 0.4) * 0.0035;
   float wavyHorizon = horizon + waveH;
   float seaMask = 1.0 - smoothstep(wavyHorizon - 0.0014, wavyHorizon + 0.0014, uv.y);
   vec3 col = mix(skyCol, seaCol, seaMask);
