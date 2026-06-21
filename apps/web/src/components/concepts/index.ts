@@ -18,6 +18,7 @@ import { JukeboxDeluxeHero } from './jukebox2-hero'
 import { VinylHero } from './vinyl-hero'
 import { Waves8BitHero } from './waves8bit-hero'
 import { ConvenienceHero } from './convenience-hero'
+import { Convenience2Hero } from './convenience2-hero'
 import { SpaceHero } from './space-hero'
 import { WavesHero } from './waves-hero'
 import { NoirNeonHero } from './noirneon-hero'
@@ -50,6 +51,7 @@ export const CONCEPTS: Record<string, ComponentType> = {
   vinyl: VinylHero,
   waves8bit: Waves8BitHero,
   convenience: ConvenienceHero,
+  convenience2: Convenience2Hero,
   space: SpaceHero,
   waves: WavesHero,
   noirneon: NoirNeonHero,
