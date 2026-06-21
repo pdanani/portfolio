@@ -1,6 +1,7 @@
 import { useId } from 'react'
 import { m, useReducedMotion } from 'motion/react'
 import { EASE } from '#/lib/motion/variants'
+import { OceanShader } from './ocean-shader'
 
 /**
  * Floating Mart — a tiny lit convenience store on an aluminium pontoon, moored on
@@ -368,13 +369,16 @@ export function ConvenienceHero() {
   )
 
   return (
-    <main className="convenience-root relative isolate min-h-screen overflow-hidden">
-      {/* full-bleed SVG scene */}
+    <main className="convenience-root relative isolate min-h-screen overflow-hidden bg-background">
+      {/* Ocean Waves sunset shader background */}
+      <OceanShader />
+
+      {/* small floating store + reflection, sitting on the shader's water */}
       <svg
         aria-hidden
-        className="convenience-canvas"
-        viewBox="0 0 420 760"
-        preserveAspectRatio="xMidYMid slice"
+        className="convenience-store"
+        viewBox="0 112 420 600"
+        preserveAspectRatio="xMidYMid meet"
       >
         <defs>
           {/* ---- gradients ---- */}
@@ -494,35 +498,9 @@ export function ConvenienceHero() {
           </mask>
         </defs>
 
-        {/* ===== SKY ===== */}
-        <rect x="0" y="0" width="420" height={WATER_Y} fill={`url(#${skyGrad})`} />
-        <ellipse cx={120} cy={70} rx={120} ry={22} fill="#3e4a64" opacity={0.4} />
-        <ellipse cx={300} cy={110} rx={140} ry={18} fill="#465372" opacity={0.3} />
-        <rect x="0" y="220" width="420" height={WATER_Y - 220} fill={`url(#${haze})`} />
+        {/* sky + sea come from the Ocean Waves shader behind this SVG */}
 
-        {/* sunset sun — warm glow + disc low on the horizon, right of centre */}
-        <ellipse cx={302} cy={350} rx={230} ry={140} fill={`url(#${softGlow})`} opacity={0.4} />
-        <ellipse cx={302} cy={348} rx={110} ry={66} fill={`url(#${softGlow})`} opacity={0.55} />
-        <circle cx={302} cy={344} r={23} fill="#ffe0ad" />
-        <circle cx={302} cy={344} r={23} fill="#fff6e2" opacity={0.5} />
-
-        {/* distant shoreline tree-line */}
-        <g opacity={0.9}>
-          <rect x="0" y={WATER_Y - 14} width="420" height="14" fill="#141d2b" />
-          <path
-            d="M0 358 Q20 348 40 356 T80 352 T120 355 T160 350 T200 357 T240 351 T280 356 T320 350 T360 357 T400 352 T420 356 L420 372 L0 372 Z"
-            fill="#101826"
-          />
-        </g>
-
-        {/* ===== WATER ===== */}
-        <rect x="0" y={WATER_Y} width="420" height={760 - WATER_Y} fill={`url(#${waterGrad})`} />
-
-        {/* warm sunset glint reflected on the water under the sun */}
-        <ellipse cx={302} cy={WATER_Y + 64} rx={74} ry={96} fill={`url(#${softGlow})`} opacity={0.26} />
-        <ellipse cx={302} cy={WATER_Y + 20} rx={34} ry={54} fill="#ffd9a0" opacity={0.2} />
-
-        {/* ===== REFLECTION (mirrored, displaced, faded) ===== */}
+        {/* ===== REFLECTION (mirrored, displaced, faded) — over the shader water ===== */}
         <g mask={`url(#${streakMask})`}>
           <g transform={`translate(0 ${WATER_Y * 2}) scale(1 -1)`}>
             {/* smeared neon streaks under the structural reflection (screen-blended) */}
@@ -551,15 +529,7 @@ export function ConvenienceHero() {
           </g>
         </g>
 
-        {/* horizontal ripple highlight lines crossing the reflection */}
-        <g opacity={0.5}>
-          <rect x="0" y="392" width="420" height="1.4" fill={`url(#${waterSheen})`} />
-          <rect x="0" y="430" width="420" height="1.2" fill="#7e95b8" opacity={0.3} />
-          <rect x="0" y="486" width="420" height="1" fill="#6a82a6" opacity={0.25} />
-          <rect x="0" y="560" width="420" height="1" fill="#5a7196" opacity={0.18} />
-        </g>
-        {/* specular sheen at the waterline under the dock */}
-        <ellipse cx={210} cy={WATER_Y + 6} rx={180} ry={8} fill="#aebfdc" opacity={0.22} />
+        {/* water-surface ripple + sheen handled by the shader behind */}
 
         {/* ===== UPRIGHT STORE (drawn last, on top) ===== */}
         {StoreScene}
