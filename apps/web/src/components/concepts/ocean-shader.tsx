@@ -30,7 +30,7 @@ float fbm(vec2 p){
 void main(){
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;
   float aspect = u_resolution.x / max(u_resolution.y, 1.0);
-  float horizon = 0.58;
+  float horizon = 0.30;
   float t = u_time;
 
   float sky = clamp((uv.y - horizon) / (1.0 - horizon), 0.0, 1.0);
@@ -63,10 +63,6 @@ void main(){
   seaCol = mix(seaCol, dusk * 0.7, smoothstep(0.10, 0.0, depth) * 0.7);
 
   float column = exp(-pow((uv.x - sunPos.x) * aspect * 3.4, 2.0));
-  float fall = smoothstep(0.0, 0.55, depth);
-  float shimmer = fbm(vec2(uv.x * aspect * 6.0, uv.y * 26.0 - t * 1.6));
-  float sparkle = smoothstep(0.62, 0.95, shimmer) * column * (1.0 - fall);
-  seaCol += sunCol * sparkle * 1.6;
   seaCol += sunCol * column * exp(-depth * 7.0) * 0.5;
 
   float seaMask = step(uv.y, horizon);
@@ -80,8 +76,8 @@ void main(){
 }`
 
 const FALLBACK_BG =
-  'radial-gradient(120% 70% at 62% 58%, oklch(0.78 0.13 70 / 0.55) 0%, transparent 42%),' +
-  'linear-gradient(to bottom, oklch(0.12 0.05 270) 0%, oklch(0.2 0.07 285) 30%, oklch(0.5 0.14 25) 55%, oklch(0.58 0.13 30) 58%, oklch(0.18 0.06 250) 60%, oklch(0.1 0.05 245) 78%, oklch(0.06 0.04 245) 100%)'
+  'radial-gradient(120% 60% at 62% 70%, oklch(0.78 0.13 70 / 0.5) 0%, transparent 40%),' +
+  'linear-gradient(to bottom, oklch(0.12 0.05 270) 0%, oklch(0.2 0.07 285) 40%, oklch(0.5 0.14 25) 66%, oklch(0.58 0.13 30) 69%, oklch(0.18 0.06 250) 71%, oklch(0.1 0.05 245) 85%, oklch(0.06 0.04 245) 100%)'
 
 export function OceanShader() {
   const reduce = useReducedMotion()

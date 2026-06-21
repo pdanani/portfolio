@@ -462,7 +462,7 @@ export function ConvenienceHero() {
             <stop offset="100%" stopColor="#9fb4d4" stopOpacity={0} />
           </linearGradient>
 
-          {/* ---- still-water displacement (STATIC: no animation) ---- */}
+          {/* ---- water displacement: gentle ripple that plays with the reflection ---- */}
           <filter id={ripple} x="-15%" y="-15%" width="130%" height="130%">
             <feTurbulence
               type="fractalNoise"
@@ -471,7 +471,17 @@ export function ConvenienceHero() {
               seed={11}
               stitchTiles="stitch"
               result="noise"
-            />
+            >
+              {!reduce && (
+                <animate
+                  attributeName="baseFrequency"
+                  dur="15s"
+                  values="0.008 0.04;0.012 0.052;0.009 0.045;0.008 0.04"
+                  keyTimes="0;0.4;0.72;1"
+                  repeatCount="indefinite"
+                />
+              )}
+            </feTurbulence>
             <feDisplacementMap
               in="SourceGraphic"
               in2="noise"
@@ -488,10 +498,10 @@ export function ConvenienceHero() {
 
           {/* reflection fade mask */}
           <linearGradient id={reflMask} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#fff" stopOpacity={0.85} />
-            <stop offset="22%" stopColor="#fff" stopOpacity={0.62} />
-            <stop offset="62%" stopColor="#fff" stopOpacity={0.28} />
-            <stop offset="100%" stopColor="#fff" stopOpacity={0} />
+            <stop offset="0%" stopColor="#fff" stopOpacity={0.58} />
+            <stop offset="20%" stopColor="#fff" stopOpacity={0.38} />
+            <stop offset="55%" stopColor="#fff" stopOpacity={0.15} />
+            <stop offset="88%" stopColor="#fff" stopOpacity={0} />
           </linearGradient>
           <mask id={streakMask} maskUnits="userSpaceOnUse" x="0" y={WATER_Y} width="420" height={REFL_H}>
             <rect x="0" y={WATER_Y} width="420" height={REFL_H} fill={`url(#${reflMask})`} />
@@ -506,14 +516,14 @@ export function ConvenienceHero() {
             {/* smeared neon streaks under the structural reflection (screen-blended) */}
             <g
               filter={`url(#${streakBlur})`}
-              opacity={0.85}
+              opacity={0.38}
               transform="scale(1 1.5)"
               style={{ mixBlendMode: 'screen' }}
             >
               {Emitters}
             </g>
             {/* the structural reflection, watery + dim */}
-            <g filter={`url(#${ripple})`} opacity={0.7}>
+            <g filter={`url(#${ripple})`} opacity={0.5}>
               {StoreScene}
             </g>
             {/* blue + dark wash to push it underwater */}
@@ -523,13 +533,17 @@ export function ConvenienceHero() {
               width="420"
               height={REFL_H}
               fill="#0e1c30"
-              opacity={0.34}
+              opacity={0.52}
               style={{ mixBlendMode: 'multiply' }}
             />
           </g>
         </g>
 
         {/* water-surface ripple + sheen handled by the shader behind */}
+
+        {/* waterline contact — seats the dock on the water */}
+        <ellipse cx={210} cy={WATER_Y - 4} rx={152} ry={7} fill="#06121f" opacity={0.5} />
+        <ellipse cx={210} cy={WATER_Y - 5} rx={120} ry={2.4} fill="#ffdcab" opacity={0.22} />
 
         {/* ===== UPRIGHT STORE (drawn last, on top) ===== */}
         {StoreScene}
