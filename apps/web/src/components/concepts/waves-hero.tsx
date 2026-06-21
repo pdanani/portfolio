@@ -80,32 +80,42 @@ void main() {
 
   // ---------- NAME WRITTEN IN CLOUDS (sky only) ----------
   // map screen uv into the text band, preserving the texture's aspect ratio
-  float cloudCx = 0.5, cloudCy = 0.74, cloudW = 0.82;
+  float cloudCx = 0.5, cloudCy = 0.74, cloudW = 0.86;
   float cloudH = cloudW * aspect / u_texAspect;
   vec2 tc = (uv - vec2(cloudCx - cloudW * 0.5, cloudCy - cloudH * 0.5)) / vec2(cloudW, cloudH);
   tc.y = 1.0 - tc.y;                                    // canvas texture is y-down
-  float inBox = step(0.0, tc.x) * step(tc.x, 1.0) * step(0.0, tc.y) * step(tc.y, 1.0);
-  float cdrift = t * 0.01;
-  // billowy warp turns the crisp glyph edges into cloud puffs
-  vec2 wn = tc * vec2(3.2, 9.0);
-  vec2 cwarp = vec2(fbm(wn + vec2(cdrift, 0.0)), fbm(wn + vec2(7.3, cdrift * 0.7))) - 0.5;
-  vec2 stc = clamp(tc + cwarp * vec2(0.045, 0.11), 0.0, 1.0);
-  // multi-scale puff noise eats into the letterforms so they read as cumulus
-  float puff = 0.6 * fbm(tc * vec2(9.0, 22.0) + vec2(cdrift * 2.0, 0.0))
-             + 0.4 * fbm(tc * vec2(3.5, 7.0) - vec2(0.0, cdrift));
-  float g = texture2D(u_text, stc).a;
-  float dens = smoothstep(0.34, 0.66, g * (0.45 + 1.05 * puff));
-  // rim light toward the sun + self-shadow under each puff -> volume
-  float gSun = texture2D(u_text, clamp(stc + vec2((sunPos.x - cloudCx) * 0.02, -0.012), 0.0, 1.0)).a;
-  float crim = clamp(dens - smoothstep(0.34, 0.66, gSun * (0.45 + 1.05 * puff)), 0.0, 1.0);
-  float gBot = texture2D(u_text, clamp(stc + vec2(0.0, 0.02), 0.0, 1.0)).a;
-  float cshade = clamp(dens - smoothstep(0.34, 0.66, gBot * (0.45 + 1.05 * puff)), 0.0, 1.0);
-  vec3 cloudShadow = vec3(0.40, 0.41, 0.52);            // cool under-shadow
-  vec3 cloudBody = vec3(0.87, 0.87, 0.93);              // soft white body
-  vec3 cloudCol = mix(cloudShadow, cloudBody, clamp(0.58 - 0.7 * cshade, 0.0, 1.0));
-  cloudCol = mix(cloudCol, vec3(1.0, 0.97, 0.92), crim * 0.8);
-  cloudCol += sunCol * crim * 0.7;                      // warm sunset edge toward the sun
-  float cloudA = dens * inBox * step(horizon, uv.y) * smoothstep(0.03, 0.22, u_fade);
+  float inBox = step(-0.06, tc.x) * step(tc.x, 1.06) * step(-0.12, tc.y) * step(tc.y, 1.12);
+  float cdrift = t * 0.006;
+
+  // soft, slightly-fattened glyph base (5 taps) -> a feathered, inflated silhouette
+  float e = 0.012;
+  float g  = texture2D(u_text, clamp(tc, 0.0, 1.0)).a * 0.30;
+  g += texture2D(u_text, clamp(tc + vec2(e, 0.0), 0.0, 1.0)).a * 0.20;
+  g += texture2D(u_text, clamp(tc + vec2(-e, 0.0), 0.0, 1.0)).a * 0.20;
+  g += texture2D(u_text, clamp(tc + vec2(0.0, e * 2.4), 0.0, 1.0)).a * 0.15;
+  g += texture2D(u_text, clamp(tc + vec2(0.0, -e * 2.4), 0.0, 1.0)).a * 0.15;
+
+  // rounded cumulus lobes: HIGH horizontal / LOW vertical freq so bumps are round,
+  // not torn vertical streaks (the band is wide and short, so freq must compensate)
+  float lobes  = fbm(tc * vec2(15.0, 5.0) + vec2(cdrift, 0.0));
+  float detail = fbm(tc * vec2(33.0, 11.0) - vec2(0.0, cdrift));
+  float bump = lobes * 0.72 + detail * 0.28;
+
+  // push the silhouette out along the lobes; WIDE threshold -> soft, fluffy edge
+  float field = g + (bump - 0.5) * 0.44;
+  float dens = smoothstep(0.30, 0.72, field);
+
+  // volume from the lobes' upward gradient: bright tops, soft cool-grey undersides
+  // (a fake vertical normal — no hard offset drop-shadow)
+  float above = fbm(tc * vec2(15.0, 5.0) + vec2(cdrift, -0.06));
+  float lit = clamp(0.45 + (bump - above) * 3.2, 0.0, 1.0);
+  vec3 cloudShadow = vec3(0.66, 0.69, 0.79);
+  vec3 cloudBody = vec3(0.99, 0.99, 1.0);
+  vec3 cloudCol = mix(cloudShadow, cloudBody, lit);
+  cloudCol = mix(cloudCol, sunCol, pow(dens, 3.0) * 0.16 * day); // warm kiss as it sets
+
+  // wispy edges read as semi-transparent (dens), solid cores opaque
+  float cloudA = dens * inBox * step(horizon, uv.y) * smoothstep(0.02, 0.2, u_fade);
   skyCol = mix(skyCol, cloudCol, clamp(cloudA, 0.0, 1.0));
 
   // ---------- SEA (below horizon) ----------
@@ -312,7 +322,7 @@ export function WavesHero() {
         render(7.5, 1)
       } else {
         const start = performance.now()
-        const ARC_S = 3.6 // length of the noon -> dusk intro
+        const ARC_S = 1.5 // length of the noon -> dusk intro
         const loop = (now: number) => {
           if (disposed) return
           resize()
@@ -339,7 +349,7 @@ export function WavesHero() {
 
   // hold the overlay copy until the sun has (mostly) set, so the noon -> dusk
   // arc plays as the intro/loader and the text fades in once it lands
-  const INTRO = 2.7
+  const INTRO = 1.0
   const rise = (delay: number) => ({
     initial: reduce ? { opacity: 0 } : { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
