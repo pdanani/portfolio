@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Warehouse Watch System Map</title>
+<meta name="description" content="How the Costco tracker, the portfolio, Neon, the cron pinger, and ntfy fit together in production." />
+
+<style>
+  :root {
+    --bg: #f4f5f8;
+    --surface: #ffffff;
+    --surface-2: #fafbfc;
+    --ink: #101623;
+    --muted: #58616f;
+    --faint: #878f9d;
+    --line: #e3e7ec;
+    --line-strong: #c9d0d9;
+    --accent: #5850ec;
+    --accent-ink: #453fce;
+    --accent-soft: #ecebfb;
+    --metal: #a95f2b;
+    --metal-soft: #f6ece2;
+    --ok: #147d49;
+    --shadow: 0 1px 2px rgba(16,22,35,.06), 0 8px 24px -12px rgba(16,22,35,.14);
+    --radius: 14px;
+    --font-display: "SF Pro Display", -apple-system, system-ui, "Segoe UI", sans-serif;
+    --font-body: -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --bg: #0a0e15; --surface: #121824; --surface-2: #0e131c;
+      --ink: #e9edf3; --muted: #9aa4b2; --faint: #69727f;
+      --line: #222a37; --line-strong: #394455;
+      --accent: #8f89f6; --accent-ink: #a9a4f8; --accent-soft: #1b1e33;
+      --metal: #d78e52; --metal-soft: #271e15; --ok: #38c880;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 30px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0a0e15; --surface: #121824; --surface-2: #0e131c;
+    --ink: #e9edf3; --muted: #9aa4b2; --faint: #69727f;
+    --line: #222a37; --line-strong: #394455;
+    --accent: #8f89f6; --accent-ink: #a9a4f8; --accent-soft: #1b1e33;
+    --metal: #d78e52; --metal-soft: #271e15; --ok: #38c880;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 30px -14px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: clamp(26px,5vw,60px) clamp(16px,4vw,40px) 90px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink); font-weight: 600; }
+  h1 { font-family: var(--font-display); font-weight: 680; letter-spacing: -.02em; font-size: clamp(28px,4.6vw,42px); line-height: 1.1; margin: 10px 0 12px; text-wrap: balance; }
+  .lede { color: var(--muted); max-width: 66ch; margin: 0 0 30px; }
+  figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: clamp(10px,2vw,22px); overflow-x: auto; }
+  figure svg { display: block; min-width: 760px; max-width: 100%; height: auto; margin: 0 auto; color: var(--ink); }
+  figcaption { font-size: 13.5px; color: var(--muted); padding: 14px 6px 2px; max-width: 74ch; }
+  figcaption b { color: var(--ink); }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 34px; }
+  @media (max-width: 720px) { .cols { grid-template-columns: 1fr; } }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 22px; }
+  .card h2 { font-family: var(--font-display); font-size: 17px; font-weight: 650; margin: 0 0 12px; letter-spacing: -.01em; }
+  ol.flow { margin: 0; padding: 0 0 0 2px; list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 9px; }
+  ol.flow li { counter-increment: s; display: grid; grid-template-columns: 26px 1fr; gap: 8px; font-size: 14px; color: var(--muted); }
+  ol.flow li::before { content: counter(s); font-family: var(--font-mono); font-size: 11.5px; font-weight: 700; color: var(--accent-ink); background: var(--accent-soft); border-radius: 6px; width: 22px; height: 22px; display: grid; place-items: center; margin-top: 2px; }
+  ol.flow b { color: var(--ink); font-weight: 600; }
+  ol.flow code { font-family: var(--font-mono); font-size: .86em; background: var(--surface-2); border: 1px solid var(--line); border-radius: 5px; padding: 0 4px; }
+  .envnote { margin-top: 18px; font-size: 13px; color: var(--faint); }
+  .envnote code { font-family: var(--font-mono); font-size: .9em; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <span class="eyebrow">System design</span>
+  <h1>Warehouse Watch, inside the portfolio</h1>
+  <p class="lede">One Vercel deployment serves both the portfolio and the tracker. Serverless functions hold no state — every request pulls from Neon, talks to Costco's public endpoints directly, and the only long-running "process" is a free external scheduler pinging one route.</p>
+
+  <figure>
+    <svg viewBox="0 0 1060 700" role="img" aria-label="System diagram: the browser loads pawandanani.com from Vercel, where TanStack Start UI calls Nitro serverless functions; functions read and write Neon Postgres over HTTPS and fetch Costco's public APIs; cron-job.org pings the poll endpoint every 10 minutes; on a restock the poll function posts to ntfy.sh, which pushes a notification to the phone.">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="currentColor" />
+        </marker>
+        <marker id="arrA" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="var(--accent)" />
+        </marker>
+        <marker id="arrM" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="var(--metal)" />
+        </marker>
+      </defs>
+
+      <!-- ===== Vercel container ===== -->
+      <rect x="270" y="42" width="390" height="478" rx="16" fill="none" stroke="var(--line-strong)" stroke-dasharray="5 4" />
+      <text x="292" y="70" font-size="12" font-weight="700" fill="var(--faint)" font-family="var(--font-mono)" letter-spacing="2">VERCEL · ONE DEPLOYMENT</text>
+
+      <!-- Edge/CDN -->
+      <rect x="292" y="88" width="346" height="52" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-opacity=".55" />
+      <text x="465" y="110" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Edge network / CDN</text>
+      <text x="465" y="127" text-anchor="middle" font-size="11" fill="var(--faint)">static assets · SSR entry</text>
+
+      <!-- UI -->
+      <rect x="292" y="168" width="346" height="86" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-opacity=".55" />
+      <text x="465" y="192" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">TanStack Start — React 19 SSR</text>
+      <text x="465" y="212" text-anchor="middle" font-size="11.5" font-family="var(--font-mono)" fill="var(--muted)">/  portfolio</text>
+      <text x="465" y="230" text-anchor="middle" font-size="11.5" font-family="var(--font-mono)" fill="var(--accent-ink)">/costco  tracker UI</text>
+
+      <!-- Functions -->
+      <rect x="292" y="288" width="346" height="204" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" />
+      <text x="465" y="312" text-anchor="middle" font-size="13" font-weight="650" fill="currentColor">Nitro serverless functions</text>
+      <text x="310" y="336" font-size="11" font-family="var(--font-mono)" fill="var(--muted)">/api/costco/inventory · search-backed list</text>
+      <text x="310" y="355" font-size="11" font-family="var(--font-mono)" fill="var(--muted)">/api/costco/lookup · URL or item #</text>
+      <text x="310" y="374" font-size="11" font-family="var(--font-mono)" fill="var(--muted)">/api/costco/items/:id/price · stock · scan</text>
+      <text x="310" y="393" font-size="11" font-family="var(--font-mono)" fill="var(--muted)">/api/costco/warehouses · /watches</text>
+      <text x="310" y="412" font-size="11" font-family="var(--font-mono)" fill="var(--accent-ink)" font-weight="700">/api/costco/poll · restock differ</text>
+      <text x="310" y="438" font-size="10.5" fill="var(--faint)">stateless · signed-cookie auth · scan capped</text>
+      <text x="310" y="454" font-size="10.5" fill="var(--faint)">to fit free maxDuration</text>
+
+      <!-- ===== Clients ===== -->
+      <rect x="28" y="150" width="184" height="70" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-opacity=".55" />
+      <text x="120" y="179" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Browser</text>
+      <text x="120" y="198" text-anchor="middle" font-size="11" fill="var(--faint)">you · recruiters</text>
+
+      <rect x="28" y="560" width="184" height="70" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-opacity=".55" />
+      <text x="120" y="589" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Phone</text>
+      <text x="120" y="608" text-anchor="middle" font-size="11" fill="var(--faint)">ntfy app · later Web Push</text>
+
+      <!-- ===== External col ===== -->
+      <rect x="742" y="88" width="290" height="88" rx="10" fill="var(--surface-2)" stroke="var(--accent)" />
+      <text x="887" y="115" text-anchor="middle" font-size="13" font-weight="650" fill="currentColor">Neon Postgres</text>
+      <text x="887" y="135" text-anchor="middle" font-size="11" font-family="var(--font-mono)" fill="var(--muted)">items · warehouses · watches</text>
+      <text x="887" y="152" text-anchor="middle" font-size="11" font-family="var(--font-mono)" fill="var(--muted)">price_snapshots · Drizzle pg-core</text>
+
+      <rect x="742" y="238" width="290" height="150" rx="10" fill="var(--metal-soft)" stroke="var(--metal)" />
+      <text x="887" y="263" text-anchor="middle" font-size="13" font-weight="650" fill="currentColor">costco.com public APIs</text>
+      <text x="760" y="288" font-size="11" font-family="var(--font-mono)" fill="var(--muted)">catalog search (POST, full catalog)</text>
+      <text x="760" y="306" font-size="11" font-family="var(--font-mono)" fill="var(--muted)">display-price-lite · price + deals</text>
+      <text x="760" y="324" font-size="11" font-family="var(--font-mono)" fill="var(--muted)">inventorylevels/pickup · per-warehouse stock</text>
+      <text x="760" y="342" font-size="11" font-family="var(--font-mono)" fill="var(--muted)">warehouse locator · geocode</text>
+      <text x="760" y="368" font-size="10.5" fill="var(--faint)">no login · client-identifier headers · throttled</text>
+
+      <rect x="742" y="438" width="290" height="60" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-opacity=".55" />
+      <text x="887" y="463" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">ntfy.sh</text>
+      <text x="887" y="482" text-anchor="middle" font-size="11" font-family="var(--font-mono)" fill="var(--faint)">private topic · free</text>
+
+      <!-- Scheduler -->
+      <rect x="292" y="586" width="238" height="64" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-opacity=".55" />
+      <text x="411" y="612" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">cron-job.org</text>
+      <text x="411" y="631" text-anchor="middle" font-size="11" fill="var(--faint)">free scheduler · every 10 min</text>
+
+      <!-- ===== Arrows ===== -->
+      <!-- browser -> vercel -->
+      <line x1="212" y1="185" x2="266" y2="185" stroke="currentColor" stroke-width="1.6" marker-end="url(#arr)" />
+      <text x="238" y="172" text-anchor="middle" font-size="10.5" fill="var(--muted)" font-family="var(--font-mono)">HTTPS</text>
+
+      <!-- edge -> ui -->
+      <line x1="465" y1="140" x2="465" y2="164" stroke="currentColor" stroke-width="1.6" marker-end="url(#arr)" />
+
+      <!-- ui -> functions -->
+      <line x1="465" y1="254" x2="465" y2="284" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#arrA)" />
+      <text x="478" y="274" font-size="10.5" fill="var(--accent-ink)" font-family="var(--font-mono)">fetch · cookie</text>
+
+      <!-- functions -> neon (elbow) -->
+      <path d="M638 330 H700 V132 H738" fill="none" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#arrA)" />
+      <text x="712" y="222" font-size="10.5" fill="var(--accent-ink)" font-family="var(--font-mono)" transform="rotate(-90 712 222)">SQL / HTTPS</text>
+
+      <!-- functions -> costco (elbow) -->
+      <path d="M638 380 H690 V313 H738" fill="none" stroke="var(--metal)" stroke-width="1.8" marker-end="url(#arrM)" />
+      <text x="664" y="368" text-anchor="middle" font-size="10.5" fill="var(--metal)" font-family="var(--font-mono)">fetch</text>
+
+      <!-- scheduler -> poll -->
+      <line x1="411" y1="586" x2="411" y2="496" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#arrA)" />
+      <text x="424" y="548" font-size="10.5" fill="var(--accent-ink)" font-family="var(--font-mono)">GET /poll · CRON_SECRET</text>
+
+      <!-- poll -> ntfy -->
+      <path d="M638 452 H700 V468 H738" fill="none" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#arrA)" />
+      <text x="668" y="442" text-anchor="middle" font-size="10.5" fill="var(--accent-ink)" font-family="var(--font-mono)">POST on out→in</text>
+
+      <!-- ntfy -> phone -->
+      <path d="M887 498 V595 H216" fill="none" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#arrA)" />
+      <text x="555" y="583" text-anchor="middle" font-size="10.5" fill="var(--accent-ink)" font-family="var(--font-mono)">push notification</text>
+    </svg>
+    <figcaption><b>Everything stateless lives on Vercel; everything stateful lives in Neon.</b> The functions are the only component that talks to Costco, and the scheduler is the only thing that "runs" when nobody's looking — one GET every ten minutes stands in for the background process a VPS would give you.</figcaption>
+  </figure>
+
+  <div class="cols">
+    <div class="card">
+      <h2>Life of a request — checking a watch's stock</h2>
+      <ol class="flow">
+        <li><span>You open <code>/costco</code>; Vercel serves the SSR'd page from the same deployment as the portfolio.</span></li>
+        <li><span>The UI calls <code>POST /api/costco/items/:id/stock</code> with your signed session cookie.</span></li>
+        <li><span>The function loads the item's child id from <b>Neon</b>, then fans out to Costco's <code>pickup</code> endpoint once per tracked warehouse.</span></li>
+        <li><span>Results are written back to Neon (<code>warehouse_items</code>) and returned; the UI renders in-stock / low / out per warehouse.</span></li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Life of an alert — back-in-stock push</h2>
+      <ol class="flow">
+        <li><span><b>cron-job.org</b> fires <code>GET /api/costco/poll</code> every 10 minutes with the <code>CRON_SECRET</code> header.</span></li>
+        <li><span>The poll function reads all <code>watches</code> from Neon and re-checks each one against Costco (online stock or per-warehouse, per the watch's scope).</span></li>
+        <li><span>It diffs against the last-known state stored in Neon — only an <b>out → in transition</b> counts.</span></li>
+        <li><span>On a transition it POSTs to your private <b>ntfy</b> topic; the ntfy app pushes it to your phone. Web Push slots in beside this once the domain serves it.</span></li>
+      </ol>
+      <p class="envnote">Config is five env vars: <code>DATABASE_URL</code> · <code>APP_PASSWORD</code> · <code>SESSION_SECRET</code> · <code>NTFY_TOPIC</code> · <code>CRON_SECRET</code>.</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
