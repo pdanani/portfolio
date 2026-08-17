@@ -136,8 +136,11 @@
   );
 }
 
+/* Glass that carries its own dark base: Chrome's backdrop sampling can
+   glitch to a blank (white) backdrop after refresh/compositor resets, so
+   legibility must not depend on what's behind the pane. */
 .waves-glass {
-  background: color-mix(in oklab, var(--card) 60%, transparent);
+  background: oklch(0.14 0.04 253 / 0.85);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }

@@ -212,28 +212,35 @@ function startOcean(
     const uRes = gl.getUniformLocation(program, 'u_resolution')
     const uFade = gl.getUniformLocation(program, 'u_fade')
 
-    // reading clientWidth forces layout, so size only on resize events —
-    // never inside the render loop
-    const resize = () => {
+    const render = (seconds: number, day: number) => {
+      // drawingBuffer* is the truth about the allocated buffer; syncing
+      // viewport + resolution from it on every draw (cheap GL state, no
+      // layout read) means a raced resize can mis-frame at most one frame
+      const w = gl.drawingBufferWidth
+      const h = gl.drawingBufferHeight
+      gl.viewport(0, 0, w, h)
+      gl.uniform2f(uRes, w, h)
+      gl.uniform1f(uTime, seconds)
+      gl.uniform1f(uFade, day)
+      gl.drawArrays(gl.TRIANGLES, 0, 3)
+    }
+
+    // reading clientWidth forces layout, so resize the buffer only on
+    // resize events — never inside the render loop
+    const resizeBuffer = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR)
       const w = Math.max(1, Math.floor(canvas.clientWidth * dpr))
       const h = Math.max(1, Math.floor(canvas.clientHeight * dpr))
       if (canvas.width !== w || canvas.height !== h) {
         canvas.width = w
         canvas.height = h
+        // resizing clears the buffer; repaint now when there is no loop
+        if (!animate) render(7.5, 1)
       }
-      gl.viewport(0, 0, canvas.width, canvas.height)
-      gl.uniform2f(uRes, canvas.width, canvas.height)
     }
 
-    const render = (seconds: number, day: number) => {
-      gl.uniform1f(uTime, seconds)
-      gl.uniform1f(uFade, day)
-      gl.drawArrays(gl.TRIANGLES, 0, 3)
-    }
-
-    resize()
-    window.addEventListener('resize', resize)
+    resizeBuffer()
+    window.addEventListener('resize', resizeBuffer)
 
     // success: reveal the canvas over the CSS fallback
     canvas.style.opacity = '1'
@@ -254,10 +261,12 @@ function startOcean(
 
     return () => {
       cancelAnimationFrame(raf)
-      window.removeEventListener('resize', resize)
+      window.removeEventListener('resize', resizeBuffer)
       gl.deleteBuffer(buffer)
       gl.deleteProgram(program)
-      gl.getExtension('WEBGL_lose_context')?.loseContext()
+      // no loseContext() here: the canvas element survives React re-mounts
+      // (dev HMR, reduced-motion toggles) and a context released that way
+      // can never be re-acquired — the next mount would render nothing
     }
   } catch {
     return null
@@ -434,7 +443,9 @@ export function WavesHero() {
               lengthAdjust="spacingAndGlyphs"
               fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
               fontSize="150"
-              fill="url(#waves-cloud-fill)"
+              /* SVG2 paint fallback keeps the clouds white if the gradient
+                 ref ever fails to rasterize */
+              fill="url(#waves-cloud-fill) #e9eef6"
               filter="url(#waves-cloud)"
             >
               Pawan Danani
