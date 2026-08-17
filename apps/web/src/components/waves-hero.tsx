@@ -212,90 +212,52 @@ function startOcean(
     const uRes = gl.getUniformLocation(program, 'u_resolution')
     const uFade = gl.getUniformLocation(program, 'u_fade')
 
-    const render = (seconds: number, day: number) => {
-      // drawingBuffer* is the truth about the allocated buffer; syncing
-      // viewport + resolution from it on every draw (cheap GL state, no
-      // layout read) means a raced resize can mis-frame at most one frame
-      const w = gl.drawingBufferWidth
-      const h = gl.drawingBufferHeight
-      gl.viewport(0, 0, w, h)
-      gl.uniform2f(uRes, w, h)
-      gl.uniform1f(uTime, seconds)
-      gl.uniform1f(uFade, day)
-      gl.drawArrays(gl.TRIANGLES, 0, 3)
-    }
-
-    // The canvas was created with alpha:false, so before anything is drawn
-    // it composites as OPAQUE BLACK. Reveal it only after verifying a frame
-    // actually presented (1x1 readback — the scene is never pure black at
-    // the sampled corner). A context that comes up wedged after a rapid
-    // refresh draws nothing, fails this check, and leaves the CSS fallback
-    // visible instead of a black rectangle. The readback runs only until
-    // the first healthy frame, so the steady-state loop never pays for it.
-    let revealed = false
-    const pixel = new Uint8Array(4)
-    const reveal = () => {
-      if (revealed || gl.isContextLost()) return
-      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
-      if (pixel[0] + pixel[1] + pixel[2] === 0) return // nothing presented
-      revealed = true
-      canvas.style.opacity = '1'
-    }
-
-    // reading clientWidth forces layout, so resize the buffer only when the
-    // canvas's layout size actually changes — never inside the render loop.
-    // ResizeObserver (not window resize) also catches late-arriving CSS.
-    const resizeBuffer = () => {
+    // reading clientWidth forces layout, so size only on resize events —
+    // never inside the render loop
+    const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR)
       const w = Math.max(1, Math.floor(canvas.clientWidth * dpr))
       const h = Math.max(1, Math.floor(canvas.clientHeight * dpr))
       if (canvas.width !== w || canvas.height !== h) {
         canvas.width = w
         canvas.height = h
-        // resizing clears the buffer; repaint now when there is no loop
-        if (!animate) render(7.5, 1)
       }
+      gl.viewport(0, 0, canvas.width, canvas.height)
+      gl.uniform2f(uRes, canvas.width, canvas.height)
     }
 
-    resizeBuffer()
-    const observer = new ResizeObserver(resizeBuffer)
-    observer.observe(canvas)
+    const render = (seconds: number, day: number) => {
+      gl.uniform1f(uTime, seconds)
+      gl.uniform1f(uFade, day)
+      gl.drawArrays(gl.TRIANGLES, 0, 3)
+    }
+
+    resize()
+    window.addEventListener('resize', resize)
+
+    // success: reveal the canvas over the CSS fallback
+    canvas.style.opacity = '1'
 
     let raf = 0
-    let deadFrames = 0
     if (animate) {
       const start = performance.now()
       const loop = (now: number) => {
-        if (gl.isContextLost()) {
-          // silent death (no contextlost event yet): fall back, stop looping
-          canvas.style.opacity = '0'
-          return
-        }
         const elapsed = (now - start) / 1000
         const p = Math.min(1, elapsed / INTRO_S)
         render(elapsed, p * p * (3 - 2 * p)) // smoothstep easing of the sun's descent
-        if (!revealed) {
-          reveal()
-          // a context that won't present within ~30 frames is wedged for
-          // good — stop burning GPU on it and let the fallback stand
-          if (!revealed && ++deadFrames > 30) return
-        }
         raf = requestAnimationFrame(loop)
       }
       raf = requestAnimationFrame(loop)
     } else {
       render(7.5, 1) // reduced motion: a single frame, settled at dusk
-      reveal()
     }
 
     return () => {
       cancelAnimationFrame(raf)
-      observer.disconnect()
+      window.removeEventListener('resize', resize)
       gl.deleteBuffer(buffer)
       gl.deleteProgram(program)
-      // no loseContext() here: the canvas element survives React re-mounts
-      // (dev HMR, reduced-motion toggles) and a context released that way
-      // can never be re-acquired — the next mount would render nothing
+      gl.getExtension('WEBGL_lose_context')?.loseContext()
     }
   } catch {
     return null
@@ -472,9 +434,7 @@ export function WavesHero() {
               lengthAdjust="spacingAndGlyphs"
               fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
               fontSize="150"
-              /* SVG2 paint fallback keeps the clouds white if the gradient
-                 ref ever fails to rasterize */
-              fill="url(#waves-cloud-fill) #e9eef6"
+              fill="url(#waves-cloud-fill)"
               filter="url(#waves-cloud)"
             >
               Pawan Danani

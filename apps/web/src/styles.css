@@ -76,9 +76,10 @@
   * {
     @apply border-border outline-ring/50;
   }
-  /* NOTE: no global scroll-behavior:smooth — TanStack's scroll restoration
-     calls scrollTo() on reload, and the CSS would animate that whole-page
-     scroll on every refresh */
+  html {
+    /* reduced-motion net resets this to auto */
+    scroll-behavior: smooth;
+  }
   html,
   body,
   #app {
@@ -135,11 +136,8 @@
   );
 }
 
-/* Glass that carries its own dark base: Chrome's backdrop sampling can
-   glitch to a blank (white) backdrop after refresh/compositor resets, so
-   legibility must not depend on what's behind the pane. */
 .waves-glass {
-  background: oklch(0.14 0.04 253 / 0.85);
+  background: color-mix(in oklab, var(--card) 60%, transparent);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
