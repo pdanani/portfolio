@@ -36,6 +36,43 @@ npx tsc -p apps/web/tsconfig.json    # type-check (kept green)
 
 ---
 
+## Deploying to pawandanani.com (TODO — parked 2026-08-16)
+
+Where things stand: **pawandanani.com currently serves the OLD Next.js site
+from Firebase Hosting** (apex A record `199.36.158.100` = Firebase). The
+Vercel project `portfolio-web` (linked in `.vercel/project.json`) hosts the
+preview URL above but its last deploy predates the revamp. The Vercel CLI on
+this machine is **logged out** — that's the only blocker.
+
+Do the steps in this order, so the domain cuts over to the new build and
+never exposes the stale one:
+
+1. **Authenticate** (one-time, opens the browser):
+   ```bash
+   npx vercel login
+   ```
+2. **Deploy today's build, then attach the domain** (from the repo root —
+   the directory is already linked to `portfolio-web`):
+   ```bash
+   npx vercel --prod
+   npx vercel domains add pawandanani.com
+   npx vercel domains add www.pawandanani.com
+   ```
+   Vercel prints the DNS records it expects and starts watching for them.
+3. **Update DNS.** Nameservers are Google Cloud DNS
+   (`ns-cloud-e*.googledomains.com`) — an ex-Google-Domains setup, so the
+   domain is most likely managed at **Squarespace Domains** now. Change two
+   records (trust Vercel's step-2 output if it shows different values):
+   - `@` (apex): replace A `199.36.158.100` → **A `76.76.21.21`**
+   - `www`: delete its A record → **CNAME `cname.vercel-dns.com`**
+
+   Propagation is usually minutes; Vercel verifies automatically, issues
+   SSL itself, and redirects `www` → apex once both are attached.
+4. **Cleanup (optional):** in the Firebase console, remove the custom
+   domain from the old hosting project, then retire the Firebase project.
+
+---
+
 ## Status (2026-08-16)
 
 ### ✅ Done
