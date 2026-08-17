@@ -76,10 +76,10 @@
   * {
     @apply border-border outline-ring/50;
   }
-  html {
-    /* reduced-motion net resets this to auto */
-    scroll-behavior: smooth;
-  }
+  /* No global scroll-behavior:smooth — it animates the browser's
+     scroll-to-#hash and the router's scroll restoration on reload (a
+     visible glide-and-rebound). In-page anchors glide via scrollToAnchor
+     (lib/scroll.ts) instead, which also keeps the URL hash-free. */
   html,
   body,
   #app {

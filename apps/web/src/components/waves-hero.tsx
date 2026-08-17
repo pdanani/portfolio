@@ -3,6 +3,7 @@ import { m, useReducedMotion } from 'motion/react'
 import { ChevronDown, Github, Linkedin, Mail } from 'lucide-react'
 import { EASE } from '#/lib/motion/variants'
 import { PROFILE } from '#/data/profile'
+import { scrollToAnchor } from '#/lib/scroll'
 
 /* Full-screen single-triangle vertex shader. */
 const VERT = `#version 100
@@ -461,6 +462,7 @@ export function WavesHero() {
         >
           <a
             href="#projects"
+            onClick={scrollToAnchor}
             className="rounded-[0.4rem] bg-primary px-7 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
             style={{
               boxShadow:
@@ -471,6 +473,7 @@ export function WavesHero() {
           </a>
           <a
             href="#about"
+            onClick={scrollToAnchor}
             className="waves-glass rounded-[0.4rem] border border-border px-7 py-3 text-sm font-medium text-foreground transition hover:bg-accent"
           >
             About me
@@ -508,6 +511,7 @@ export function WavesHero() {
       {/* scroll cue — appears once the sun has landed */}
       <m.a
         href="#experience"
+        onClick={scrollToAnchor}
         aria-label="Scroll to experience"
         className="absolute bottom-5 left-1/2 -translate-x-1/2 text-foreground/50 transition hover:text-foreground"
         {...rise(0.9)}
