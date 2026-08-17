@@ -104,6 +104,26 @@ TTL) and search results self-heal the local catalog on every query.
 - Deal scans price a bounded batch (≤60) per invocation; re-run (or cron) to
   accumulate coverage.
 
+## Status & next steps (2026-08-16)
+
+- ✅ Code + docs committed on `revamp`; build and typecheck clean; auth flow
+  smoke-tested. The feature is fully built but **not yet live** — no database
+  exists yet.
+- ⏳ **To go live, in order:**
+  1. Standalone repo → GitHub: create `pdanani/warehouse-watch` (private,
+     empty) on github.com; the local repo's remote is already set — then push.
+  2. Neon: Vercel → Storage → Create Database → Neon (adds `DATABASE_URL`).
+  3. `apps/web/.env`: `DATABASE_URL` + `APP_PASSWORD`, `SESSION_SECRET`,
+     `NTFY_TOPIC`, `CRON_SECRET`.
+  4. `cd apps/web && npm run db:push`, then a full live test
+     (search → price → warehouse stock → region scan → test alert).
+  5. Vercel env vars (same + `PUBLIC_URL`), deploy, cron-job.org →
+     `GET /api/costco/poll?key=<CRON_SECRET>` every 10 min; subscribe to the
+     ntfy topic on the phone.
+- 🗺️ **Next feature once live:** `/eats` — NYC favorite-restaurants map
+  (Google Maps JS API, pins in Neon, photos in Vercel Blob, private add-pin
+  form reusing this feature's auth).
+
 ## Provenance
 
 Ported from the standalone app at `~/warehouse-watch` (Fastify + SQLite +
