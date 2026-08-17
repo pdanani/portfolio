@@ -9,10 +9,6 @@ import { nitro } from 'nitro/vite'
 
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
-  // Inline (empty) PostCSS config so Vite does NOT search ancestor dirs and
-  // pick up the legacy root Next.js postcss.config.js. Tailwind v4 runs via
-  // the @tailwindcss/vite plugin and needs no PostCSS plugins here.
-  css: { postcss: { plugins: [] } },
   plugins: [
     devtools(),
     nitro({ rollupConfig: { external: [/^@sentry\//] } }),

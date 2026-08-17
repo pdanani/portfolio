@@ -9,9 +9,15 @@ void main() {
   gl_Position = vec4(a_pos, 0.0, 1.0);
 }`
 
-/* Twilight ocean: dusk sky gradient, fbm swell, horizon, warm sun glint. */
+/* Twilight ocean: dusk sky gradient, fbm swell, horizon, warm sun glint.
+   highp is not guaranteed in fragment shaders on older mobile GPUs, so fall
+   back to mediump there instead of failing to compile. */
 const FRAG = `#version 100
+#ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
+#else
+precision mediump float;
+#endif
 uniform vec2 u_resolution;
 uniform float u_time;
 uniform float u_fade;
@@ -62,21 +68,19 @@ void main() {
   vec3 skyCol = mix(horizCol, midSky, smoothstep(0.0, 0.45, sky));
   skyCol = mix(skyCol, zenith, smoothstep(0.35, 1.0, sky));
 
-  // the sun starts behind the name clouds (centre, high) and arcs down to the dusk horizon
-  // same arc as before (Δx = 0.12, same descent), just translated right so it
-  // starts further right and therefore lands further right (clears the mobile button)
+  // the sun starts behind the name clouds (centre, high) and arcs down to the
+  // dusk horizon, landing right of centre so it clears the mobile CTA
   vec2 sunPos = mix(vec2(0.66, 0.62), vec2(0.78, horizon + 0.018), day);
   vec2 sd = (uv - sunPos);
   sd.x *= aspect;
   float sunDist = length(sd);
-  // warm glow halo in the sky — much gentler on load (high-noon) so it isn't harsh,
-  // ramping to full strength by the time it reaches the dusk horizon
+  // warm glow halo in the sky — gentle at noon, full strength by dusk
   float glow = exp(-sunDist * 6.5) * 1.0 + exp(-sunDist * 2.2) * 0.42;
   glow *= 0.38 + 0.62 * day;
   // sun colour warms as it sets: white-hot noon -> warm orange dusk
   vec3 sunCol = mix(vec3(1.0, 0.98, 0.92), vec3(1.0, 0.66, 0.36), day);
   skyCol += sunCol * glow * step(horizon, uv.y);
-  // soft sun disc (swells a touch as it nears the horizon; softer + dimmer on load)
+  // soft sun disc (swells a touch as it nears the horizon; softer + dimmer at noon)
   float disc = smoothstep(mix(0.045, 0.058, day), mix(0.024, 0.032, day), sunDist);
   skyCol = mix(skyCol, mix(vec3(0.93, 0.94, 0.92), vec3(1.0, 0.86, 0.66), day), disc * step(horizon, uv.y) * (0.5 + 0.5 * day));
 
@@ -129,6 +133,163 @@ void main() {
   gl_FragColor = vec4(col, 1.0);
 }`
 
+/** Length (s) of the noon->dusk sun-arc intro; the overlay copy waits for it. */
+const INTRO_S = 1.5
+
+/** Above 1.5x device pixels this soft scene looks identical, but every extra
+    pixel runs the fbm shader — on 3x phones that's the difference between
+    smooth and choppy. */
+const MAX_DPR = 1.5
+
+/**
+ * Compiles the ocean shader on `canvas` and starts rendering (a single dusk
+ * frame when `animate` is false). Returns a cleanup function, or null when
+ * WebGL is unavailable — the canvas then stays transparent and the CSS
+ * `.waves-fallback` scene underneath shows instead.
+ */
+function startOcean(
+  canvas: HTMLCanvasElement,
+  animate: boolean,
+): (() => void) | null {
+  const attrs: WebGLContextAttributes = {
+    alpha: false,
+    antialias: false, // a full-screen triangle has no edges to smooth
+    // software-rendered GL would crawl; prefer the static CSS fallback
+    failIfMajorPerformanceCaveat: true,
+  }
+
+  try {
+    const gl =
+      canvas.getContext('webgl', attrs) ??
+      (canvas.getContext(
+        'experimental-webgl',
+        attrs,
+      ) as WebGLRenderingContext | null)
+    if (!gl) return null
+
+    const compile = (type: number, src: string): WebGLShader | null => {
+      const shader = gl.createShader(type)
+      if (!shader) return null
+      gl.shaderSource(shader, src)
+      gl.compileShader(shader)
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        gl.deleteShader(shader)
+        return null
+      }
+      return shader
+    }
+
+    const vs = compile(gl.VERTEX_SHADER, VERT)
+    const fs = compile(gl.FRAGMENT_SHADER, FRAG)
+    if (!vs || !fs) return null
+
+    const program = gl.createProgram()
+    gl.attachShader(program, vs)
+    gl.attachShader(program, fs)
+    gl.linkProgram(program)
+    gl.deleteShader(vs)
+    gl.deleteShader(fs)
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      gl.deleteProgram(program)
+      return null
+    }
+    gl.useProgram(program)
+
+    // full-screen triangle
+    const buffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([-1, -1, 3, -1, -1, 3]),
+      gl.STATIC_DRAW,
+    )
+    const loc = gl.getAttribLocation(program, 'a_pos')
+    gl.enableVertexAttribArray(loc)
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0)
+
+    const uTime = gl.getUniformLocation(program, 'u_time')
+    const uRes = gl.getUniformLocation(program, 'u_resolution')
+    const uFade = gl.getUniformLocation(program, 'u_fade')
+
+    // reading clientWidth forces layout, so size only on resize events —
+    // never inside the render loop
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR)
+      const w = Math.max(1, Math.floor(canvas.clientWidth * dpr))
+      const h = Math.max(1, Math.floor(canvas.clientHeight * dpr))
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w
+        canvas.height = h
+      }
+      gl.viewport(0, 0, canvas.width, canvas.height)
+      gl.uniform2f(uRes, canvas.width, canvas.height)
+    }
+
+    const render = (seconds: number, day: number) => {
+      gl.uniform1f(uTime, seconds)
+      gl.uniform1f(uFade, day)
+      gl.drawArrays(gl.TRIANGLES, 0, 3)
+    }
+
+    resize()
+    window.addEventListener('resize', resize)
+
+    // success: reveal the canvas over the CSS fallback
+    canvas.style.opacity = '1'
+
+    let raf = 0
+    if (animate) {
+      const start = performance.now()
+      const loop = (now: number) => {
+        const elapsed = (now - start) / 1000
+        const p = Math.min(1, elapsed / INTRO_S)
+        render(elapsed, p * p * (3 - 2 * p)) // smoothstep easing of the sun's descent
+        raf = requestAnimationFrame(loop)
+      }
+      raf = requestAnimationFrame(loop)
+    } else {
+      render(7.5, 1) // reduced motion: a single frame, settled at dusk
+    }
+
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('resize', resize)
+      gl.deleteBuffer(buffer)
+      gl.deleteProgram(program)
+      gl.getExtension('WEBGL_lose_context')?.loseContext()
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Runs the ocean and keeps it alive across GPU context loss (backgrounded
+ * mobile tabs, driver resets): on loss the canvas hides so the CSS fallback
+ * shows; on restore the scene re-initialises.
+ */
+function mountOcean(canvas: HTMLCanvasElement, animate: boolean): () => void {
+  let stop = startOcean(canvas, animate)
+
+  const onContextLost = (event: Event) => {
+    event.preventDefault() // signal that we handle restoration
+    stop?.()
+    stop = null
+    canvas.style.opacity = '0'
+  }
+  const onContextRestored = () => {
+    stop = startOcean(canvas, animate)
+  }
+  canvas.addEventListener('webglcontextlost', onContextLost)
+  canvas.addEventListener('webglcontextrestored', onContextRestored)
+
+  return () => {
+    canvas.removeEventListener('webglcontextlost', onContextLost)
+    canvas.removeEventListener('webglcontextrestored', onContextRestored)
+    stop?.()
+  }
+}
+
 /** Ocean Waves — raw WebGL twilight sea (fbm swell + sun glint) behind the overlay. */
 export function WavesHero() {
   const reduce = useReducedMotion()
@@ -137,147 +298,18 @@ export function WavesHero() {
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-
-    let raf = 0
-    let gl: WebGLRenderingContext | null = null
-    let program: WebGLProgram | null = null
-    let buffer: WebGLBuffer | null = null
-    let disposed = false
-
-    const cleanup = () => {
-      cancelAnimationFrame(raf) // no-op when raf is 0
-      raf = 0
-      if (gl) {
-        if (buffer) gl.deleteBuffer(buffer)
-        if (program) gl.deleteProgram(program)
-        const lose = gl.getExtension('WEBGL_lose_context')
-        if (lose) lose.loseContext()
-      }
-      gl = null
-    }
-
-    try {
-      gl =
-        canvas.getContext('webgl', { antialias: true, alpha: false }) ??
-        (canvas.getContext(
-          'experimental-webgl',
-        ) as WebGLRenderingContext | null)
-      if (!gl) return // leave canvas hidden -> CSS fallback shows
-
-      const context = gl
-
-      const compile = (type: number, src: string): WebGLShader | null => {
-        const shader = context.createShader(type)
-        if (!shader) return null
-        context.shaderSource(shader, src)
-        context.compileShader(shader)
-        if (!context.getShaderParameter(shader, context.COMPILE_STATUS)) {
-          context.deleteShader(shader)
-          return null
-        }
-        return shader
-      }
-
-      const vs = compile(context.VERTEX_SHADER, VERT)
-      const fs = compile(context.FRAGMENT_SHADER, FRAG)
-      if (!vs || !fs) {
-        cleanup()
-        return
-      }
-
-      program = context.createProgram()
-      context.attachShader(program, vs)
-      context.attachShader(program, fs)
-      context.linkProgram(program)
-      context.deleteShader(vs)
-      context.deleteShader(fs)
-      if (!context.getProgramParameter(program, context.LINK_STATUS)) {
-        cleanup()
-        return
-      }
-
-      context.useProgram(program)
-
-      // full-screen triangle
-      buffer = context.createBuffer()
-      context.bindBuffer(context.ARRAY_BUFFER, buffer)
-      context.bufferData(
-        context.ARRAY_BUFFER,
-        new Float32Array([-1, -1, 3, -1, -1, 3]),
-        context.STATIC_DRAW,
-      )
-      const loc = context.getAttribLocation(program, 'a_pos')
-      context.enableVertexAttribArray(loc)
-      context.vertexAttribPointer(loc, 2, context.FLOAT, false, 0, 0)
-
-      const uTime = context.getUniformLocation(program, 'u_time')
-      const uRes = context.getUniformLocation(program, 'u_resolution')
-      const uFade = context.getUniformLocation(program, 'u_fade')
-
-      const resize = () => {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2)
-        const w = Math.max(1, Math.floor(canvas.clientWidth * dpr))
-        const h = Math.max(1, Math.floor(canvas.clientHeight * dpr))
-        if (canvas.width !== w || canvas.height !== h) {
-          canvas.width = w
-          canvas.height = h
-        }
-        context.viewport(0, 0, canvas.width, canvas.height)
-        context.uniform2f(uRes, canvas.width, canvas.height)
-      }
-
-      const render = (seconds: number, fade: number) => {
-        context.uniform1f(uTime, seconds)
-        context.uniform1f(uFade, fade)
-        context.drawArrays(context.TRIANGLES, 0, 3)
-      }
-
-      resize()
-      window.addEventListener('resize', resize)
-
-      // success: reveal the canvas (CSS fallback stays underneath as a safety net)
-      canvas.style.opacity = '1'
-
-      if (reduce) {
-        // settle straight into dusk, skip the noon -> dusk arc
-        render(7.5, 1)
-      } else {
-        const start = performance.now()
-        const ARC_S = 1.5 // length of the noon -> dusk intro
-        const loop = (now: number) => {
-          if (disposed) return
-          resize()
-          const elapsed = (now - start) / 1000
-          const p = Math.min(1, elapsed / ARC_S)
-          const day = p * p * (3 - 2 * p) // smoothstep easing of the sun's descent
-          render(elapsed, day)
-          raf = requestAnimationFrame(loop)
-        }
-        raf = requestAnimationFrame(loop)
-      }
-
-      return () => {
-        disposed = true
-        window.removeEventListener('resize', resize)
-        cleanup()
-      }
-    } catch {
-      // any GL failure -> keep canvas hidden so the CSS sea/sky shows
-      cleanup()
-      return
-    }
+    return mountOcean(canvas, !reduce)
   }, [reduce])
 
   // hold the overlay copy until the sun has (mostly) set, so the noon -> dusk
   // arc plays as the intro/loader and the text fades in once it lands
-  const INTRO = 1.5
   const rise = (delay: number) => ({
     initial: reduce ? { opacity: 0 } : { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
     transition: {
       duration: reduce ? 0.01 : 0.7,
       ease: EASE,
-      delay: reduce ? 0 : INTRO + delay,
+      delay: reduce ? 0 : INTRO_S + delay,
     },
   })
 
@@ -313,18 +345,20 @@ export function WavesHero() {
 
         {/* the name, spelled in soft clouds — kept IN the layout flow (the real
             <h1>) so it reserves space and can never collide with the copy below;
-            the SVG "gooey" filter rounds the letters into puffy blobs */}
+            the SVG "gooey" filter rounds the letters into puffy blobs. The
+            intro animates only opacity/transform (compositor-friendly) — a CSS
+            blur here would re-run the SVG filters every frame. */}
         <m.h1
           aria-label="Pawan Danani"
           className="mt-1 mb-1"
           style={{ transformOrigin: 'left center' }}
-          initial={
-            reduce
-              ? { opacity: 0 }
-              : { opacity: 0, filter: 'blur(18px)', scale: 1.04, y: 12 }
-          }
-          animate={{ opacity: 1, filter: 'blur(0px)', scale: 1, y: 0 }}
-          transition={{ duration: reduce ? 0.01 : 1.5, ease: EASE, delay: reduce ? 0 : 0.2 }}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.04, y: 12 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{
+            duration: reduce ? 0.01 : 1.5,
+            ease: EASE,
+            delay: reduce ? 0 : 0.2,
+          }}
         >
           <span className="sr-only">Pawan Danani</span>
           <svg aria-hidden viewBox="0 0 1200 240" className="w-full max-w-4xl">
@@ -344,7 +378,12 @@ export function WavesHero() {
                   seed={6}
                   result="n"
                 />
-                <feDisplacementMap in="SourceGraphic" in2="n" scale={15} result="d" />
+                <feDisplacementMap
+                  in="SourceGraphic"
+                  in2="n"
+                  scale={15}
+                  result="d"
+                />
                 <feGaussianBlur in="d" stdDeviation={5} result="b" />
                 <feColorMatrix
                   in="b"
