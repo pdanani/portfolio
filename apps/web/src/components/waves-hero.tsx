@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { m, useReducedMotion } from 'motion/react'
+import { ChevronDown } from 'lucide-react'
 import { EASE } from '#/lib/motion/variants'
 
 /* Full-screen single-triangle vertex shader. */
@@ -314,7 +315,7 @@ export function WavesHero() {
   })
 
   return (
-    <main className="relative isolate min-h-screen overflow-hidden bg-background">
+    <section className="relative isolate min-h-screen overflow-hidden bg-background">
       {/* CSS fallback sea + sky (always rendered, sits behind the canvas) */}
       <div
         aria-hidden
@@ -455,7 +456,7 @@ export function WavesHero() {
 
         <m.div {...rise(0.4)} className="mt-10 flex flex-wrap gap-4">
           <a
-            href="#"
+            href="#projects"
             className="rounded-[0.4rem] bg-primary px-7 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
             style={{
               boxShadow:
@@ -465,13 +466,29 @@ export function WavesHero() {
             View projects
           </a>
           <a
-            href="#"
+            href="#contact"
             className="waves-glass rounded-[0.4rem] border border-border px-7 py-3 text-sm font-medium text-foreground transition hover:bg-accent"
           >
-            About
+            Get in touch
           </a>
         </m.div>
       </div>
-    </main>
+
+      {/* scroll cue — appears once the sun has landed */}
+      <m.a
+        href="#experience"
+        aria-label="Scroll to experience"
+        className="absolute bottom-5 left-1/2 -translate-x-1/2 text-foreground/50 transition hover:text-foreground"
+        {...rise(0.9)}
+      >
+        <m.span
+          className="block"
+          animate={reduce ? undefined : { y: [0, 6, 0] }}
+          transition={{ repeat: Infinity, duration: 2.4, ease: 'easeInOut' }}
+        >
+          <ChevronDown aria-hidden className="h-5 w-5" />
+        </m.span>
+      </m.a>
+    </section>
   )
 }

@@ -59,12 +59,22 @@ npx tsc -p apps/web/tsconfig.json    # type-check (kept green)
     `<link>` instead of a CSS `@import`;
   - TanStack devtools moved to `devDependencies`; `/styleguide` route removed.
 
-### ❌ Not built yet (the real site — Phase 2+)
-Still a single hero page. None of these exist: real routes (`/about`,
-`/projects`, `/projects/$slug`), nav, footer, page transitions, a content model
-(zod schemas / labs registry), migration of the old `data.json` (7 projects +
-experience, kept at `data/data.json`), MDX (not installed), any TanStack Query
-data fetching, any installed UI components, or the BFF server-fn layer.
+- **Resume sections shipped (2026-08-16)** — the home page is now a full
+  one-pager: Experience (timeline with amber "harbor-light" markers),
+  Selected projects (glass cards), Toolbox (skill chips), and Get in touch,
+  all on a `night-sea` gradient that continues the hero's sea into night
+  (with the set sun's afterglow bleeding past the waterline at the same x).
+  Subtle SVG wave dividers between sections; reveals via the existing
+  motion primitives; hero CTAs + scroll cue wired to section anchors.
+- **Content migrated to typed data (2026-08-16)** — `data/data.json` →
+  `apps/web/src/data/*.ts` (strict-TS checked, tech as arrays, per-project
+  `slug` + optional `liveUrl` reserved for hosting live apps under this
+  domain later). The JSON stays only as the archival source.
+
+### ❌ Not built yet (Phase 2+)
+Separate routes (`/projects/$slug` for app/writeup pages), nav, page
+transitions, MDX writeups, TanStack Query data fetching, installed UI
+components (shadcn vs Mantine still open), the BFF server-fn layer.
 
 ---
 
@@ -78,11 +88,11 @@ data fetching, any installed UI components, or the BFF server-fn layer.
   shadcn/ui unless the Mantine question is resolved otherwise.
 - Per-route `head` meta (SEO), sitemap/robots, default OG image.
 
-### Phase 3 — content model & migration
-- `labs/types.ts` + **zod** `LabProject` schema; `labs/registry.ts`.
-- Migrate `data/data.json` → typed `data/*.ts` (split `tech` strings → arrays,
-  generate slugs, fix the placeholder repo URL, carry experience/skills).
-- Install MDX (`@mdx-js/rollup` + remark/rehype) for project writeups.
+### Phase 3 — content depth
+- MDX (`@mdx-js/rollup` + remark/rehype) for project writeups at
+  `/projects/$slug`; the `slug` field in `src/data/projects.ts` is the hook.
+- Add the real Gesture Swiping Decoder repo URL (old data had a placeholder;
+  its card ships without a link until then).
 
 ### Phase 4 — pages & signature moments
 - Home (Ocean Waves hero + featured projects), Projects grid, project detail
@@ -102,13 +112,16 @@ data fetching, any installed UI components, or the BFF server-fn layer.
 
 ```
 apps/web/src/
-├─ routes/            __root, index (renders WavesHero)
+├─ routes/            __root, index (hero + sections one-pager)
 ├─ components/
 │  ├─ waves-hero.tsx  the Ocean Waves hero (shader + overlay)
+│  ├─ sections/       Section/SectionHeading, Experience, Projects, Skills, Contact
+│  ├─ chip.tsx        shared tech-tag pill · wave-divider.tsx swell separator
 │  └─ motion/         Reveal, StaggerGroup, Parallax, scroll progress
-├─ lib/               cn(), motion variants + provider
-└─ styles.css         Tailwind v4 + OKLCH tokens + waves helper classes
-data/data.json        old-site content awaiting Phase 3 migration
+├─ data/              typed resume content (profile, experience, projects, skills)
+├─ lib/               cn(), formatMonth/Range, motion variants + provider
+└─ styles.css         Tailwind v4 + OKLCH tokens + waves/night-sea classes
+data/data.json        archival source of the migrated content
 ```
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
