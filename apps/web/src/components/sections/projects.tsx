@@ -55,7 +55,7 @@ export function ProjectsSection() {
   return (
     <Section id="projects">
       <SectionHeading
-        number="02"
+        number="03"
         title="Selected projects"
         blurb="Systems work and product builds — a few will dock here as live apps over time."
       />

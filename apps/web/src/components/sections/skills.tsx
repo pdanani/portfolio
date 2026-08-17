@@ -6,7 +6,7 @@ import { Section, SectionHeading } from './section'
 export function SkillsSection() {
   return (
     <Section id="skills">
-      <SectionHeading number="03" title="Toolbox" />
+      <SectionHeading number="04" title="Toolbox" />
 
       <StaggerGroup className="grid gap-10 sm:grid-cols-3" amount={0.2}>
         {SKILLS.map((group) => (

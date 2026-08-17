@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { m, useReducedMotion } from 'motion/react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Github, Linkedin, Mail } from 'lucide-react'
 import { EASE } from '#/lib/motion/variants'
+import { PROFILE } from '#/data/profile'
 
 /* Full-screen single-triangle vertex shader. */
 const VERT = `#version 100
@@ -341,7 +342,7 @@ export function WavesHero() {
           {...rise(0.05)}
           className="font-mono text-xs uppercase tracking-[0.42em] text-brand-amber sm:text-sm"
         >
-          Backend Engineer
+          Software Engineer
         </m.p>
 
         {/* the name, spelled in soft clouds — kept IN the layout flow (the real
@@ -446,15 +447,18 @@ export function WavesHero() {
           {...rise(0.28)}
           className="mt-6 max-w-xl text-base leading-relaxed text-foreground/85 sm:text-lg"
         >
-          I build resilient distributed systems that stay afloat under load —
-          <span className="text-brand-amber"> Spring Boot</span>,
-          <span className="text-foreground"> Postgres</span>,
-          <span className="text-brand-cyan"> Redis</span> and
-          <span className="text-foreground"> Kafka</span>, engineered for
-          failure and tuned for the storm.
+          I&apos;m a software engineer building systems that stay afloat under
+          load — currently at{' '}
+          <span className="text-foreground">
+            M&amp;C Saatchi World Services
+          </span>{' '}
+          in New York. Have a problem worth building for? My inbox is open.
         </m.p>
 
-        <m.div {...rise(0.4)} className="mt-10 flex flex-wrap gap-4">
+        <m.div
+          {...rise(0.4)}
+          className="mt-10 flex flex-wrap items-center gap-4"
+        >
           <a
             href="#projects"
             className="rounded-[0.4rem] bg-primary px-7 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
@@ -466,11 +470,38 @@ export function WavesHero() {
             View projects
           </a>
           <a
-            href="#contact"
+            href="#about"
             className="waves-glass rounded-[0.4rem] border border-border px-7 py-3 text-sm font-medium text-foreground transition hover:bg-accent"
           >
-            Get in touch
+            About me
           </a>
+          <span className="ml-1 flex items-center gap-4">
+            <a
+              href={`mailto:${PROFILE.email}`}
+              aria-label={`Email ${PROFILE.email}`}
+              className="text-foreground/60 transition hover:text-brand-amber"
+            >
+              <Mail className="h-5 w-5" />
+            </a>
+            <a
+              href="https://github.com/pdanani"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="GitHub"
+              className="text-foreground/60 transition hover:text-brand-amber"
+            >
+              <Github className="h-5 w-5" />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/pawan-danani-8b9402148/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="LinkedIn"
+              className="text-foreground/60 transition hover:text-brand-amber"
+            >
+              <Linkedin className="h-5 w-5" />
+            </a>
+          </span>
         </m.div>
       </div>
 

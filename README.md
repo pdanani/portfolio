@@ -61,7 +61,8 @@ npx tsc -p apps/web/tsconfig.json    # type-check (kept green)
 
 - **Resume sections shipped (2026-08-16)** — the home page is now a full
   one-pager: Experience (timeline with amber "harbor-light" markers),
-  Selected projects (glass cards), Toolbox (skill chips), and Get in touch,
+  Selected projects (glass cards), and Toolbox (skill chips) — contact is
+  folded into the hero (email + LinkedIn) with a slim closing footer —
   all on a `night-sea` gradient that continues the hero's sea into night
   (with the set sun's afterglow bleeding past the waterline at the same x).
   Subtle SVG wave dividers between sections; reveals via the existing
@@ -115,8 +116,8 @@ apps/web/src/
 ├─ routes/            __root, index (hero + sections one-pager)
 ├─ components/
 │  ├─ waves-hero.tsx  the Ocean Waves hero (shader + overlay)
-│  ├─ sections/       Section/SectionHeading, Experience, Projects, Skills, Contact
-│  ├─ chip.tsx        shared tech-tag pill · wave-divider.tsx swell separator
+│  ├─ sections/       Section/SectionHeading, Experience, Projects, Skills
+│  ├─ chip.tsx        tech-tag pill · wave-divider.tsx · site-footer.tsx
 │  └─ motion/         Reveal, StaggerGroup, Parallax, scroll progress
 ├─ data/              typed resume content (profile, experience, projects, skills)
 ├─ lib/               cn(), formatMonth/Range, motion variants + provider

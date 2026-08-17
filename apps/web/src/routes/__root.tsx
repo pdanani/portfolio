@@ -29,10 +29,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {
         name: 'description',
         content:
-          'Backend engineer building resilient distributed systems — Spring Boot, Postgres, Redis and Kafka.',
+          'Software engineer building resilient systems — currently at M&C Saatchi World Services in New York.',
       },
     ],
     links: [
+      { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+      { rel: 'icon', href: '/favicon.ico', sizes: '256x256' },
+      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
       {
         rel: 'preconnect',

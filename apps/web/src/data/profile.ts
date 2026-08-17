@@ -2,7 +2,7 @@ import type { Profile } from './types'
 
 export const PROFILE: Profile = {
   name: 'Pawan Danani',
-  role: 'Backend Engineer',
+  role: 'Software Engineer',
   email: 'nycpawan@gmail.com',
   links: [
     { label: 'GitHub', url: 'https://github.com/pdanani' },

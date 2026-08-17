@@ -7,7 +7,7 @@ import { Section, SectionHeading } from './section'
 export function ExperienceSection() {
   return (
     <Section id="experience">
-      <SectionHeading number="01" title="Experience" />
+      <SectionHeading number="02" title="Experience" />
 
       <ol className="relative space-y-16 border-l border-border/60">
         {EXPERIENCE.map((job) => (
@@ -32,17 +32,21 @@ export function ExperienceSection() {
                 </p>
               </div>
 
-              <ul className="mt-5 space-y-2.5 pl-5 text-[0.95rem] leading-relaxed text-muted-foreground list-disc marker:text-brand-amber/50">
-                {job.highlights.map((line) => (
-                  <li key={line}>{line}</li>
-                ))}
-              </ul>
+              {job.highlights.length > 0 ? (
+                <ul className="mt-5 space-y-2.5 pl-5 text-[0.95rem] leading-relaxed text-muted-foreground list-disc marker:text-brand-amber/50">
+                  {job.highlights.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              ) : null}
 
-              <div className="mt-5 flex flex-wrap gap-2">
-                {job.tech.map((t) => (
-                  <Chip key={t}>{t}</Chip>
-                ))}
-              </div>
+              {job.tech.length > 0 ? (
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {job.tech.map((t) => (
+                    <Chip key={t}>{t}</Chip>
+                  ))}
+                </div>
+              ) : null}
             </Reveal>
           </li>
         ))}
