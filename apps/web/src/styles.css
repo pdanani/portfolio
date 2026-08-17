@@ -76,10 +76,9 @@
   * {
     @apply border-border outline-ring/50;
   }
-  html {
-    /* reduced-motion net resets this to auto */
-    scroll-behavior: smooth;
-  }
+  /* NOTE: no global scroll-behavior:smooth — TanStack's scroll restoration
+     calls scrollTo() on reload, and the CSS would animate that whole-page
+     scroll on every refresh */
   html,
   body,
   #app {

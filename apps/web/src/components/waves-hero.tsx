@@ -225,8 +225,26 @@ function startOcean(
       gl.drawArrays(gl.TRIANGLES, 0, 3)
     }
 
-    // reading clientWidth forces layout, so resize the buffer only on
-    // resize events — never inside the render loop
+    // The canvas was created with alpha:false, so before anything is drawn
+    // it composites as OPAQUE BLACK. Reveal it only after verifying a frame
+    // actually presented (1x1 readback — the scene is never pure black at
+    // the sampled corner). A context that comes up wedged after a rapid
+    // refresh draws nothing, fails this check, and leaves the CSS fallback
+    // visible instead of a black rectangle. The readback runs only until
+    // the first healthy frame, so the steady-state loop never pays for it.
+    let revealed = false
+    const pixel = new Uint8Array(4)
+    const reveal = () => {
+      if (revealed || gl.isContextLost()) return
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+      if (pixel[0] + pixel[1] + pixel[2] === 0) return // nothing presented
+      revealed = true
+      canvas.style.opacity = '1'
+    }
+
+    // reading clientWidth forces layout, so resize the buffer only when the
+    // canvas's layout size actually changes — never inside the render loop.
+    // ResizeObserver (not window resize) also catches late-arriving CSS.
     const resizeBuffer = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR)
       const w = Math.max(1, Math.floor(canvas.clientWidth * dpr))
@@ -240,28 +258,39 @@ function startOcean(
     }
 
     resizeBuffer()
-    window.addEventListener('resize', resizeBuffer)
-
-    // success: reveal the canvas over the CSS fallback
-    canvas.style.opacity = '1'
+    const observer = new ResizeObserver(resizeBuffer)
+    observer.observe(canvas)
 
     let raf = 0
+    let deadFrames = 0
     if (animate) {
       const start = performance.now()
       const loop = (now: number) => {
+        if (gl.isContextLost()) {
+          // silent death (no contextlost event yet): fall back, stop looping
+          canvas.style.opacity = '0'
+          return
+        }
         const elapsed = (now - start) / 1000
         const p = Math.min(1, elapsed / INTRO_S)
         render(elapsed, p * p * (3 - 2 * p)) // smoothstep easing of the sun's descent
+        if (!revealed) {
+          reveal()
+          // a context that won't present within ~30 frames is wedged for
+          // good — stop burning GPU on it and let the fallback stand
+          if (!revealed && ++deadFrames > 30) return
+        }
         raf = requestAnimationFrame(loop)
       }
       raf = requestAnimationFrame(loop)
     } else {
       render(7.5, 1) // reduced motion: a single frame, settled at dusk
+      reveal()
     }
 
     return () => {
       cancelAnimationFrame(raf)
-      window.removeEventListener('resize', resizeBuffer)
+      observer.disconnect()
       gl.deleteBuffer(buffer)
       gl.deleteProgram(program)
       // no loseContext() here: the canvas element survives React re-mounts
