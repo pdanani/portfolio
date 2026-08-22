@@ -21,9 +21,6 @@ export function AboutSection() {
               {/* dusk grade: melts the daylight shot into the night-sea */}
               <div aria-hidden className="about-photo-grade absolute inset-0" />
             </div>
-            <figcaption className="mt-3 text-center font-mono text-xs text-muted-foreground/70">
-              out on the water — as usual
-            </figcaption>
           </figure>
         </Reveal>
 

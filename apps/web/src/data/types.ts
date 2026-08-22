@@ -18,7 +18,8 @@ export interface ExperienceEntry {
   start: string
   /** null while the role is current. */
   end: string | null
-  highlights: Array<string>
+  /** Short, first-person, talking to the reader — not résumé bullets. */
+  summary: string
   tech: Array<string>
 }
 

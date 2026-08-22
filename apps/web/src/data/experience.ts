@@ -1,7 +1,8 @@
 import type { ExperienceEntry } from './types'
 
 /** Most recent first — rendered top-down in the Experience timeline.
-    The current role deliberately lists no highlights (title + dates only). */
+    Summaries are deliberately personal and light on tech detail; the
+    full resume carries the formal bullets. */
 export const EXPERIENCE: Array<ExperienceEntry> = [
   {
     company: 'M&C Saatchi World Services',
@@ -9,8 +10,9 @@ export const EXPERIENCE: Array<ExperienceEntry> = [
     location: 'New York, NY',
     start: '2025-12',
     end: null,
-    highlights: [],
-    tech: [],
+    summary:
+      'I build geospatial analysis and data tools here — one web app where teams keep shared, validated data in one place instead of scattered spreadsheets, assemble dashboards from customizable widgets, and explore it all on interactive maps.',
+    tech: ['React', 'Mapbox GL', 'deck.gl', 'FastAPI', 'PostgreSQL'],
   },
   {
     company: 'P.C. Richard & Son',
@@ -18,16 +20,8 @@ export const EXPERIENCE: Array<ExperienceEntry> = [
     location: 'Long Island, NY',
     start: '2023-08',
     end: '2025-12',
-    highlights: [
-      'Core engineer modernizing the point-of-sale system from a legacy IBM i platform to a modern React/SQL web application used daily by 2,000+ employees, shipping features like a QR-code sign-in flow.',
-      'Led the development of a Java companion app deployed across 70 retail locations that embeds the POS in a native WebView and integrates device SDKs to enable tap-to-pay and other tablet hardware features.',
-      'Built an AWS Lambda (Python) service integrated with API Gateway that embeds GPS coordinates and timestamps into images, providing verifiable location data for New York State rebate claims.',
-      'Built the frontend for an internal AI multi-agent assistant and contributed to its FastAPI backend and OpenAI SDK integration for real-time streamed responses, part of a system that reduced IT and HR support tickets by 15%.',
-      'Modernized CI/CD by migrating 4 legacy declarative pipelines to Pipeline-as-Code in a new Jenkins environment, replacing weekly overnight manual deployments with automated runs and patching numerous vulnerabilities from a years-old Jenkins version.',
-      'Proposed and integrated OpenReplay, a self-hosted session replay tool, reducing bug reproduction and debugging time by ~70% and helping triage false-positive user reports.',
-      'Expanded and hardened the Node.js middleware API with new endpoints and protections against SQL injection on DB2 for IBM i.',
-      'Maintained the internal employee mobile app (Cordova, iOS + Android) serving 3,000+ users, shipping new features across both platforms.',
-    ],
+    summary:
+      'I got to touch nearly every corner of retail tech here: modernizing a legacy IBM i point-of-sale into a React web app that 2,000+ employees use daily, building the Java companion app that turned tablets in 70 stores into tap-to-pay terminals, and shipping an internal AI assistant that cut IT and HR tickets by 15%. Along the way I replaced years-old overnight deployment rituals with modern Jenkins pipelines, hardened the middleware APIs, and kept the employee mobile app humming for 3,000+ users.',
     tech: [
       'React',
       'Java',
@@ -35,12 +29,10 @@ export const EXPERIENCE: Array<ExperienceEntry> = [
       'Python',
       'FastAPI',
       'AWS Lambda',
-      'API Gateway',
       'Cordova',
       'Jenkins',
       'DB2',
       'OpenAI SDK',
-      'OpenReplay',
     ],
   },
   {
@@ -49,11 +41,8 @@ export const EXPERIENCE: Array<ExperienceEntry> = [
     location: 'New York, NY',
     start: '2022-03',
     end: '2022-10',
-    highlights: [
-      'Built core functionality for the Explore, Profile, and Home pages of madeyn.com, a social e-commerce app, using React and GraphQL.',
-      'Integrated AWS Cognito for user authentication and configured Lambda triggers to sync user data into a PostgreSQL database.',
-      'Implemented an S3 upload Lambda that compresses static media on ingest, reducing data load by 60% and improving page performance.',
-    ],
+    summary:
+      'A proper startup sprint: I built the Explore, Profile, and Home pages of madeyn.com — a social e-commerce app — and wired up the AWS underneath it: Cognito auth, Lambda triggers syncing users into Postgres, and media compression that cut page weight by 60%.',
     tech: ['React', 'GraphQL', 'AWS Cognito', 'Lambda', 'S3', 'PostgreSQL'],
   },
 ]

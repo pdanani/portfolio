@@ -32,13 +32,9 @@ export function ExperienceSection() {
                 </p>
               </div>
 
-              {job.highlights.length > 0 ? (
-                <ul className="mt-5 space-y-2.5 pl-5 text-[0.95rem] leading-relaxed text-muted-foreground list-disc marker:text-brand-amber/50">
-                  {job.highlights.map((line) => (
-                    <li key={line}>{line}</li>
-                  ))}
-                </ul>
-              ) : null}
+              <p className="mt-4 max-w-2xl text-[0.95rem] leading-relaxed text-muted-foreground">
+                {job.summary}
+              </p>
 
               {job.tech.length > 0 ? (
                 <div className="mt-5 flex flex-wrap gap-2">

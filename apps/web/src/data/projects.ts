@@ -3,20 +3,28 @@ import type { Project } from './types'
 /** Display order: systems work first (it backs the hero's pitch), apps after. */
 export const PROJECTS: Array<Project> = [
   {
+    slug: 'warehouse-watch',
+    title: 'Warehouse Watch',
+    description:
+      'A subscription-free Costco tracker built into this site — live full-catalog search with real prices and promotions, true per-warehouse stock, and back-in-stock push alerts, all from Costco’s public endpoints. Serverless TanStack Start API over Neon Postgres, polled by cron.',
+    tech: [
+      'TypeScript',
+      'TanStack Start',
+      'Neon Postgres',
+      'Drizzle',
+      'Nitro',
+      'ntfy',
+    ],
+    githubUrl: 'https://github.com/pdanani/portfolio/tree/revamp/docs/costco',
+    // liveUrl: '/costco' once the Vercel deploy is live (Pages is static)
+  },
+  {
     slug: 'memory-allocator',
     title: 'Synchronization-Free Memory Allocator',
     description:
       'A custom dynamic memory allocator for x86-64 architectures featuring segregated free lists, a "first-best fit" strategy, and immediate coalescing to minimize external fragmentation.',
     tech: ['C'],
     githubUrl: 'https://github.com/pdanani/MemoryAllocator',
-  },
-  {
-    slug: 'dns-dig-tool',
-    title: 'DNS Dig Tool',
-    description:
-      'A recursive DNS resolver that iteratively contacts root, TLD, and authoritative servers to resolve domain names from scratch.',
-    tech: ['Python'],
-    githubUrl: 'https://github.com/pdanani/DNSDigTool',
   },
   {
     slug: 'shipstation-workflow',
@@ -42,21 +50,5 @@ export const PROJECTS: Array<Project> = [
     tech: ['Python', 'Flask', 'NumPy'],
     // TODO: the old data had a placeholder repo URL for this one — add the
     // real link (the card shows no GitHub action until then)
-  },
-  {
-    slug: 'songoff',
-    title: 'SongOff',
-    description:
-      'A daily song voting app that lets users choose among four daily picks, tallying votes to determine a "Song of the Day" stored in the database.',
-    tech: ['React', 'Node', 'PostgreSQL'],
-    githubUrl: 'https://github.com/pdanani/songoff',
-  },
-  {
-    slug: 'gologolo',
-    title: 'GoLogoLo',
-    description:
-      'A MERN stack logo creation app that allows users to design shapes, text, import images, and export logos as .png files for web use.',
-    tech: ['MongoDB', 'Express', 'React', 'Node'],
-    githubUrl: 'https://github.com/pdanani/GoLogoLo-MERN-',
   },
 ]
