@@ -5,7 +5,13 @@ import { getInventory } from '#/server/costco/inventory-service'
 
 import type { InventorySort } from '#/server/costco/types'
 
-const SORTS: Array<InventorySort> = ['name', 'price_asc', 'price_desc', 'newest', 'biggest_savings']
+const SORTS: Array<InventorySort> = [
+  'name',
+  'price_asc',
+  'price_desc',
+  'newest',
+  'biggest_savings',
+]
 
 export const Route = createFileRoute('/api/costco/inventory')({
   server: {
@@ -24,7 +30,10 @@ export const Route = createFileRoute('/api/costco/inventory')({
             sort: sortRaw && SORTS.includes(sortRaw) ? sortRaw : 'name',
             dealsOnly: p.get('dealsOnly') === 'true',
             page: Math.max(1, Number(p.get('page') ?? 1)),
-            pageSize: Math.min(100, Math.max(1, Number(p.get('pageSize') ?? 24))),
+            pageSize: Math.min(
+              100,
+              Math.max(1, Number(p.get('pageSize') ?? 24)),
+            ),
           })
           return Response.json(result)
         } catch (err) {

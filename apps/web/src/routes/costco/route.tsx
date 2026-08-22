@@ -53,8 +53,8 @@ function CostcoLayout() {
               Costco tracker
             </h1>
             <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-              Live prices, deals, and real per-warehouse stock — no subscription, no login to
-              Costco.
+              Live prices, deals, and real per-warehouse stock — no
+              subscription, no login to Costco.
             </p>
           </div>
           <Link
@@ -78,7 +78,9 @@ function CostcoLayout() {
                   to={t.to}
                   activeOptions={{ exact: t.exact }}
                   activeProps={{ className: 'bg-secondary text-foreground' }}
-                  inactiveProps={{ className: 'text-muted-foreground hover:text-foreground' }}
+                  inactiveProps={{
+                    className: 'text-muted-foreground hover:text-foreground',
+                  }}
                   className="rounded-md px-4 py-1.5 text-sm font-medium transition-colors"
                 >
                   {t.label}
@@ -119,7 +121,9 @@ function LoginCard() {
       className="mx-auto mt-16 flex w-full max-w-sm flex-col gap-3 rounded-xl border border-border bg-card p-6"
     >
       <h2 className="font-display text-lg font-semibold">Sign in</h2>
-      <p className="text-sm text-muted-foreground">This tool is private — one password.</p>
+      <p className="text-sm text-muted-foreground">
+        This tool is private — one password.
+      </p>
       <input
         type="password"
         value={password}

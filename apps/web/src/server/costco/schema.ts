@@ -48,7 +48,9 @@ export const items = pgTable(
     priceCents: integer('price_cents'),
     onlinePriceCents: integer('online_price_cents'),
     discountCents: integer('discount_cents').notNull().default(0),
-    onlineAvailability: text('online_availability').notNull().default('unknown'),
+    onlineAvailability: text('online_availability')
+      .notNull()
+      .default('unknown'),
     dealShortText: text('deal_short_text'),
     dealLongText: text('deal_long_text'),
     dealEndsAt: text('deal_ends_at'),

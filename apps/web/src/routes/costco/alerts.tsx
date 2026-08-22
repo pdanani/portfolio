@@ -3,15 +3,21 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { costcoApi } from '#/lib/costco/api'
 
-export const Route = createFileRoute('/costco/alerts')({ component: AlertsPage })
+export const Route = createFileRoute('/costco/alerts')({
+  component: AlertsPage,
+})
 
 function AlertsPage() {
   const queryClient = useQueryClient()
-  const watchesQuery = useQuery({ queryKey: ['costco', 'watches'], queryFn: costcoApi.watches })
+  const watchesQuery = useQuery({
+    queryKey: ['costco', 'watches'],
+    queryFn: costcoApi.watches,
+  })
 
   const remove = useMutation({
     mutationFn: (id: number) => costcoApi.removeWatch(id),
-    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['costco', 'watches'] }),
+    onSuccess: () =>
+      void queryClient.invalidateQueries({ queryKey: ['costco', 'watches'] }),
   })
   const test = useMutation({ mutationFn: () => costcoApi.testAlert() })
 
@@ -31,16 +37,21 @@ function AlertsPage() {
         </button>
       </div>
       {test.isSuccess && (
-        <p className="font-mono text-xs text-emerald-300">Test sent — check your phone.</p>
+        <p className="font-mono text-xs text-emerald-300">
+          Test sent — check your phone.
+        </p>
       )}
       {test.isError && (
-        <p className="font-mono text-xs text-destructive">{(test.error as Error).message}</p>
+        <p className="font-mono text-xs text-destructive">
+          {(test.error as Error).message}
+        </p>
       )}
 
       {configured === false && (
         <p className="rounded-lg border border-amber-400/30 bg-amber-500/10 p-3 text-sm">
-          Alerts aren't configured yet — set <code className="font-mono">NTFY_TOPIC</code> in the
-          environment and subscribe to that topic in the ntfy app on your phone.
+          Alerts aren't configured yet — set{' '}
+          <code className="font-mono">NTFY_TOPIC</code> in the environment and
+          subscribe to that topic in the ntfy app on your phone.
         </p>
       )}
 
@@ -48,7 +59,8 @@ function AlertsPage() {
         <p className="text-muted-foreground">Loading…</p>
       ) : watches.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          No alerts yet. Open any item and tap <b>Back online</b> or <b>In my warehouses</b>.
+          No alerts yet. Open any item and tap <b>Back online</b> or{' '}
+          <b>In my warehouses</b>.
         </p>
       ) : (
         <ul className="flex flex-col gap-2">
@@ -58,7 +70,11 @@ function AlertsPage() {
               className="flex items-center gap-3 rounded-lg border border-border bg-card p-3"
             >
               {w.imageUrl ? (
-                <img src={w.imageUrl} alt="" className="h-11 w-11 rounded-md bg-white object-contain" />
+                <img
+                  src={w.imageUrl}
+                  alt=""
+                  className="h-11 w-11 rounded-md bg-white object-contain"
+                />
               ) : (
                 <div className="h-11 w-11 rounded-md bg-muted" />
               )}

@@ -33,9 +33,21 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
     links: [
-      { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
-      { rel: 'icon', href: '/favicon.ico', sizes: '256x256' },
-      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      // BASE_URL-prefixed so the GitHub Pages subpath build finds them
+      {
+        rel: 'icon',
+        href: `${import.meta.env.BASE_URL}favicon.svg`,
+        type: 'image/svg+xml',
+      },
+      {
+        rel: 'icon',
+        href: `${import.meta.env.BASE_URL}favicon.ico`,
+        sizes: '256x256',
+      },
+      {
+        rel: 'apple-touch-icon',
+        href: `${import.meta.env.BASE_URL}apple-touch-icon.png`,
+      },
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
       {
         rel: 'preconnect',

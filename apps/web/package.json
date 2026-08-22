@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
+    "build:pages": "PAGES_BASE=/portfolio/ vite build",
     "db:push": "drizzle-kit push",
     "preview": "vite preview",
     "test": "vitest run",

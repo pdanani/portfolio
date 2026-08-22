@@ -10,6 +10,8 @@ export function getRouter() {
   const router = createTanStackRouter({
     routeTree,
     context,
+    // '/' normally; '/portfolio/' in the GitHub Pages build (vite `base`)
+    basepath: import.meta.env.BASE_URL,
     scrollRestoration: true,
     defaultPreload: 'intent',
     defaultPreloadStaleTime: 0,

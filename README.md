@@ -7,7 +7,10 @@ git history) on a modern, type-safe, serverless stack. Currently on the
 
 **The hero:** the **Ocean Waves** scene — a raw-WebGL twilight sea with a
 noon→dusk sun-arc intro and the name spelled in soft (SVG-filter) clouds.
-Live preview: https://portfolio-web-ruddy-pi.vercel.app
+
+**Live:** https://pdanani.github.io/portfolio/ (GitHub Pages — the static
+one-pager only; `/costco` needs a server and isn't there).
+Stale Vercel preview: https://portfolio-web-ruddy-pi.vercel.app
 
 ---
 
@@ -36,7 +39,21 @@ npx tsc -p apps/web/tsconfig.json    # type-check (kept green)
 
 ---
 
-## Deploying to pawandanani.com (TODO — parked 2026-08-16)
+## Deploying
+
+### GitHub Pages (live)
+
+```bash
+./scripts/deploy-pages.sh
+```
+
+Builds with `PAGES_BASE=/portfolio/`, snapshots the SSR-rendered home page
+from the built server, and force-pushes the static artifact to `gh-pages` →
+https://pdanani.github.io/portfolio/. **Static only**: the `/costco` app
+(API routes + Neon/Drizzle) cannot run on Pages — shipping it live requires
+the Vercel deploy below.
+
+### pawandanani.com via Vercel (TODO — parked 2026-08-16)
 
 Where things stand: **pawandanani.com currently serves the OLD Next.js site
 from Firebase Hosting** (apex A record `199.36.158.100` = Firebase). The

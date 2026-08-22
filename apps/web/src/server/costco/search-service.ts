@@ -80,7 +80,9 @@ export function parseItemNumber(input: string): string | null {
 }
 
 /** Direct add by Costco URL / item number — finds items search can't (discontinued). */
-export async function lookupItem(input: string): Promise<{ itemId: number; name: string } | null> {
+export async function lookupItem(
+  input: string,
+): Promise<{ itemId: number; name: string } | null> {
   const itemNumber = parseItemNumber(input)
   if (!itemNumber) return null
   const db = getDb()

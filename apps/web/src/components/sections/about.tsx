@@ -8,14 +8,23 @@ export function AboutSection() {
 
       <div className="flex flex-col items-start gap-10 sm:flex-row sm:gap-14">
         <Reveal className="shrink-0">
-          <img
-            src="/profile.jpg"
-            alt="Pawan Danani by the water"
-            width={499}
-            height={446}
-            loading="lazy"
-            className="w-56 rounded-2xl border border-border shadow-[0_18px_50px_oklch(0.72_0.18_50_/_0.12)] sm:w-64"
-          />
+          <figure className="w-56 -rotate-1 transition-transform duration-500 hover:rotate-0 sm:w-64">
+            <div className="relative overflow-hidden rounded-2xl border border-border shadow-[0_18px_50px_oklch(0.72_0.18_50_/_0.16)] ring-1 ring-brand-amber/15">
+              <img
+                src={`${import.meta.env.BASE_URL}profile.jpg`}
+                alt="Pawan Danani out on the water"
+                width={499}
+                height={446}
+                loading="lazy"
+                className="block w-full saturate-[0.92]"
+              />
+              {/* dusk grade: melts the daylight shot into the night-sea */}
+              <div aria-hidden className="about-photo-grade absolute inset-0" />
+            </div>
+            <figcaption className="mt-3 text-center font-mono text-xs text-muted-foreground/70">
+              out on the water — as usual
+            </figcaption>
+          </figure>
         </Reveal>
 
         <Reveal amount={0.3} className="max-w-xl">

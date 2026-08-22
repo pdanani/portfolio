@@ -22,7 +22,9 @@ export class ApiError extends Error {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
     ...init,
-    headers: init?.body ? { 'content-type': 'application/json', ...init?.headers } : init?.headers,
+    headers: init?.body
+      ? { 'content-type': 'application/json', ...init?.headers }
+      : init?.headers,
   })
   if (!res.ok) {
     let message = res.statusText
@@ -50,7 +52,10 @@ export interface InventoryParams {
 export const costcoApi = {
   me: () => request<{ ok: true }>('/api/costco/auth'),
   login: (password: string) =>
-    request<{ ok: true }>('/api/costco/auth', { method: 'POST', body: JSON.stringify({ password }) }),
+    request<{ ok: true }>('/api/costco/auth', {
+      method: 'POST',
+      body: JSON.stringify({ password }),
+    }),
   logout: () => request<{ ok: true }>('/api/costco/auth', { method: 'DELETE' }),
 
   inventory: (params: InventoryParams) => {
@@ -66,40 +71,69 @@ export const costcoApi = {
       method: 'POST',
       body: JSON.stringify({ query }),
     }),
-  getItem: (id: number) => request<{ row: InventoryRow }>(`/api/costco/items/${id}`),
+  getItem: (id: number) =>
+    request<{ row: InventoryRow }>(`/api/costco/items/${id}`),
   priceItem: (id: number, force = false) =>
     request<{ row: InventoryRow }>(`/api/costco/items/${id}`, {
       method: 'POST',
       body: JSON.stringify({ action: 'price', force }),
     }),
   checkStock: (id: number) =>
-    request<{ hits: Array<CrossWarehouseHit>; status: 'checked' | 'not_sold' | 'no_warehouses' }>(
-      `/api/costco/items/${id}`,
-      { method: 'POST', body: JSON.stringify({ action: 'stock' }) },
-    ),
+    request<{
+      hits: Array<CrossWarehouseHit>
+      status: 'checked' | 'not_sold' | 'no_warehouses'
+    }>(`/api/costco/items/${id}`, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'stock' }),
+    }),
   scanRegion: (id: number, region = 'northeast') =>
-    request<{ region: string; scanned: number; inStockCount: number; hits: Array<CrossWarehouseHit> }>(
-      `/api/costco/items/${id}`,
-      { method: 'POST', body: JSON.stringify({ action: 'scan', region }) },
-    ),
+    request<{
+      region: string
+      scanned: number
+      inStockCount: number
+      hits: Array<CrossWarehouseHit>
+    }>(`/api/costco/items/${id}`, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'scan', region }),
+    }),
 
-  warehouses: () => request<{ warehouses: Array<WarehouseInfo> }>('/api/costco/warehouses'),
+  warehouses: () =>
+    request<{ warehouses: Array<WarehouseInfo> }>('/api/costco/warehouses'),
   searchWarehouses: (zip: string) =>
-    request<{ results: Array<WarehouseSearchResult> }>(`/api/costco/warehouses?zip=${zip}`),
-  trackWarehouse: (w: Pick<WarehouseSearchResult, 'name' | 'address' | 'postalCode' | 'warehouseNumber'>) =>
-    request<{ id: number }>('/api/costco/warehouses', { method: 'POST', body: JSON.stringify(w) }),
+    request<{ results: Array<WarehouseSearchResult> }>(
+      `/api/costco/warehouses?zip=${zip}`,
+    ),
+  trackWarehouse: (
+    w: Pick<
+      WarehouseSearchResult,
+      'name' | 'address' | 'postalCode' | 'warehouseNumber'
+    >,
+  ) =>
+    request<{ id: number }>('/api/costco/warehouses', {
+      method: 'POST',
+      body: JSON.stringify(w),
+    }),
   untrackWarehouse: (id: number) =>
-    request<{ ok: true }>(`/api/costco/warehouses?id=${id}`, { method: 'DELETE' }),
+    request<{ ok: true }>(`/api/costco/warehouses?id=${id}`, {
+      method: 'DELETE',
+    }),
 
-  watches: () => request<{ watches: Array<Watch>; alertsConfigured: boolean }>('/api/costco/watches'),
+  watches: () =>
+    request<{ watches: Array<Watch>; alertsConfigured: boolean }>(
+      '/api/costco/watches',
+    ),
   addWatch: (itemId: number, scope: WatchScope) =>
     request<{ id: number }>('/api/costco/watches', {
       method: 'POST',
       body: JSON.stringify({ itemId, scope }),
     }),
-  removeWatch: (id: number) => request<{ ok: true }>(`/api/costco/watches?id=${id}`, { method: 'DELETE' }),
+  removeWatch: (id: number) =>
+    request<{ ok: true }>(`/api/costco/watches?id=${id}`, { method: 'DELETE' }),
   testAlert: () =>
-    request<{ ok: true }>('/api/costco/watches', { method: 'POST', body: JSON.stringify({ test: true }) }),
+    request<{ ok: true }>('/api/costco/watches', {
+      method: 'POST',
+      body: JSON.stringify({ test: true }),
+    }),
 
   catalogStats: () => request<CatalogStats>('/api/costco/catalog'),
   seedCatalog: () =>
@@ -119,4 +153,11 @@ export function centsToDollars(cents: number | null | undefined): string {
   return `$${(cents / 100).toFixed(2)}`
 }
 
-export type { InventoryRow, InventorySort, Watch, WatchScope, WarehouseInfo, WarehouseSearchResult }
+export type {
+  InventoryRow,
+  InventorySort,
+  Watch,
+  WatchScope,
+  WarehouseInfo,
+  WarehouseSearchResult,
+}

@@ -38,7 +38,8 @@ function InventoryPage() {
 
   const inventory = useQuery({
     queryKey: ['costco', 'inventory', { q, sort, dealsOnly, page }],
-    queryFn: () => costcoApi.inventory({ q: q || undefined, sort, dealsOnly, page }),
+    queryFn: () =>
+      costcoApi.inventory({ q: q || undefined, sort, dealsOnly, page }),
     placeholderData: keepPreviousData,
   })
 
@@ -55,7 +56,9 @@ function InventoryPage() {
   })
 
   const data = inventory.data
-  const totalPages = data ? Math.max(1, Math.ceil(data.total / data.pageSize)) : 1
+  const totalPages = data
+    ? Math.max(1, Math.ceil(data.total / data.pageSize))
+    : 1
 
   return (
     <div className="flex flex-col gap-4">
@@ -81,7 +84,9 @@ function InventoryPage() {
         </button>
       </form>
       {lookup.isError && (
-        <p className="text-sm text-destructive">{(lookup.error as Error).message}</p>
+        <p className="text-sm text-destructive">
+          {(lookup.error as Error).message}
+        </p>
       )}
 
       <div className="flex flex-wrap items-center gap-3">
@@ -134,9 +139,12 @@ function InventoryPage() {
         </p>
       ) : data && data.rows.length === 0 ? (
         <div className="py-16 text-center">
-          <p className="font-medium">Search any Costco product to get started</p>
+          <p className="font-medium">
+            Search any Costco product to get started
+          </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Search hits Costco's live catalog — try “seiko”, “kirkland”, “olipop”.
+            Search hits Costco's live catalog — try “seiko”, “kirkland”,
+            “olipop”.
           </p>
         </div>
       ) : data ? (

@@ -16,7 +16,10 @@ export const Route = createFileRoute('/api/costco/catalog')({
       POST: async ({ request }) => {
         const denied = requireAuth(request)
         if (denied) return denied
-        const body = (await request.json().catch(() => ({}))) as { action?: string; limit?: number }
+        const body = (await request.json().catch(() => ({}))) as {
+          action?: string
+          limit?: number
+        }
         if (body.action === 'seed') return Response.json(await seedCatalog())
         if (body.action === 'deal-scan') {
           return Response.json(await dealScan(Math.min(60, body.limit ?? 40)))

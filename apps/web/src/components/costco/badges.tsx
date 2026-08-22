@@ -13,7 +13,11 @@ const availabilityLabel: Record<Availability, string> = {
   unknown: '—',
 }
 
-export function AvailabilityBadge({ availability }: { availability: Availability }) {
+export function AvailabilityBadge({
+  availability,
+}: {
+  availability: Availability
+}) {
   return (
     <span
       className={`inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-[11px] font-medium ${availabilityStyle[availability]}`}
@@ -25,7 +29,11 @@ export function AvailabilityBadge({ availability }: { availability: Availability
 
 export function StockText({ status }: { status: string }) {
   if (status === 'not_sold')
-    return <span className="font-mono text-[11px] text-muted-foreground">not sold here</span>
+    return (
+      <span className="font-mono text-[11px] text-muted-foreground">
+        not sold here
+      </span>
+    )
   return <AvailabilityBadge availability={status as Availability} />
 }
 
@@ -33,7 +41,9 @@ export function DealBadge({ row }: { row: InventoryRow }) {
   if (!row.deal) return null
   const label =
     row.deal.shortText ??
-    (row.deal.discountCents > 0 ? `$${(row.deal.discountCents / 100).toFixed(0)} OFF` : 'Deal')
+    (row.deal.discountCents > 0
+      ? `$${(row.deal.discountCents / 100).toFixed(0)} OFF`
+      : 'Deal')
   return (
     <span className="inline-flex items-center rounded-full bg-primary px-2 py-0.5 font-mono text-[11px] font-bold text-primary-foreground">
       {label}

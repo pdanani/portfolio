@@ -1,7 +1,12 @@
 import { eq, inArray, sql } from 'drizzle-orm'
 
 import { getDb, schema } from './db'
-import { itemMetadata, onlineAvailability, priceAndPromos, seedItems } from './costco-client'
+import {
+  itemMetadata,
+  onlineAvailability,
+  priceAndPromos,
+  seedItems,
+} from './costco-client'
 
 import type { CatalogStats } from './types'
 
@@ -17,7 +22,11 @@ export interface PricedItem {
 /** Hydrate metadata (image, category, child id, model) for one item if missing. */
 export async function hydrateMetadata(itemId: number): Promise<string | null> {
   const db = getDb()
-  const [item] = await db.select().from(schema.items).where(eq(schema.items.id, itemId)).limit(1)
+  const [item] = await db
+    .select()
+    .from(schema.items)
+    .where(eq(schema.items.id, itemId))
+    .limit(1)
   if (!item) return null
   if (item.costcoChildId && item.imageUrl) return item.costcoChildId
   if (!item.costcoItemNumber) return item.costcoChildId
@@ -38,22 +47,36 @@ export async function hydrateMetadata(itemId: number): Promise<string | null> {
 }
 
 /** Hydrate + fetch/store price, deal, and real online availability. Snapshots the price. */
-export async function priceItem(itemId: number, throttled = true): Promise<PricedItem | null> {
+export async function priceItem(
+  itemId: number,
+  throttled = true,
+): Promise<PricedItem | null> {
   const db = getDb()
   const childId = await hydrateMetadata(itemId)
   const ts = new Date().toISOString()
   if (!childId) {
-    await db.update(schema.items).set({ lastPricedAt: ts }).where(eq(schema.items.id, itemId))
+    await db
+      .update(schema.items)
+      .set({ lastPricedAt: ts })
+      .where(eq(schema.items.id, itemId))
     return null
   }
-  const price = await priceAndPromos(childId, '847', throttled).catch(() => null)
-  if (!price) {
-    await db.update(schema.items).set({ lastPricedAt: ts }).where(eq(schema.items.id, itemId))
-    return null
-  }
-  const availability = await onlineAvailability(childId, '98101', 'WA', throttled).catch(
-    () => 'unknown' as const,
+  const price = await priceAndPromos(childId, '847', throttled).catch(
+    () => null,
   )
+  if (!price) {
+    await db
+      .update(schema.items)
+      .set({ lastPricedAt: ts })
+      .where(eq(schema.items.id, itemId))
+    return null
+  }
+  const availability = await onlineAvailability(
+    childId,
+    '98101',
+    'WA',
+    throttled,
+  ).catch(() => 'unknown' as const)
   const promo = price.promotions[0] ?? null
   const result: PricedItem = {
     priceCents: price.warehousePriceCents ?? price.onlinePriceCents,
@@ -86,7 +109,10 @@ export async function priceItem(itemId: number, throttled = true): Promise<Price
 }
 
 /** Concurrently price a page of items, skipping fresh ones (TTL). */
-export async function priceMany(itemIds: Array<number>, concurrency = 6): Promise<void> {
+export async function priceMany(
+  itemIds: Array<number>,
+  concurrency = 6,
+): Promise<void> {
   if (itemIds.length === 0) return
   const db = getDb()
   const rows = await db
@@ -94,7 +120,11 @@ export async function priceMany(itemIds: Array<number>, concurrency = 6): Promis
     .from(schema.items)
     .where(inArray(schema.items.id, itemIds))
   const stale = rows
-    .filter((r) => Date.now() - (r.lastPricedAt ? Date.parse(r.lastPricedAt) : 0) >= PRICE_TTL_MS)
+    .filter(
+      (r) =>
+        Date.now() - (r.lastPricedAt ? Date.parse(r.lastPricedAt) : 0) >=
+        PRICE_TTL_MS,
+    )
     .map((r) => r.id)
   let i = 0
   async function worker() {
@@ -103,11 +133,15 @@ export async function priceMany(itemIds: Array<number>, concurrency = 6): Promis
       await priceItem(id, false).catch(() => {})
     }
   }
-  await Promise.all(Array.from({ length: Math.min(concurrency, stale.length) }, worker))
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, stale.length) }, worker),
+  )
 }
 
 /** Price a bounded batch of never/least-recently priced items (deals engine). */
-export async function dealScan(limit = 40): Promise<{ priced: number; deals: number }> {
+export async function dealScan(
+  limit = 40,
+): Promise<{ priced: number; deals: number }> {
   const db = getDb()
   const rows = await db
     .select({ id: schema.items.id })

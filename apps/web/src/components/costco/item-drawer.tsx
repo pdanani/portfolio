@@ -6,23 +6,42 @@ import { AvailabilityBadge, DealBadge, StockText } from './badges'
 
 import type { InventoryRow, WatchScope } from '#/server/costco/types'
 
-export function ItemDrawer({ row, onClose }: { row: InventoryRow | null; onClose: () => void }) {
+export function ItemDrawer({
+  row,
+  onClose,
+}: {
+  row: InventoryRow | null
+  onClose: () => void
+}) {
   const queryClient = useQueryClient()
 
-  const price = useMutation({ mutationFn: (id: number) => costcoApi.priceItem(id) })
-  const stock = useMutation({ mutationFn: (id: number) => costcoApi.checkStock(id) })
-  const scan = useMutation({ mutationFn: (id: number) => costcoApi.scanRegion(id) })
+  const price = useMutation({
+    mutationFn: (id: number) => costcoApi.priceItem(id),
+  })
+  const stock = useMutation({
+    mutationFn: (id: number) => costcoApi.checkStock(id),
+  })
+  const scan = useMutation({
+    mutationFn: (id: number) => costcoApi.scanRegion(id),
+  })
 
-  const watchesQuery = useQuery({ queryKey: ['costco', 'watches'], queryFn: costcoApi.watches })
-  const myWatches = (watchesQuery.data?.watches ?? []).filter((w) => w.itemId === row?.itemId)
-  const watchFor = (scope: WatchScope) => myWatches.find((w) => w.scope === scope)
+  const watchesQuery = useQuery({
+    queryKey: ['costco', 'watches'],
+    queryFn: costcoApi.watches,
+  })
+  const myWatches = (watchesQuery.data?.watches ?? []).filter(
+    (w) => w.itemId === row?.itemId,
+  )
+  const watchFor = (scope: WatchScope) =>
+    myWatches.find((w) => w.scope === scope)
   const toggleWatch = useMutation({
     mutationFn: async (scope: WatchScope) => {
       const existing = watchFor(scope)
       if (existing) return costcoApi.removeWatch(existing.id)
       if (row) return costcoApi.addWatch(row.itemId, scope)
     },
-    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['costco', 'watches'] }),
+    onSuccess: () =>
+      void queryClient.invalidateQueries({ queryKey: ['costco', 'watches'] }),
   })
 
   // Lazy-price on open; clear stale results when switching items.
@@ -42,7 +61,11 @@ export function ItemDrawer({ row, onClose }: { row: InventoryRow | null; onClose
   const availability = live?.onlineAvailability ?? row.onlineAvailability
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true">
+    <div
+      className="fixed inset-0 z-50 flex justify-end"
+      role="dialog"
+      aria-modal="true"
+    >
       <button
         aria-label="Close"
         onClick={onClose}
@@ -58,7 +81,11 @@ export function ItemDrawer({ row, onClose }: { row: InventoryRow | null; onClose
 
         <div className="flex gap-4">
           {row.imageUrl ? (
-            <img src={row.imageUrl} alt="" className="h-24 w-24 rounded-lg bg-white object-contain" />
+            <img
+              src={row.imageUrl}
+              alt=""
+              className="h-24 w-24 rounded-lg bg-white object-contain"
+            />
           ) : (
             <div className="h-24 w-24 rounded-lg bg-muted" />
           )}
@@ -68,7 +95,9 @@ export function ItemDrawer({ row, onClose }: { row: InventoryRow | null; onClose
             </h2>
             <p className="mt-1 font-mono text-xs text-muted-foreground">
               {row.brand && <span>{row.brand} · </span>}
-              {row.costcoItemNumber && <span>Item #{row.costcoItemNumber}</span>}
+              {row.costcoItemNumber && (
+                <span>Item #{row.costcoItemNumber}</span>
+              )}
               {row.model && <span> · Model {row.model}</span>}
             </p>
           </div>
@@ -76,15 +105,21 @@ export function ItemDrawer({ row, onClose }: { row: InventoryRow | null; onClose
 
         <div className="flex items-baseline gap-3">
           {price.isPending && priceCents == null ? (
-            <span className="text-sm text-muted-foreground">Fetching price…</span>
+            <span className="text-sm text-muted-foreground">
+              Fetching price…
+            </span>
           ) : (
             <>
-              <span className="font-mono text-2xl font-bold">{centsToDollars(priceCents)}</span>
-              {discountCents > 0 && onlineCents != null && onlineCents !== priceCents && (
-                <span className="font-mono text-sm text-muted-foreground line-through">
-                  {centsToDollars(onlineCents)}
-                </span>
-              )}
+              <span className="font-mono text-2xl font-bold">
+                {centsToDollars(priceCents)}
+              </span>
+              {discountCents > 0 &&
+                onlineCents != null &&
+                onlineCents !== priceCents && (
+                  <span className="font-mono text-sm text-muted-foreground line-through">
+                    {centsToDollars(onlineCents)}
+                  </span>
+                )}
               <DealBadge row={{ ...row, deal }} />
               <AvailabilityBadge availability={availability} />
             </>
@@ -97,7 +132,9 @@ export function ItemDrawer({ row, onClose }: { row: InventoryRow | null; onClose
         )}
 
         <section className="border-t border-border pt-4">
-          <h3 className="mb-2 font-display text-sm font-semibold">Alert me when back in stock</h3>
+          <h3 className="mb-2 font-display text-sm font-semibold">
+            Alert me when back in stock
+          </h3>
           <div className="flex gap-2">
             {(['online', 'warehouses'] as const).map((scope) => {
               const on = !!watchFor(scope)
@@ -122,7 +159,9 @@ export function ItemDrawer({ row, onClose }: { row: InventoryRow | null; onClose
 
         <section className="border-t border-border pt-4">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <h3 className="font-display text-sm font-semibold">Warehouse stock</h3>
+            <h3 className="font-display text-sm font-semibold">
+              Warehouse stock
+            </h3>
             <div className="flex gap-2">
               <button
                 onClick={() => stock.mutate(row.itemId)}
@@ -149,7 +188,10 @@ export function ItemDrawer({ row, onClose }: { row: InventoryRow | null; onClose
           {stock.isSuccess && stock.data.status !== 'no_warehouses' && (
             <ul className="flex flex-col gap-1.5">
               {stock.data.hits.map((h, i) => (
-                <li key={i} className="flex items-center justify-between text-sm">
+                <li
+                  key={i}
+                  className="flex items-center justify-between text-sm"
+                >
                   <span>{h.warehouseName}</span>
                   <StockText status={h.stockStatus} />
                 </li>
@@ -160,14 +202,21 @@ export function ItemDrawer({ row, onClose }: { row: InventoryRow | null; onClose
           {scan.isSuccess && (
             <div className="mt-3">
               <p className="mb-1.5 text-sm font-medium">
-                {scan.data.region}: in stock at {scan.data.inStockCount} of {scan.data.scanned}{' '}
-                warehouses
+                {scan.data.region}: in stock at {scan.data.inStockCount} of{' '}
+                {scan.data.scanned} warehouses
               </p>
               <ul className="flex max-h-56 flex-col gap-1.5 overflow-y-auto pr-1">
                 {scan.data.hits
-                  .filter((h) => h.stockStatus === 'in_stock' || h.stockStatus === 'low_stock')
+                  .filter(
+                    (h) =>
+                      h.stockStatus === 'in_stock' ||
+                      h.stockStatus === 'low_stock',
+                  )
                   .map((h, i) => (
-                    <li key={i} className="flex items-center justify-between text-sm">
+                    <li
+                      key={i}
+                      className="flex items-center justify-between text-sm"
+                    >
                       <span>{h.warehouseName}</span>
                       <StockText status={h.stockStatus} />
                     </li>
@@ -183,7 +232,8 @@ export function ItemDrawer({ row, onClose }: { row: InventoryRow | null; onClose
         </section>
 
         <p className="mt-auto border-t border-border pt-3 text-xs text-muted-foreground">
-          Stock reads Costco's own per-warehouse inventory; prices may lag the shelf.
+          Stock reads Costco's own per-warehouse inventory; prices may lag the
+          shelf.
         </p>
       </aside>
     </div>

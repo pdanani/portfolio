@@ -142,6 +142,24 @@
   -webkit-backdrop-filter: blur(14px);
 }
 
+/* Dusk grade over the (daylight) About photo so it sits naturally on the
+   night-sea: navy rising from the waterline below, a whisper of the set
+   sun's warmth from the top right. */
+.about-photo-grade {
+  background:
+    radial-gradient(
+      70% 55% at 82% 0%,
+      oklch(0.72 0.14 50 / 0.16) 0%,
+      transparent 65%
+    ),
+    linear-gradient(
+      to top,
+      oklch(0.12 0.05 258 / 0.55) 0%,
+      oklch(0.14 0.05 258 / 0.12) 38%,
+      transparent 58%
+    );
+}
+
 /* Backdrop for everything below the hero: the sea darkening into night.
    The faint warm radial at the top sits at the same x as the hero's set
    sun (0.78), so its afterglow appears to bleed past the waterline. */

@@ -7,7 +7,10 @@ import type { WarehouseInfo, WarehouseSearchResult } from './types'
 
 export async function listTracked(): Promise<Array<WarehouseInfo>> {
   const db = getDb()
-  const rows = await db.select().from(schema.warehouses).where(eq(schema.warehouses.tracked, true))
+  const rows = await db
+    .select()
+    .from(schema.warehouses)
+    .where(eq(schema.warehouses.tracked, true))
   const out: Array<WarehouseInfo> = []
   for (const w of rows) {
     const [count] = await db
@@ -27,7 +30,9 @@ export async function listTracked(): Promise<Array<WarehouseInfo>> {
   return out
 }
 
-export async function searchByZip(zip: string): Promise<Array<WarehouseSearchResult>> {
+export async function searchByZip(
+  zip: string,
+): Promise<Array<WarehouseSearchResult>> {
   const db = getDb()
   const found = await searchWarehousesByZip(zip)
   const results: Array<WarehouseSearchResult> = []
@@ -37,13 +42,19 @@ export async function searchByZip(zip: string): Promise<Array<WarehouseSearchRes
       .from(schema.warehouses)
       .where(eq(schema.warehouses.costcoWarehouseNumber, f.warehouseNumber))
       .limit(1)
-    results.push({ ...f, alreadyTrackedWarehouseId: existing?.tracked ? existing.id : null })
+    results.push({
+      ...f,
+      alreadyTrackedWarehouseId: existing?.tracked ? existing.id : null,
+    })
   }
   return results
 }
 
 export async function track(
-  body: Pick<WarehouseSearchResult, 'name' | 'address' | 'postalCode' | 'warehouseNumber'>,
+  body: Pick<
+    WarehouseSearchResult,
+    'name' | 'address' | 'postalCode' | 'warehouseNumber'
+  >,
 ): Promise<number> {
   const db = getDb()
   const [existing] = await db
@@ -52,7 +63,10 @@ export async function track(
     .where(eq(schema.warehouses.costcoWarehouseNumber, body.warehouseNumber))
     .limit(1)
   if (existing) {
-    await db.update(schema.warehouses).set({ tracked: true }).where(eq(schema.warehouses.id, existing.id))
+    await db
+      .update(schema.warehouses)
+      .set({ tracked: true })
+      .where(eq(schema.warehouses.id, existing.id))
     return existing.id
   }
   const [row] = await db
@@ -71,6 +85,11 @@ export async function track(
 
 export async function untrack(id: number): Promise<void> {
   const db = getDb()
-  await db.update(schema.warehouses).set({ tracked: false }).where(eq(schema.warehouses.id, id))
-  await db.delete(schema.warehouseItems).where(eq(schema.warehouseItems.warehouseId, id))
+  await db
+    .update(schema.warehouses)
+    .set({ tracked: false })
+    .where(eq(schema.warehouses.id, id))
+  await db
+    .delete(schema.warehouseItems)
+    .where(eq(schema.warehouseItems.warehouseId, id))
 }

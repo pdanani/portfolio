@@ -54,7 +54,11 @@ export function requireAuth(request: Request): Response | null {
 /** Guard for the cron-facing poll endpoint. */
 export function requireCronSecret(request: Request): Response | null {
   const expected = process.env.CRON_SECRET
-  if (!expected) return Response.json({ error: 'CRON_SECRET not configured' }, { status: 500 })
+  if (!expected)
+    return Response.json(
+      { error: 'CRON_SECRET not configured' },
+      { status: 500 },
+    )
   const url = new URL(request.url)
   const provided =
     request.headers.get('x-cron-secret') ??

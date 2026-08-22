@@ -42,17 +42,27 @@ export async function listWatches(): Promise<Array<Watch>> {
   }))
 }
 
-export async function addWatch(itemId: number, scope: WatchScope): Promise<number> {
+export async function addWatch(
+  itemId: number,
+  scope: WatchScope,
+): Promise<number> {
   const db = getDb()
   const [existing] = await db
     .select({ id: schema.watches.id })
     .from(schema.watches)
-    .where(and(eq(schema.watches.itemId, itemId), eq(schema.watches.scope, scope)))
+    .where(
+      and(eq(schema.watches.itemId, itemId), eq(schema.watches.scope, scope)),
+    )
     .limit(1)
   if (existing) return existing.id
   const [row] = await db
     .insert(schema.watches)
-    .values({ itemId, scope, wasInStock: false, createdAt: new Date().toISOString() })
+    .values({
+      itemId,
+      scope,
+      wasInStock: false,
+      createdAt: new Date().toISOString(),
+    })
     .returning({ id: schema.watches.id })
   // Seed current state so the first poll doesn't false-fire.
   await checkOne(row.id, false).catch(() => {})
@@ -78,14 +88,19 @@ async function evaluate(
     return { inStock: IN_STOCK.has(avail), detail: avail }
   }
 
-  const tracked = await db.select().from(schema.warehouses).where(eq(schema.warehouses.tracked, true))
+  const tracked = await db
+    .select()
+    .from(schema.warehouses)
+    .where(eq(schema.warehouses.tracked, true))
   const numbers = tracked
     .map((w) => w.costcoWarehouseNumber)
     .filter((n): n is string => n != null)
   const stock = await warehouseStockBatch(childId, numbers, 6)
   const inStockAt = tracked
     .filter((w) => {
-      const s = w.costcoWarehouseNumber ? stock.get(w.costcoWarehouseNumber) : undefined
+      const s = w.costcoWarehouseNumber
+        ? stock.get(w.costcoWarehouseNumber)
+        : undefined
       return s?.carried && IN_STOCK.has(s.availability)
     })
     .map((w) => w.name)
@@ -94,13 +109,24 @@ async function evaluate(
 
 async function checkOne(watchId: number, notify: boolean): Promise<boolean> {
   const db = getDb()
-  const [watch] = await db.select().from(schema.watches).where(eq(schema.watches.id, watchId)).limit(1)
+  const [watch] = await db
+    .select()
+    .from(schema.watches)
+    .where(eq(schema.watches.id, watchId))
+    .limit(1)
   if (!watch) return false
-  const [item] = await db.select().from(schema.items).where(eq(schema.items.id, watch.itemId)).limit(1)
+  const [item] = await db
+    .select()
+    .from(schema.items)
+    .where(eq(schema.items.id, watch.itemId))
+    .limit(1)
   const outcome = await evaluate(watch.itemId, watch.scope as WatchScope)
   const now = new Date().toISOString()
   if (!outcome) {
-    await db.update(schema.watches).set({ lastCheckedAt: now }).where(eq(schema.watches.id, watchId))
+    await db
+      .update(schema.watches)
+      .set({ lastCheckedAt: now })
+      .where(eq(schema.watches.id, watchId))
     return false
   }
   const restocked = notify && !watch.wasInStock && outcome.inStock
@@ -115,21 +141,32 @@ async function checkOne(watchId: number, notify: boolean): Promise<boolean> {
     .where(eq(schema.watches.id, watchId))
   if (restocked && item) {
     const where =
-      watch.scope === 'online' ? 'online' : outcome.detail ? `at ${outcome.detail}` : 'at a warehouse'
+      watch.scope === 'online'
+        ? 'online'
+        : outcome.detail
+          ? `at ${outcome.detail}`
+          : 'at a warehouse'
     await sendPush(`🛒 ${item.name} is back in stock ${where}.`, {
       title: 'Back in stock',
       tags: ['white_check_mark'],
       priority: 4,
-      clickUrl: process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/costco` : undefined,
+      clickUrl: process.env.PUBLIC_URL
+        ? `${process.env.PUBLIC_URL}/costco`
+        : undefined,
     })
   }
   return restocked
 }
 
 /** Poll entry point (hit by the external scheduler). */
-export async function checkAllWatches(): Promise<{ checked: number; notified: number }> {
+export async function checkAllWatches(): Promise<{
+  checked: number
+  notified: number
+}> {
   const db = getDb()
-  const ids = (await db.select({ id: schema.watches.id }).from(schema.watches)).map((r) => r.id)
+  const ids = (
+    await db.select({ id: schema.watches.id }).from(schema.watches)
+  ).map((r) => r.id)
   let notified = 0
   for (const id of ids) {
     if (await checkOne(id, true).catch(() => false)) notified++

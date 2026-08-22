@@ -6,15 +6,25 @@ import { costcoApi } from '#/lib/costco/api'
 
 import type { WarehouseSearchResult } from '#/server/costco/types'
 
-export const Route = createFileRoute('/costco/warehouses')({ component: WarehousesPage })
+export const Route = createFileRoute('/costco/warehouses')({
+  component: WarehousesPage,
+})
 
 function WarehousesPage() {
   const queryClient = useQueryClient()
   const [zip, setZip] = useState('')
-  const [results, setResults] = useState<Array<WarehouseSearchResult> | null>(null)
+  const [results, setResults] = useState<Array<WarehouseSearchResult> | null>(
+    null,
+  )
 
-  const warehouses = useQuery({ queryKey: ['costco', 'warehouses'], queryFn: costcoApi.warehouses })
-  const stats = useQuery({ queryKey: ['costco', 'catalog'], queryFn: costcoApi.catalogStats })
+  const warehouses = useQuery({
+    queryKey: ['costco', 'warehouses'],
+    queryFn: costcoApi.warehouses,
+  })
+  const stats = useQuery({
+    queryKey: ['costco', 'catalog'],
+    queryFn: costcoApi.catalogStats,
+  })
 
   const invalidate = () => {
     void queryClient.invalidateQueries({ queryKey: ['costco', 'warehouses'] })
@@ -29,9 +39,18 @@ function WarehousesPage() {
     mutationFn: (w: WarehouseSearchResult) => costcoApi.trackWarehouse(w),
     onSuccess: invalidate,
   })
-  const untrack = useMutation({ mutationFn: (id: number) => costcoApi.untrackWarehouse(id), onSuccess: invalidate })
-  const seed = useMutation({ mutationFn: () => costcoApi.seedCatalog(), onSuccess: invalidate })
-  const dealScanRun = useMutation({ mutationFn: () => costcoApi.dealScan(), onSuccess: invalidate })
+  const untrack = useMutation({
+    mutationFn: (id: number) => costcoApi.untrackWarehouse(id),
+    onSuccess: invalidate,
+  })
+  const seed = useMutation({
+    mutationFn: () => costcoApi.seedCatalog(),
+    onSuccess: invalidate,
+  })
+  const dealScanRun = useMutation({
+    mutationFn: () => costcoApi.dealScan(),
+    onSuccess: invalidate,
+  })
 
   const tracked = warehouses.data?.warehouses ?? []
 
@@ -66,13 +85,16 @@ function WarehousesPage() {
         </div>
         {dealScanRun.isSuccess && (
           <p className="mt-2 font-mono text-xs text-muted-foreground">
-            priced {dealScanRun.data.priced}, found {dealScanRun.data.deals} deals — run again to keep going
+            priced {dealScanRun.data.priced}, found {dealScanRun.data.deals}{' '}
+            deals — run again to keep going
           </p>
         )}
       </section>
 
       <section>
-        <h2 className="mb-3 font-display text-base font-semibold">Find warehouses</h2>
+        <h2 className="mb-3 font-display text-base font-semibold">
+          Find warehouses
+        </h2>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -82,7 +104,9 @@ function WarehousesPage() {
         >
           <input
             value={zip}
-            onChange={(e) => setZip(e.target.value.replace(/\D/g, '').slice(0, 5))}
+            onChange={(e) =>
+              setZip(e.target.value.replace(/\D/g, '').slice(0, 5))
+            }
             placeholder="ZIP code"
             inputMode="numeric"
             className="w-32 rounded-md border border-input bg-background px-3 py-2 font-mono text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -99,16 +123,23 @@ function WarehousesPage() {
         {results && (
           <ul className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {results.length === 0 && (
-              <li className="text-sm text-muted-foreground">No warehouses found for {zip}.</li>
+              <li className="text-sm text-muted-foreground">
+                No warehouses found for {zip}.
+              </li>
             )}
             {results.map((r) => (
-              <li key={r.warehouseNumber} className="rounded-lg border border-border bg-card p-3">
+              <li
+                key={r.warehouseNumber}
+                className="rounded-lg border border-border bg-card p-3"
+              >
                 <p className="text-sm font-medium">{r.name}</p>
                 <p className="mt-0.5 truncate font-mono text-xs text-muted-foreground">
                   {r.address ?? ''}
                 </p>
                 <button
-                  disabled={r.alreadyTrackedWarehouseId !== null || track.isPending}
+                  disabled={
+                    r.alreadyTrackedWarehouseId !== null || track.isPending
+                  }
                   onClick={() => track.mutate(r)}
                   className="mt-2 rounded-md border border-brand/40 px-3 py-1 font-mono text-xs text-brand disabled:opacity-50"
                 >
@@ -121,16 +152,21 @@ function WarehousesPage() {
       </section>
 
       <section>
-        <h2 className="mb-3 font-display text-base font-semibold">Tracked warehouses</h2>
+        <h2 className="mb-3 font-display text-base font-semibold">
+          Tracked warehouses
+        </h2>
         {tracked.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            Nothing tracked yet — search by ZIP above. Tracked warehouses power per-warehouse stock
-            checks and alerts.
+            Nothing tracked yet — search by ZIP above. Tracked warehouses power
+            per-warehouse stock checks and alerts.
           </p>
         ) : (
           <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {tracked.map((w) => (
-              <li key={w.id} className="rounded-lg border border-border bg-card p-3">
+              <li
+                key={w.id}
+                className="rounded-lg border border-border bg-card p-3"
+              >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <p className="text-sm font-medium">{w.name}</p>
