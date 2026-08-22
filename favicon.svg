@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- The hero in 64px: dusk sky over a dark sea, sun glow on the right,
+       initials in cloud-white. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#171335"/>
+      <stop offset=".40" stop-color="#3a2452"/>
+      <stop offset=".60" stop-color="#7c3a52"/>
+      <stop offset=".665" stop-color="#c25b40"/>
+      <stop offset=".70" stop-color="#d97a45"/>
+      <stop offset=".705" stop-color="#12283c"/>
+      <stop offset="1" stop-color="#08131f"/>
+    </linearGradient>
+    <radialGradient id="sun" cx=".70" cy=".70" r=".52">
+      <stop offset="0" stop-color="#ffb35c" stop-opacity=".85"/>
+      <stop offset=".45" stop-color="#ff8a4d" stop-opacity=".30"/>
+      <stop offset="1" stop-color="#ff8a4d" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#sky)"/>
+  <rect width="64" height="64" rx="14" fill="url(#sun)"/>
+  <text x="32" y="44" text-anchor="middle"
+    font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+    font-weight="900" font-size="31" letter-spacing="-1.5"
+    fill="#f2f5fb" stroke="#0c1526" stroke-width="1.1" paint-order="stroke"
+  >PD</text>
+</svg>
