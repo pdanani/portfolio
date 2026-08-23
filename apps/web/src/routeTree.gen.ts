@@ -9,200 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as CostcoRouteRouteImport } from './routes/costco/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CostcoIndexRouteImport } from './routes/costco/index'
-import { Route as CostcoWarehousesRouteImport } from './routes/costco/warehouses'
-import { Route as CostcoAlertsRouteImport } from './routes/costco/alerts'
-import { Route as ApiCostcoWatchesRouteImport } from './routes/api/costco/watches'
-import { Route as ApiCostcoWarehousesRouteImport } from './routes/api/costco/warehouses'
-import { Route as ApiCostcoPollRouteImport } from './routes/api/costco/poll'
-import { Route as ApiCostcoLookupRouteImport } from './routes/api/costco/lookup'
-import { Route as ApiCostcoInventoryRouteImport } from './routes/api/costco/inventory'
-import { Route as ApiCostcoCatalogRouteImport } from './routes/api/costco/catalog'
-import { Route as ApiCostcoAuthRouteImport } from './routes/api/costco/auth'
-import { Route as ApiCostcoItemsIdRouteImport } from './routes/api/costco/items.$id'
 
-const CostcoRouteRoute = CostcoRouteRouteImport.update({
-  id: '/costco',
-  path: '/costco',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CostcoIndexRoute = CostcoIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CostcoRouteRoute,
-} as any)
-const CostcoWarehousesRoute = CostcoWarehousesRouteImport.update({
-  id: '/warehouses',
-  path: '/warehouses',
-  getParentRoute: () => CostcoRouteRoute,
-} as any)
-const CostcoAlertsRoute = CostcoAlertsRouteImport.update({
-  id: '/alerts',
-  path: '/alerts',
-  getParentRoute: () => CostcoRouteRoute,
-} as any)
-const ApiCostcoWatchesRoute = ApiCostcoWatchesRouteImport.update({
-  id: '/api/costco/watches',
-  path: '/api/costco/watches',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiCostcoWarehousesRoute = ApiCostcoWarehousesRouteImport.update({
-  id: '/api/costco/warehouses',
-  path: '/api/costco/warehouses',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiCostcoPollRoute = ApiCostcoPollRouteImport.update({
-  id: '/api/costco/poll',
-  path: '/api/costco/poll',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiCostcoLookupRoute = ApiCostcoLookupRouteImport.update({
-  id: '/api/costco/lookup',
-  path: '/api/costco/lookup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiCostcoInventoryRoute = ApiCostcoInventoryRouteImport.update({
-  id: '/api/costco/inventory',
-  path: '/api/costco/inventory',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiCostcoCatalogRoute = ApiCostcoCatalogRouteImport.update({
-  id: '/api/costco/catalog',
-  path: '/api/costco/catalog',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiCostcoAuthRoute = ApiCostcoAuthRouteImport.update({
-  id: '/api/costco/auth',
-  path: '/api/costco/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiCostcoItemsIdRoute = ApiCostcoItemsIdRouteImport.update({
-  id: '/api/costco/items/$id',
-  path: '/api/costco/items/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/costco': typeof CostcoRouteRouteWithChildren
-  '/costco/alerts': typeof CostcoAlertsRoute
-  '/costco/warehouses': typeof CostcoWarehousesRoute
-  '/costco/': typeof CostcoIndexRoute
-  '/api/costco/auth': typeof ApiCostcoAuthRoute
-  '/api/costco/catalog': typeof ApiCostcoCatalogRoute
-  '/api/costco/inventory': typeof ApiCostcoInventoryRoute
-  '/api/costco/lookup': typeof ApiCostcoLookupRoute
-  '/api/costco/poll': typeof ApiCostcoPollRoute
-  '/api/costco/warehouses': typeof ApiCostcoWarehousesRoute
-  '/api/costco/watches': typeof ApiCostcoWatchesRoute
-  '/api/costco/items/$id': typeof ApiCostcoItemsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/costco/alerts': typeof CostcoAlertsRoute
-  '/costco/warehouses': typeof CostcoWarehousesRoute
-  '/costco': typeof CostcoIndexRoute
-  '/api/costco/auth': typeof ApiCostcoAuthRoute
-  '/api/costco/catalog': typeof ApiCostcoCatalogRoute
-  '/api/costco/inventory': typeof ApiCostcoInventoryRoute
-  '/api/costco/lookup': typeof ApiCostcoLookupRoute
-  '/api/costco/poll': typeof ApiCostcoPollRoute
-  '/api/costco/warehouses': typeof ApiCostcoWarehousesRoute
-  '/api/costco/watches': typeof ApiCostcoWatchesRoute
-  '/api/costco/items/$id': typeof ApiCostcoItemsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/costco': typeof CostcoRouteRouteWithChildren
-  '/costco/alerts': typeof CostcoAlertsRoute
-  '/costco/warehouses': typeof CostcoWarehousesRoute
-  '/costco/': typeof CostcoIndexRoute
-  '/api/costco/auth': typeof ApiCostcoAuthRoute
-  '/api/costco/catalog': typeof ApiCostcoCatalogRoute
-  '/api/costco/inventory': typeof ApiCostcoInventoryRoute
-  '/api/costco/lookup': typeof ApiCostcoLookupRoute
-  '/api/costco/poll': typeof ApiCostcoPollRoute
-  '/api/costco/warehouses': typeof ApiCostcoWarehousesRoute
-  '/api/costco/watches': typeof ApiCostcoWatchesRoute
-  '/api/costco/items/$id': typeof ApiCostcoItemsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/costco'
-    | '/costco/alerts'
-    | '/costco/warehouses'
-    | '/costco/'
-    | '/api/costco/auth'
-    | '/api/costco/catalog'
-    | '/api/costco/inventory'
-    | '/api/costco/lookup'
-    | '/api/costco/poll'
-    | '/api/costco/warehouses'
-    | '/api/costco/watches'
-    | '/api/costco/items/$id'
+  fullPaths: '/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/costco/alerts'
-    | '/costco/warehouses'
-    | '/costco'
-    | '/api/costco/auth'
-    | '/api/costco/catalog'
-    | '/api/costco/inventory'
-    | '/api/costco/lookup'
-    | '/api/costco/poll'
-    | '/api/costco/warehouses'
-    | '/api/costco/watches'
-    | '/api/costco/items/$id'
-  id:
-    | '__root__'
-    | '/'
-    | '/costco'
-    | '/costco/alerts'
-    | '/costco/warehouses'
-    | '/costco/'
-    | '/api/costco/auth'
-    | '/api/costco/catalog'
-    | '/api/costco/inventory'
-    | '/api/costco/lookup'
-    | '/api/costco/poll'
-    | '/api/costco/warehouses'
-    | '/api/costco/watches'
-    | '/api/costco/items/$id'
+  to: '/'
+  id: '__root__' | '/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CostcoRouteRoute: typeof CostcoRouteRouteWithChildren
-  ApiCostcoAuthRoute: typeof ApiCostcoAuthRoute
-  ApiCostcoCatalogRoute: typeof ApiCostcoCatalogRoute
-  ApiCostcoInventoryRoute: typeof ApiCostcoInventoryRoute
-  ApiCostcoLookupRoute: typeof ApiCostcoLookupRoute
-  ApiCostcoPollRoute: typeof ApiCostcoPollRoute
-  ApiCostcoWarehousesRoute: typeof ApiCostcoWarehousesRoute
-  ApiCostcoWatchesRoute: typeof ApiCostcoWatchesRoute
-  ApiCostcoItemsIdRoute: typeof ApiCostcoItemsIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/costco': {
-      id: '/costco'
-      path: '/costco'
-      fullPath: '/costco'
-      preLoaderRoute: typeof CostcoRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -210,113 +48,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/costco/': {
-      id: '/costco/'
-      path: '/'
-      fullPath: '/costco/'
-      preLoaderRoute: typeof CostcoIndexRouteImport
-      parentRoute: typeof CostcoRouteRoute
-    }
-    '/costco/warehouses': {
-      id: '/costco/warehouses'
-      path: '/warehouses'
-      fullPath: '/costco/warehouses'
-      preLoaderRoute: typeof CostcoWarehousesRouteImport
-      parentRoute: typeof CostcoRouteRoute
-    }
-    '/costco/alerts': {
-      id: '/costco/alerts'
-      path: '/alerts'
-      fullPath: '/costco/alerts'
-      preLoaderRoute: typeof CostcoAlertsRouteImport
-      parentRoute: typeof CostcoRouteRoute
-    }
-    '/api/costco/watches': {
-      id: '/api/costco/watches'
-      path: '/api/costco/watches'
-      fullPath: '/api/costco/watches'
-      preLoaderRoute: typeof ApiCostcoWatchesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/costco/warehouses': {
-      id: '/api/costco/warehouses'
-      path: '/api/costco/warehouses'
-      fullPath: '/api/costco/warehouses'
-      preLoaderRoute: typeof ApiCostcoWarehousesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/costco/poll': {
-      id: '/api/costco/poll'
-      path: '/api/costco/poll'
-      fullPath: '/api/costco/poll'
-      preLoaderRoute: typeof ApiCostcoPollRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/costco/lookup': {
-      id: '/api/costco/lookup'
-      path: '/api/costco/lookup'
-      fullPath: '/api/costco/lookup'
-      preLoaderRoute: typeof ApiCostcoLookupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/costco/inventory': {
-      id: '/api/costco/inventory'
-      path: '/api/costco/inventory'
-      fullPath: '/api/costco/inventory'
-      preLoaderRoute: typeof ApiCostcoInventoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/costco/catalog': {
-      id: '/api/costco/catalog'
-      path: '/api/costco/catalog'
-      fullPath: '/api/costco/catalog'
-      preLoaderRoute: typeof ApiCostcoCatalogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/costco/auth': {
-      id: '/api/costco/auth'
-      path: '/api/costco/auth'
-      fullPath: '/api/costco/auth'
-      preLoaderRoute: typeof ApiCostcoAuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/costco/items/$id': {
-      id: '/api/costco/items/$id'
-      path: '/api/costco/items/$id'
-      fullPath: '/api/costco/items/$id'
-      preLoaderRoute: typeof ApiCostcoItemsIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
-interface CostcoRouteRouteChildren {
-  CostcoAlertsRoute: typeof CostcoAlertsRoute
-  CostcoWarehousesRoute: typeof CostcoWarehousesRoute
-  CostcoIndexRoute: typeof CostcoIndexRoute
-}
-
-const CostcoRouteRouteChildren: CostcoRouteRouteChildren = {
-  CostcoAlertsRoute: CostcoAlertsRoute,
-  CostcoWarehousesRoute: CostcoWarehousesRoute,
-  CostcoIndexRoute: CostcoIndexRoute,
-}
-
-const CostcoRouteRouteWithChildren = CostcoRouteRoute._addFileChildren(
-  CostcoRouteRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CostcoRouteRoute: CostcoRouteRouteWithChildren,
-  ApiCostcoAuthRoute: ApiCostcoAuthRoute,
-  ApiCostcoCatalogRoute: ApiCostcoCatalogRoute,
-  ApiCostcoInventoryRoute: ApiCostcoInventoryRoute,
-  ApiCostcoLookupRoute: ApiCostcoLookupRoute,
-  ApiCostcoPollRoute: ApiCostcoPollRoute,
-  ApiCostcoWarehousesRoute: ApiCostcoWarehousesRoute,
-  ApiCostcoWatchesRoute: ApiCostcoWatchesRoute,
-  ApiCostcoItemsIdRoute: ApiCostcoItemsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

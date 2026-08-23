@@ -9,8 +9,13 @@ git history) on a modern, type-safe, serverless stack. Currently on the
 noon→dusk sun-arc intro and the name spelled in soft (SVG-filter) clouds.
 
 **Live:** https://pdanani.github.io/portfolio/ (GitHub Pages — the static
-one-pager only; `/costco` needs a server and isn't there).
+one-pager).
 Stale Vercel preview: https://portfolio-web-ruddy-pi.vercel.app
+
+The Costco tracker (**Warehouse Watch**) used to live here at `/costco`; it's
+been extracted to its own repo ([`pdanani/warehouse-watch-app`](https://github.com/pdanani/warehouse-watch-app))
+and deploys independently at `costco.pawandanani.com` — see that repo for its
+own setup. This repo no longer depends on Neon/Drizzle at all.
 
 ---
 
@@ -49,11 +54,13 @@ npx tsc -p apps/web/tsconfig.json    # type-check (kept green)
 
 Builds with `PAGES_BASE=/portfolio/`, snapshots the SSR-rendered home page
 from the built server, and force-pushes the static artifact to `gh-pages` →
-https://pdanani.github.io/portfolio/. **Static only**: the `/costco` app
-(API routes + Neon/Drizzle) cannot run on Pages — shipping it live requires
-the Vercel deploy below.
+https://pdanani.github.io/portfolio/. Static only, but that's all this repo
+needs now — no server routes live here anymore.
 
-### pawandanani.com via Vercel (TODO — parked 2026-08-16)
+### pawandanani.com via Vercel (TODO — parked 2026-08-16, optional)
+
+Unlike the tracker, moving the apex off Firebase isn't blocking anything —
+it's just a nicer permanent home for the one-pager than GitHub Pages.
 
 Where things stand: **pawandanani.com currently serves the OLD Next.js site
 from Firebase Hosting** (apex A record `199.36.158.100` = Firebase). The

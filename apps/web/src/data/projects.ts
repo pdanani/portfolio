@@ -6,7 +6,7 @@ export const PROJECTS: Array<Project> = [
     slug: 'warehouse-watch',
     title: 'Warehouse Watch',
     description:
-      'A subscription-free Costco tracker built into this site — live full-catalog search with real prices and promotions, true per-warehouse stock, and back-in-stock push alerts, all from Costco’s public endpoints. Serverless TanStack Start API over Neon Postgres, polled by cron.',
+      'A subscription-free Costco tracker — live full-catalog search with real prices and promotions, true per-warehouse stock, and back-in-stock push alerts, all from Costco’s public endpoints. Serverless TanStack Start API over Neon Postgres, polled by cron; its own app, its own deploy.',
     tech: [
       'TypeScript',
       'TanStack Start',
@@ -15,8 +15,8 @@ export const PROJECTS: Array<Project> = [
       'Nitro',
       'ntfy',
     ],
-    githubUrl: 'https://github.com/pdanani/portfolio/tree/revamp/docs/costco',
-    // liveUrl: '/costco' once the Vercel deploy is live (Pages is static)
+    githubUrl: 'https://github.com/pdanani/warehouse-watch-app',
+    // liveUrl: 'https://costco.pawandanani.com' once the DNS CNAME + Vercel deploy are live
   },
   {
     slug: 'memory-allocator',
