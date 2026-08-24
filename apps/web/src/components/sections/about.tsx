@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import { useInView, useReducedMotion } from 'motion/react'
 import { Reveal } from '#/components/motion/reveal'
 import { StaggerGroup, StaggerItem } from '#/components/motion/stagger'
+import { MovieWarp, useMovieWarp } from '#/components/movie-warp'
 import { VinylWarp, useVinylWarp } from '#/components/vinyl-warp'
 import { ZeldaWarp, useZeldaWarp } from '#/components/zelda-warp'
 import { IN_VIEW } from '#/lib/motion/in-view'
@@ -22,7 +23,7 @@ const INTERESTS = [
   { emoji: '🚴', label: 'Biking', tilt: 'rotate-2', spin: 18 },
   { emoji: '🥾', label: 'Hiking', tilt: '-rotate-2', spin: -16 },
   { emoji: '⌨️', label: 'Keyboards', tilt: 'rotate-3', spin: 24 },
-  { emoji: '🍿', label: 'Movies', tilt: '-rotate-1', spin: -20 },
+  { emoji: '🍿', label: 'Movies', tilt: '-rotate-1', spin: -20, warp: 'movie' },
   { emoji: '🎵', label: 'Music', tilt: 'rotate-1', spin: 16, warp: 'vinyl' },
   { emoji: '🎮', label: 'Gaming', tilt: '-rotate-1', spin: -18, warp: 'zelda' },
   { emoji: '🏀', label: 'Sports', tilt: 'rotate-3', spin: 20 },
@@ -190,6 +191,32 @@ function VinylSticker({ label, tilt }: { label: string; tilt: string }) {
   )
 }
 
+/** The Movies sticker: marquee halo; hover or tap dims the lights and draws the curtains. */
+function MovieSticker({
+  emoji,
+  label,
+  tilt,
+}: {
+  emoji: string
+  label: string
+  tilt: string
+}) {
+  const { state, close, triggerProps } = useMovieWarp()
+  return (
+    <>
+      <button
+        type="button"
+        className={cn(CARD, 'movie-halo cursor-pointer', tilt)}
+        aria-label={`${label} — hover or tap for a surprise`}
+        {...triggerProps}
+      >
+        <StickerFace emoji={emoji} label={label} />
+      </button>
+      <MovieWarp state={state} onDismiss={close} />
+    </>
+  )
+}
+
 export function AboutSection() {
   const reduce = useReducedMotion()
 
@@ -250,6 +277,8 @@ export function AboutSection() {
                   <ZeldaSticker emoji={emoji} label={label} tilt={tilt} />
                 ) : warp === 'vinyl' ? (
                   <VinylSticker label={label} tilt={tilt} />
+                ) : warp === 'movie' ? (
+                  <MovieSticker emoji={emoji} label={label} tilt={tilt} />
                 ) : (
                   <div className={cn(CARD, tilt)}>
                     <StickerFace emoji={emoji} label={label} />
