@@ -424,33 +424,33 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Gaming sticker easter egg — hover/tap warps the screen to a Smash   */
-/* Bros. match (smash-warp.tsx). Original CSS art only, id-prefixed.    */
+/* Gaming sticker easter egg — hover/tap warps the screen to Hyrule    */
+/* (zelda-warp.tsx). Original CSS art only, id-prefixed.               */
 /* ------------------------------------------------------------------ */
 
 /* Halo: a slowly turning gold → green → blue ring around the one
    interactive sticker, plus a breathing outer glow, so it reads as a
    "legendary item" next to its plain siblings. The ring is a masked
-   conic gradient; --smash-angle is a registered property so the hue can
+   conic gradient; --zelda-angle is a registered property so the hue can
    rotate without touching layout. */
-@property --smash-angle {
+@property --zelda-angle {
   syntax: '<angle>';
   inherits: false;
   initial-value: 0deg;
 }
 
-.smash-halo {
-  animation: smash-halo-breathe 2.6s ease-in-out infinite alternate;
+.zelda-halo {
+  animation: zelda-halo-breathe 2.6s ease-in-out infinite alternate;
 }
 
-.smash-halo::before {
+.zelda-halo::before {
   content: '';
   position: absolute;
   inset: -4px;
   padding: 3px;
   border-radius: calc(1rem + 4px); /* card is rounded-2xl */
   background: conic-gradient(
-    from var(--smash-angle),
+    from var(--zelda-angle),
     oklch(0.85 0.16 85),
     oklch(0.7 0.17 145),
     oklch(0.75 0.13 235),
@@ -464,17 +464,17 @@
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  animation: smash-halo-spin 5s linear infinite;
+  animation: zelda-halo-spin 5s linear infinite;
   pointer-events: none;
 }
 
-@keyframes smash-halo-spin {
+@keyframes zelda-halo-spin {
   to {
-    --smash-angle: 360deg;
+    --zelda-angle: 360deg;
   }
 }
 
-@keyframes smash-halo-breathe {
+@keyframes zelda-halo-breathe {
   from {
     box-shadow:
       0 12px 34px oklch(0.72 0.18 50 / 0.14),
@@ -488,33 +488,33 @@
 }
 
 /* ---- the warp overlay ---- */
-.smash-warp {
-  --smash-ink: oklch(0.16 0.02 150 / 0.9);
-  --smash-gold: oklch(0.8 0.15 85);
-  --smash-red: oklch(0.6 0.22 27);
-  --smash-paper: oklch(0.95 0.02 95);
-  --smash-box: oklch(0.22 0.03 150);
+.zelda-warp {
+  --zelda-ink: oklch(0.16 0.02 150 / 0.9);
+  --zelda-gold: oklch(0.8 0.15 85);
+  --zelda-paper: oklch(0.95 0.02 95);
+  --zelda-box: oklch(0.22 0.03 150);
+  --zelda-sky: oklch(0.62 0.11 235);
   position: fixed;
   inset: 0;
   z-index: 60;
   overflow: hidden;
   font-family: 'Press Start 2P', ui-monospace, monospace;
-  color: var(--smash-paper);
+  color: var(--zelda-paper);
   -webkit-font-smoothing: auto;
 }
 
 /* Opened by hover: let the pointer keep hitting the sticker underneath,
    so hover ends only when it really leaves the card. Opened by tap: the
    whole screen is the dismiss target. */
-.smash-warp[data-mode='hover'] {
+.zelda-warp[data-mode='hover'] {
   pointer-events: none;
 }
 
 /* Mosaic wipe: 336 cells (24 × 14, or 12 × 28 on phones) that pop in
    one by one in a shuffled order (--i), then hold — and stay as the
-   meadow the stage floats over. Closing plays them out last-in,
+   meadow the overworld is built on. Closing plays them out last-in,
    first-out. */
-.smash-pixels {
+.zelda-pixels {
   position: absolute;
   inset: 0;
   display: grid;
@@ -523,37 +523,37 @@
 }
 
 @media (max-width: 640px) {
-  .smash-pixels {
+  .zelda-pixels {
     grid-template-columns: repeat(12, 1fr);
   }
 }
 
-.smash-pixel {
+.zelda-pixel {
   background: var(--c);
   opacity: 0;
-  animation: smash-pixel-in 1ms linear forwards;
+  animation: zelda-pixel-in 1ms linear forwards;
   animation-delay: calc(var(--i) * 1.8ms);
 }
 
-.smash-warp[data-state='closing'] .smash-pixel {
+.zelda-warp[data-state='closing'] .zelda-pixel {
   opacity: 1;
-  animation-name: smash-pixel-out;
+  animation-name: zelda-pixel-out;
   animation-delay: calc((335 - var(--i)) * 0.9ms);
 }
 
-@keyframes smash-pixel-in {
+@keyframes zelda-pixel-in {
   to {
     opacity: 1;
   }
 }
 
-@keyframes smash-pixel-out {
+@keyframes zelda-pixel-out {
   to {
     opacity: 0;
   }
 }
 
-.smash-world {
+.zelda-world {
   position: absolute;
   inset: 0;
   display: flex;
@@ -562,493 +562,320 @@
   transition: opacity 0.15s ease;
 }
 
-.smash-warp[data-state='open'] .smash-world {
+.zelda-warp[data-state='open'] .zelda-world {
   opacity: 1;
   transition-duration: 0.4s;
 }
 
-/* ---- the stage (behind the textbox): a floating main platform with
-   three soft platforms, over the deep space the mosaic paints ---- */
-.smash-scenery {
+/* ---- overworld scenery (behind the HUD + textbox) ---- */
+.zelda-scenery {
   position: absolute;
   inset: 0;
 }
 
-/* Sky over the top of the meadow mosaic, so it reads as an outdoor stage. */
-.smash-sky {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    oklch(0.72 0.1 235 / 0.85) 0%,
-    oklch(0.78 0.08 225 / 0.6) 40%,
-    transparent 62%
-  );
-}
-
-.smash-cloud {
-  position: absolute;
-  width: 150px;
-  height: 46px;
-  border-radius: 40px;
-  background: oklch(0.97 0.01 95);
-  box-shadow:
-    -50px 14px 0 -8px oklch(0.97 0.01 95),
-    56px 12px 0 -10px oklch(0.97 0.01 95),
-    -10px -20px 0 -4px oklch(0.97 0.01 95),
-    0 6px 0 0 oklch(0.72 0.06 230 / 0.35);
-  animation: smash-cloud-drift 14s ease-in-out infinite alternate;
-}
-
-@keyframes smash-cloud-drift {
-  to {
-    transform: translateX(40px);
-  }
-}
-
-.smash-glow {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      60% 45% at 50% 62%,
-      oklch(0.7 0.2 30 / 0.28) 0%,
-      transparent 70%
-    ),
-    radial-gradient(
-      40% 30% at 18% 18%,
-      oklch(0.6 0.15 300 / 0.22) 0%,
-      transparent 70%
-    );
-}
-
-.smash-stage {
-  position: absolute;
-  left: 50%;
-  bottom: 17%;
-  width: min(82vw, 940px);
-  height: 54px;
-  transform: translateX(-50%);
-  background: linear-gradient(
-    180deg,
-    oklch(0.88 0.02 260) 0 6px,
-    oklch(0.42 0.03 270) 6px 100%
-  );
-  border: 3px solid var(--smash-ink);
-  box-shadow:
-    0 18px 0 -6px oklch(0.24 0.03 270),
-    0 0 40px oklch(0.75 0.15 60 / 0.25);
-}
-
-.smash-stage::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  right: 22%;
-  left: 22%;
-  height: 90px;
-  background: linear-gradient(180deg, oklch(0.3 0.04 150), transparent);
-  clip-path: polygon(0 0, 100% 0, 72% 100%, 28% 100%);
-}
-
-.smash-platform {
-  position: absolute;
-  height: 12px;
-  background: oklch(0.82 0.02 260);
-  border: 3px solid var(--smash-ink);
-}
-
-/* ---- the fight (original blocky fighters, CSS only) ---- */
-/* Impact burst behind P2: a hot core, a spiky conic ring, and speed lines
-   fanning off to the right — the "you just got launched" moment. */
-.smash-burst {
-  position: absolute;
-  left: 58%;
-  bottom: 24%;
-  width: min(46vw, 520px);
-  aspect-ratio: 1;
-  transform: translate(-50%, 30%);
-  background:
-    radial-gradient(
-      circle,
-      oklch(0.98 0.05 90) 0 6%,
-      oklch(0.85 0.18 70) 6% 14%,
-      oklch(0.7 0.22 35 / 0.9) 14% 26%,
-      oklch(0.6 0.22 25 / 0.5) 26% 40%,
-      transparent 62%
-    ),
-    repeating-conic-gradient(
-      from 8deg,
-      oklch(0.85 0.18 70 / 0.55) 0 7deg,
-      transparent 7deg 24deg
-    );
-  mask-image: radial-gradient(circle, black 30%, transparent 62%);
-  mix-blend-mode: screen;
-  animation: smash-burst-pulse 0.45s ease-in-out infinite alternate;
-}
-
-.smash-lines {
+/* dirt path crossing the meadow */
+.zelda-path {
   position: absolute;
   top: 0;
-  right: 0;
   bottom: 0;
-  left: 40%;
-  background: repeating-linear-gradient(
-    -12deg,
-    transparent 0 22px,
-    oklch(0.95 0.05 90 / 0.28) 22px 25px
-  );
-  mask-image:
-    linear-gradient(to right, transparent, black 55%),
-    linear-gradient(to bottom, transparent 32%, black 48% 72%, transparent 84%);
-  mask-composite: intersect;
-  mix-blend-mode: screen;
-}
-
-.smash-fighter {
-  position: absolute;
-  bottom: calc(17% + 54px);
-  width: 120px;
-  height: 140px;
-  transform-origin: 50% 100%;
-}
-
-.smash-fighter > span {
-  position: absolute;
-  border: 3px solid var(--smash-ink);
-  background: var(--fighter);
-}
-
-.f-head {
-  top: 22px;
-  left: 30px;
-  width: 60px;
-  height: 52px;
-  border-radius: 50% 50% 46% 46%;
+  left: 50%;
+  width: 132px;
+  transform: translateX(-50%);
   background:
-    linear-gradient(var(--smash-ink) 0 0) 16px 22px / 8px 10px no-repeat,
-    linear-gradient(var(--smash-ink) 0 0) 36px 22px / 8px 10px no-repeat,
-    linear-gradient(oklch(0.95 0.02 95) 0 0) 12px 18px / 16px 16px no-repeat,
-    linear-gradient(oklch(0.95 0.02 95) 0 0) 32px 18px / 16px 16px no-repeat,
-    var(--fighter);
-  box-shadow: inset 0 -8px 0 oklch(0 0 0 / 0.18);
-}
-
-.f-body {
-  top: 68px;
-  left: 26px;
-  width: 68px;
-  height: 52px;
-  border-radius: 40% 40% 30% 30% / 50% 50% 30% 30%;
-  background:
-    linear-gradient(oklch(0.95 0.02 95) 0 0) 50% 100% / 44px 22px no-repeat,
-    var(--fighter);
-  box-shadow: inset 0 -10px 0 oklch(0 0 0 / 0.2);
-}
-
-.f-arm {
-  top: 84px;
-  left: 6px;
-  width: 30px;
-  height: 14px;
-  border-radius: 8px;
-  transform: rotate(-30deg);
-}
-
-.f-legs {
-  top: 116px;
-  left: 34px;
-  width: 52px;
-  height: 22px;
-  border-radius: 6px 6px 10px 10px;
-  background: oklch(0.32 0.04 60);
-  box-shadow: inset 0 0 0 20px oklch(0.32 0.04 60);
-}
-
-/* King's crown: a gold zigzag on top of the head */
-.f-crown {
-  top: 6px;
-  left: 40px;
-  width: 40px;
-  height: 22px;
-  background: var(--smash-gold);
-  clip-path: polygon(
-    0 100%,
-    0 25%,
-    25% 60%,
-    50% 0,
-    75% 60%,
-    100% 25%,
-    100% 100%
-  );
-  border: 0;
-  z-index: 1;
-}
-
-/* the mallet: a big wooden head on a long handle, swung from behind */
-.f-hammer {
-  top: -34px;
-  left: 62px;
-  width: 16px;
-  height: 120px;
-  background: oklch(0.48 0.08 60);
-  border-radius: 6px;
-  transform-origin: 50% 100%;
-  transform: rotate(38deg);
-}
-
-.f-hammer::before {
-  content: '';
-  position: absolute;
-  top: -22px;
-  left: -34px;
-  width: 78px;
-  height: 46px;
-  background:
-    linear-gradient(
-      90deg,
-      oklch(0.75 0.03 250) 0 12%,
-      transparent 12% 88%,
-      oklch(0.75 0.03 250) 88%
+    repeating-linear-gradient(
+      0deg,
+      oklch(0.55 0.08 62) 0 30px,
+      oklch(0.49 0.08 60) 30px 32px
     ),
-    oklch(0.62 0.1 55);
-  border: 3px solid var(--smash-ink);
-  border-radius: 10px;
-  box-shadow: inset 0 -10px 0 oklch(0 0 0 / 0.22);
-}
-
-/* the kid's leaf sprout */
-.f-leaf {
-  top: 6px;
-  left: 54px;
-  width: 22px;
-  height: 22px;
-  background: oklch(0.65 0.16 140);
-  border-radius: 0 100% 0 100%;
-  transform: rotate(-20deg);
-}
-
-.smash-fighter-p1 {
-  --fighter: oklch(0.6 0.2 27);
-  left: 30%;
-  animation: smash-stance 0.5s ease-in-out infinite alternate;
-}
-
-.smash-fighter-p1 .f-body {
-  background:
-    linear-gradient(oklch(0.95 0.02 95) 0 0) 50% 100% / 44px 22px no-repeat,
     repeating-linear-gradient(
       90deg,
-      oklch(0.6 0.2 27) 0 10px,
-      oklch(0.95 0.02 95) 10px 16px
+      oklch(0.55 0.08 62) 0 30px,
+      oklch(0.49 0.08 60) 30px 32px
     );
+  background-blend-mode: multiply;
+  box-shadow:
+    inset 6px 0 0 oklch(0.42 0.07 58),
+    inset -6px 0 0 oklch(0.42 0.07 58);
+  opacity: 0.92;
 }
 
-.smash-fighter-p2 {
-  --fighter: oklch(0.62 0.14 150);
-  left: 60%;
-  transform: translateY(-40px) rotate(38deg);
-  animation: smash-launch 0.6s ease-in-out infinite alternate;
+/* leafy canopy + trunk */
+.zelda-tree {
+  position: absolute;
+  width: 78px;
+  height: 78px;
 }
 
-.smash-fighter-p2 .f-head {
+.zelda-tree::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -16px;
+  width: 18px;
+  height: 22px;
+  transform: translateX(-50%);
+  background: oklch(0.42 0.07 58);
+  border: 3px solid var(--zelda-ink);
+}
+
+.zelda-tree::after {
+  content: '';
+  position: absolute;
+  inset: 0;
   background:
-    linear-gradient(var(--smash-ink) 0 0) 14px 20px / 10px 4px no-repeat,
-    linear-gradient(var(--smash-ink) 0 0) 36px 20px / 10px 4px no-repeat,
-    linear-gradient(var(--smash-ink) 0 0) 22px 34px / 16px 8px no-repeat,
-    var(--fighter);
+    radial-gradient(
+      circle at 32% 30%,
+      oklch(0.62 0.11 145) 0 18%,
+      transparent 19%
+    ),
+    linear-gradient(180deg, oklch(0.58 0.11 146), oklch(0.46 0.1 148));
+  border: 3px solid var(--zelda-ink);
+  border-radius: 22px;
+  box-shadow: inset 0 -10px 0 oklch(0.4 0.09 150 / 0.5);
 }
 
-.smash-fighter-p2 .f-arm {
-  left: auto;
-  right: 4px;
-  transform: rotate(40deg);
-}
-
-@keyframes smash-stance {
-  from {
-    transform: translateY(0) rotate(-4deg);
-  }
-  to {
-    transform: translateY(-4px) rotate(-8deg);
-  }
-}
-
-@keyframes smash-launch {
-  from {
-    transform: translate(0, -40px) rotate(34deg);
-  }
-  to {
-    transform: translate(10px, -56px) rotate(44deg);
-  }
-}
-
-@keyframes smash-burst-pulse {
-  from {
-    transform: translate(-50%, 30%) scale(0.94) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, 30%) scale(1.06) rotate(6deg);
-  }
-}
-
-/* ---- HUD: match timer up top, damage meters + stocks down low ---- */
-.smash-timer {
+.zelda-rock {
   position: absolute;
-  top: 1.2rem;
-  right: 1.5rem;
-  font-size: 12px;
-  color: var(--smash-paper);
-  text-shadow: 3px 3px 0 var(--smash-ink);
+  width: 50px;
+  height: 42px;
+  background: linear-gradient(
+    180deg,
+    oklch(0.66 0.02 250) 0 45%,
+    oklch(0.52 0.02 250) 45% 100%
+  );
+  border: 3px solid var(--zelda-ink);
+  border-radius: 16px 16px 8px 8px;
+  box-shadow:
+    inset 0 -8px 0 oklch(0.42 0.02 250 / 0.6),
+    inset 0 6px 0 oklch(0.78 0.02 250 / 0.5);
 }
 
-.smash-hud {
+.zelda-pond {
   position: absolute;
-  right: 0;
-  bottom: 2.6rem;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  gap: clamp(2rem, 12vw, 12rem);
+  width: 168px;
+  height: 104px;
+  background:
+    radial-gradient(
+      circle at 36% 32%,
+      oklch(0.74 0.1 232) 0 14%,
+      transparent 15%
+    ),
+    linear-gradient(180deg, oklch(0.64 0.11 233), oklch(0.5 0.11 236));
+  border: 3px solid var(--zelda-ink);
+  border-radius: 9999px;
+  box-shadow: inset 0 -10px 0 oklch(0.44 0.1 238 / 0.6);
 }
 
-.smash-player {
+/* ---- HUD ---- */
+.zelda-hud {
+  position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.35rem;
-}
-
-.smash-tag {
-  padding: 3px 6px;
-  font-size: 8px;
-  letter-spacing: 0.1em;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem 0;
+  font-size: 10px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  background: var(--smash-red);
-  color: var(--smash-paper);
-  box-shadow: 2px 2px 0 var(--smash-ink);
 }
 
-.smash-tag-p2 {
-  background: oklch(0.52 0.15 250);
-}
-
-.smash-damage {
-  font-size: clamp(26px, 4.6vw, 48px);
-  font-style: italic;
-  color: var(--smash-paper);
-  text-shadow: 3px 3px 0 var(--smash-ink);
-}
-
-.smash-damage-hot {
-  color: oklch(0.72 0.22 30);
-}
-
-.smash-stocks {
+.zelda-hud > * {
   display: flex;
-  gap: 4px;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.smash-stock {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--smash-gold);
-  border: 2px solid var(--smash-ink);
+.zelda-hud-label {
+  text-shadow: 2px 2px 0 var(--zelda-ink);
 }
 
-.smash-stock-lost {
-  background: oklch(0.3 0.02 270);
+.zelda-emblem {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  background: var(--zelda-gold);
+  border: 3px solid var(--zelda-ink);
+  box-shadow: 3px 3px 0 var(--zelda-ink);
+}
+
+.zelda-emblem::before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 12px solid oklch(0.24 0.05 60);
+}
+
+/* HUD hearts: an 8-bit heart as a stepped clip-path on a 7 × 6 cell grid —
+   ink outline (slightly larger) behind the fill. */
+.zelda-heart {
+  --heart: polygon(
+    14.29% 0%,
+    42.86% 0%,
+    42.86% 16.67%,
+    57.14% 16.67%,
+    57.14% 0%,
+    85.71% 0%,
+    85.71% 16.67%,
+    100% 16.67%,
+    100% 50%,
+    85.71% 50%,
+    85.71% 66.67%,
+    71.43% 66.67%,
+    71.43% 83.33%,
+    57.14% 83.33%,
+    57.14% 100%,
+    42.86% 100%,
+    42.86% 83.33%,
+    28.57% 83.33%,
+    28.57% 66.67%,
+    14.29% 66.67%,
+    14.29% 50%,
+    0% 50%,
+    0% 16.67%,
+    14.29% 16.67%
+  );
+  position: relative;
+  width: 21px;
+  height: 18px;
+}
+
+.zelda-heart::before,
+.zelda-heart::after {
+  content: '';
+  position: absolute;
+  clip-path: var(--heart);
+}
+
+.zelda-heart::before {
+  inset: -3px;
+  background: var(--zelda-ink);
+}
+
+.zelda-heart::after {
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    oklch(0.66 0.21 27) 0 34%,
+    oklch(0.56 0.2 27) 34% 100%
+  );
+}
+
+.zelda-heart-empty::after {
+  background: oklch(0.3 0.04 150);
+}
+
+.zelda-gem {
+  width: 16px;
+  height: 24px;
+  background: linear-gradient(
+    180deg,
+    oklch(0.78 0.1 150) 0 50%,
+    oklch(0.6 0.11 152) 50% 100%
+  );
+  border: 2px solid var(--zelda-ink);
+  clip-path: polygon(50% 0, 100% 30%, 100% 70%, 50% 100%, 0 70%, 0 30%);
+  box-shadow: inset 3px 0 0 oklch(0.9 0.06 150 / 0.6);
+}
+
+.zelda-rupees {
+  color: var(--zelda-gold);
+  text-shadow: 2px 2px 0 var(--zelda-ink);
 }
 
 /* ---- centre: quest text ---- */
-/* The match card: tucked top-left and small, so the fight — not the
-   text — is the scene. */
-.smash-card {
-  position: absolute;
-  top: 1.25rem;
-  left: 1.5rem;
-  width: min(24rem, calc(100vw - 3rem));
+.zelda-center {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 1.5rem;
 }
 
-.smash-eyebrow {
+.zelda-eyebrow {
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: oklch(0.85 0.08 235);
 }
 
-.smash-eyebrow > span {
-  background: var(--smash-box);
+.zelda-eyebrow > span {
+  background: var(--zelda-box);
   padding: 0.5rem 0.75rem;
-  box-shadow: 3px 3px 0 var(--smash-ink);
+  box-shadow: 3px 3px 0 var(--zelda-ink);
 }
 
-.smash-title {
+.zelda-title {
   font-family: inherit; /* the base h2 rule would swap in Space Grotesk */
-  margin-top: 0.9rem;
-  font-size: clamp(13px, 1.5vw, 18px);
+  margin-top: 1.5rem;
+  font-size: clamp(16px, 3vw, 30px);
   line-height: 1.3;
   color: oklch(0.85 0.15 85);
   text-shadow:
-    3px 0 0 var(--smash-ink),
-    -3px 0 0 var(--smash-ink),
-    0 3px 0 var(--smash-ink),
-    0 -3px 0 var(--smash-ink),
-    7px 7px 0 var(--smash-ink);
+    3px 0 0 var(--zelda-ink),
+    -3px 0 0 var(--zelda-ink),
+    0 3px 0 var(--zelda-ink),
+    0 -3px 0 var(--zelda-ink),
+    7px 7px 0 var(--zelda-ink);
 }
 
 /* NPC dialogue box */
-.smash-textbox {
+.zelda-textbox {
   position: relative;
-  margin-top: 0.9rem;
-  padding: 0.9rem 1rem 1.4rem;
-  background: color-mix(in oklab, var(--smash-box) 88%, transparent);
-  background: var(--smash-box);
-  border: 4px solid var(--smash-gold);
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem 1.75rem;
+  background: var(--zelda-box);
+  border: 4px solid var(--zelda-gold);
   box-shadow:
-    0 0 0 4px var(--smash-ink),
-    6px 6px 0 var(--smash-ink);
+    0 0 0 4px var(--zelda-ink),
+    6px 6px 0 var(--zelda-ink);
 }
 
-.smash-body {
-  font-size: 9px;
-  line-height: 1.9;
-  color: var(--smash-paper);
+.zelda-body {
+  font-size: clamp(9px, 1.15vw, 12px);
+  line-height: 2;
+  color: var(--zelda-paper);
 }
 
-.smash-inv-label {
+.zelda-inv-label {
   margin-top: 1rem;
   font-size: 9px;
   letter-spacing: 0.14em;
-  color: var(--smash-gold);
+  color: var(--zelda-gold);
 }
 
-.smash-inv {
+.zelda-inv {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.5rem;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: 12px;
 }
 
-.smash-inv > li {
-  padding: 0.25rem 0.45rem;
-  border: 2px solid var(--smash-gold);
+.zelda-inv > li {
+  padding: 0.35rem 0.6rem;
+  border: 2px solid var(--zelda-gold);
   background: oklch(0.26 0.04 150);
 }
 
-.smash-cont {
+.zelda-cont {
   position: absolute;
   right: 14px;
   bottom: 10px;
   font-size: 10px;
-  color: var(--smash-gold);
-  animation: smash-blink 1s steps(1) infinite;
+  color: var(--zelda-gold);
+  animation: zelda-blink 1s steps(1) infinite;
 }
 
-@keyframes smash-blink {
+@keyframes zelda-blink {
   0%,
   50% {
     opacity: 1;
@@ -1059,34 +886,32 @@
   }
 }
 
-.smash-hint {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: 0 1.5rem 0.9rem;
+.zelda-hint {
+  position: relative;
+  padding: 0 1.5rem 1.25rem;
   text-align: center;
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  text-shadow: 2px 2px 0 var(--smash-ink);
+  text-shadow: 2px 2px 0 var(--zelda-ink);
 }
 
 @media (max-width: 640px) {
-  .smash-stage {
-    height: 32px;
+  .zelda-hud {
+    font-size: 8px;
   }
-  .smash-platform {
-    display: none;
+  .zelda-path {
+    width: 84px;
   }
-  .smash-fighter {
-    bottom: calc(17% + 32px);
-    scale: 0.7;
+  .zelda-tree {
+    width: 56px;
+    height: 56px;
   }
-  .smash-burst {
-    width: 70vw;
+  .zelda-pond {
+    width: 120px;
+    height: 74px;
   }
-  .smash-textbox {
+  .zelda-textbox {
     padding: 1rem 1rem 1.5rem;
   }
 }
@@ -1098,7 +923,7 @@
    landed in view (`data-drawn` on the wrapper), then the stroke draws
    itself on, the chevron snaps in, the note fades up, and only then does
    it start bobbing toward the card. */
-.smash-point {
+.zelda-point {
   position: absolute;
   top: calc(100% + 4px);
   left: calc(50% - 36px);
@@ -1109,7 +934,7 @@
   pointer-events: none;
 }
 
-.smash-point-arrow {
+.zelda-point-arrow {
   flex: none;
   width: 160px;
   height: 112px;
@@ -1117,20 +942,20 @@
 }
 
 /* pathLength="1" on both paths, so one dash unit is the whole stroke */
-.smash-point-arrow path {
+.zelda-point-arrow path {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
 }
 
-[data-drawn] .smash-point-arrow path:first-child {
-  animation: smash-point-draw 0.7s ease-out 0.9s forwards;
+[data-drawn] .zelda-point-arrow path:first-child {
+  animation: zelda-point-draw 0.7s ease-out 0.9s forwards;
 }
 
-[data-drawn] .smash-point-arrow path:last-child {
-  animation: smash-point-draw 0.25s ease-out 1.55s forwards;
+[data-drawn] .zelda-point-arrow path:last-child {
+  animation: zelda-point-draw 0.25s ease-out 1.55s forwards;
 }
 
-.smash-point-label {
+.zelda-point-label {
   padding-bottom: 6px;
   font-family: 'Caveat', 'Segoe Script', 'Bradley Hand', cursive;
   font-size: 1.6rem;
@@ -1141,21 +966,21 @@
   transform: rotate(-4deg);
 }
 
-[data-drawn] .smash-point-label {
-  animation: smash-point-fade 0.35s ease-out 1.75s forwards;
+[data-drawn] .zelda-point-label {
+  animation: zelda-point-fade 0.35s ease-out 1.75s forwards;
 }
 
-[data-drawn] .smash-point {
-  animation: smash-point-bob 2.2s ease-in-out 2.2s infinite;
+[data-drawn] .zelda-point {
+  animation: zelda-point-bob 2.2s ease-in-out 2.2s infinite;
 }
 
-@keyframes smash-point-draw {
+@keyframes zelda-point-draw {
   to {
     stroke-dashoffset: 0;
   }
 }
 
-@keyframes smash-point-fade {
+@keyframes zelda-point-fade {
   to {
     opacity: 1;
   }
@@ -1164,19 +989,19 @@
 /* Narrow screens: a smaller arrow, so the note never runs off the right
    edge — the Gaming sticker sits in the left column there. */
 @media (max-width: 640px) {
-  .smash-point {
+  .zelda-point {
     left: calc(50% - 27px); /* tip x scales with the arrow: 36 × 120/160 */
   }
-  .smash-point-arrow {
+  .zelda-point-arrow {
     width: 120px;
     height: 84px;
   }
-  .smash-point-label {
+  .zelda-point-label {
     font-size: 1.35rem;
   }
 }
 
-@keyframes smash-point-bob {
+@keyframes zelda-point-bob {
   0%,
   100% {
     transform: translateY(0);
@@ -1188,10 +1013,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   /* the wipe becomes a cut; the halo ring stays, static */
-  .smash-pixel {
+  .zelda-pixel {
     animation-delay: 0s !important;
   }
-  .smash-cont {
+  .zelda-cont {
     animation: none !important;
   }
 }

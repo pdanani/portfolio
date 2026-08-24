@@ -6,22 +6,16 @@ import { useReducedMotion } from 'motion/react'
 /* Everything the overlay says, in one place. */
 const COPY = {
   eyebrow: 'Sidequest',
-  title: 'A new challenger approaches!',
-  body: 'So when the laptop closes, it’s one more match. Super Smash Bros. — favourite series, no contest.',
-  rulesLabel: 'Rules',
-  rules: ['3 stock', '8:00', 'Items: on', 'Battlefield'],
-  timer: '8:00',
-  players: [
-    { tag: 'P1 · Pawan', damage: '0%', stocks: 3, hot: false },
-    { tag: 'P2 · CPU', damage: '148%', stocks: 1, hot: true },
-  ],
+  title: "It's dangerous to go alone!",
+  body: 'So when the laptop closes, Pawan heads to Hyrule. The Legend of Zelda — favourite series, no contest.',
+  inventory: ['Master Sword', 'Hylian Shield', 'Ocarina', 'Hookshot'],
   hintHover: 'move away to return',
   hintTap: 'tap anywhere to return',
 }
 
 /** 24 × 14 on desktop, 12 × 28 on phones — same count either way. */
 const CELLS = 336
-/** Mosaic fill; the stage fades in once it's done. */
+/** Mosaic fill; the overworld fades in once it's done. */
 const FILL_MS = 620
 const DISSOLVE_MS = 340
 /** Hover intent, so brushing past the sticker doesn't fire it. */
@@ -29,7 +23,7 @@ const INTENT_MS = 220
 /** Opened by tap: dismiss on its own if nobody taps again. */
 const AUTO_CLOSE_MS = 7000
 
-/* Meadow greens for the mosaic — it stays as the field the stage floats over. */
+/* Meadow greens for the mosaic — it stays as the ground of the overworld. */
 const FIELD = [
   'oklch(0.5 0.1 147)',
   'oklch(0.46 0.09 150)',
@@ -37,11 +31,18 @@ const FIELD = [
   'oklch(0.43 0.09 152)',
 ]
 
-/* Soft platforms flanking the main stage, kept clear of the centred
-   textbox (hidden on phones, where the box spans the width). */
-const PLATFORMS = [
-  { left: '5%', width: '17%', bottom: '44%' },
-  { left: '78%', width: '17%', bottom: '44%' },
+type Spot = { top: string; left?: string; right?: string }
+const TREES: Array<Spot> = [
+  { top: '16%', left: '8%' },
+  { top: '62%', left: '12%' },
+  { top: '24%', right: '10%' },
+  { top: '70%', right: '14%' },
+  { top: '46%', left: '4%' },
+]
+const ROCKS: Array<Spot> = [
+  { top: '34%', left: '20%' },
+  { top: '78%', left: '30%' },
+  { top: '18%', right: '24%' },
 ]
 
 export type WarpMode = 'hover' | 'pinned'
@@ -57,11 +58,10 @@ type Timers = Partial<
 
 /**
  * State machine behind the warp. Mouse: hover the sticker (with intent
- * delay) to open; moving away starts the dissolve immediately.
- * Touch/keyboard: click toggles a "pinned" open that dismisses on
- * tap-anywhere, Escape, or a timer.
+ * delay) to open; moving away starts the dissolve immediately. Touch/keyboard: click toggles a
+ * "pinned" open that dismisses on tap-anywhere, Escape, or a timer.
  */
-export function useSmashWarp() {
+export function useZeldaWarp() {
   const reduce = useReducedMotion()
   const [state, setState] = useState<WarpState>({
     phase: 'closed',
@@ -163,7 +163,7 @@ export function useSmashWarp() {
   return { state, close, triggerProps }
 }
 
-/* Fisher–Yates: each cell gets its slot in the fill order + a space tone. */
+/* Fisher–Yates: each cell gets its slot in the fill order + a meadow tone. */
 function shuffledCells() {
   const order = Array.from({ length: CELLS }, (_, i) => i)
   for (let i = order.length - 1; i > 0; i--) {
@@ -180,11 +180,11 @@ function shuffledCells() {
 function PixelGrid() {
   const [cells] = useState(shuffledCells)
   return (
-    <div className="smash-pixels">
+    <div className="zelda-pixels">
       {cells.map((cell, i) => (
         <div
           key={i}
-          className="smash-pixel"
+          className="zelda-pixel"
           style={{ '--i': cell.slot, '--c': cell.color } as CSSProperties}
         />
       ))}
@@ -193,11 +193,11 @@ function PixelGrid() {
 }
 
 /**
- * Full-screen match, portalled to <body> so no transformed ancestor (the
+ * Full-screen Hyrule, portalled to <body> so no transformed ancestor (the
  * sticker's own tumble-in) can break its fixed positioning. Decorative:
  * hidden from assistive tech; the trigger button carries the label.
  */
-export function SmashWarp({
+export function ZeldaWarp({
   state,
   onDismiss,
 }: {
@@ -209,95 +209,64 @@ export function SmashWarp({
   return createPortal(
     <div
       aria-hidden
-      className="smash-warp"
+      className="zelda-warp"
       data-state={state.phase}
       data-mode={state.mode}
       onClick={state.mode === 'pinned' ? onDismiss : undefined}
     >
       <PixelGrid />
 
-      <div className="smash-world">
-        <div className="smash-scenery">
-          <div className="smash-sky" />
-          <div className="smash-cloud" style={{ top: '8%', left: '38%' }} />
-          <div className="smash-cloud" style={{ top: '18%', left: '68%' }} />
-          <div className="smash-glow" />
-          <div className="smash-stage" />
-          {PLATFORMS.map((p, i) => (
-            <div key={i} className="smash-platform" style={p} />
+      <div className="zelda-world">
+        <div className="zelda-scenery">
+          <div className="zelda-path" />
+          {TREES.map((t, i) => (
+            <div key={i} className="zelda-tree" style={t} />
           ))}
-          {/* the fight: P1 in a stance, P2 launched off the impact */}
-          <div className="smash-burst" />
-          <div className="smash-lines" />
-          {/* Hammer King (P1) winding up; Leaf Kid (P2) launched off the hit */}
-          <div className="smash-fighter smash-fighter-p1">
-            <span className="f-hammer" />
-            <span className="f-crown" />
-            <span className="f-head" />
-            <span className="f-body" />
-            <span className="f-arm" />
-            <span className="f-legs" />
+          {ROCKS.map((r, i) => (
+            <div key={i} className="zelda-rock" style={r} />
+          ))}
+          <div className="zelda-pond" style={{ bottom: '9%', left: '6%' }} />
+        </div>
+
+        <div className="zelda-hud">
+          <div>
+            <span className="zelda-emblem" />
+            <span className="zelda-hud-label">Hyrule</span>
           </div>
-          <div className="smash-fighter smash-fighter-p2">
-            <span className="f-leaf" />
-            <span className="f-head" />
-            <span className="f-body" />
-            <span className="f-arm" />
-            <span className="f-legs" />
+          <div>
+            {[false, false, false, true].map((empty, i) => (
+              <span
+                key={i}
+                className={
+                  empty ? 'zelda-heart zelda-heart-empty' : 'zelda-heart'
+                }
+              />
+            ))}
+          </div>
+          <div className="zelda-rupees">
+            <span className="zelda-gem" />
+            <span>x255</span>
           </div>
         </div>
 
-        <span className="smash-timer">{COPY.timer}</span>
-
-        <div className="smash-card">
-          <p className="smash-eyebrow">
+        <div className="zelda-center">
+          <p className="zelda-eyebrow">
             <span>{COPY.eyebrow}</span>
           </p>
-          <h2 className="smash-title">{COPY.title}</h2>
-          <div className="smash-textbox">
-            <p className="smash-body">{COPY.body}</p>
-            <p className="smash-inv-label">{COPY.rulesLabel}</p>
-            <ul className="smash-inv">
-              {COPY.rules.map((item) => (
+          <h2 className="zelda-title">{COPY.title}</h2>
+          <div className="zelda-textbox">
+            <p className="zelda-body">{COPY.body}</p>
+            <p className="zelda-inv-label">Inventory</p>
+            <ul className="zelda-inv">
+              {COPY.inventory.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
-            <span className="smash-cont">▼</span>
+            <span className="zelda-cont">▼</span>
           </div>
         </div>
 
-        <div className="smash-hud">
-          {COPY.players.map((p, i) => (
-            <div key={p.tag} className="smash-player">
-              <span
-                className={
-                  p.hot ? 'smash-damage smash-damage-hot' : 'smash-damage'
-                }
-              >
-                {p.damage}
-              </span>
-              <span
-                className={i === 0 ? 'smash-tag' : 'smash-tag smash-tag-p2'}
-              >
-                {p.tag}
-              </span>
-              <span className="smash-stocks">
-                {[0, 1, 2].map((s) => (
-                  <span
-                    key={s}
-                    className={
-                      s < p.stocks
-                        ? 'smash-stock'
-                        : 'smash-stock smash-stock-lost'
-                    }
-                  />
-                ))}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <p className="smash-hint">
+        <p className="zelda-hint">
           ▼ {state.mode === 'hover' ? COPY.hintHover : COPY.hintTap}
         </p>
       </div>
