@@ -16,8 +16,7 @@ export const PROJECTS: Array<Project> = [
       'ntfy',
     ],
     githubUrl: 'https://github.com/pdanani/warehouse-watch-app',
-    // The card links here (liveUrl wins over githubUrl). Swap to
-    // https://costco.pawandanani.com once that CNAME is added at the registrar.
+    // The card links here (liveUrl wins over githubUrl).
     liveUrl: 'https://warehouse-watch-app.vercel.app',
   },
   {

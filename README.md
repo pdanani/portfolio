@@ -8,14 +8,13 @@ git history) on a modern, type-safe, serverless stack. Currently on the
 **The hero:** the **Ocean Waves** scene — a raw-WebGL twilight sea with a
 noon→dusk sun-arc intro and the name spelled in soft (SVG-filter) clouds.
 
-**Live:** https://pdanani.github.io/portfolio/ (GitHub Pages — the static
-one-pager).
-Stale Vercel preview: https://portfolio-web-ruddy-pi.vercel.app
+**Live:** https://pawandanani.com (Vercel — auto-deploys from `main`).
+Legacy GitHub Pages copy: https://pdanani.github.io/portfolio/
 
 The Costco tracker (**Warehouse Watch**) used to live here at `/costco`; it's
 been extracted to its own repo ([`pdanani/warehouse-watch-app`](https://github.com/pdanani/warehouse-watch-app))
-and deploys independently at `costco.pawandanani.com` — see that repo for its
-own setup. This repo no longer depends on Neon/Drizzle at all.
+and deploys independently at https://warehouse-watch-app.vercel.app — see
+that repo for its own setup. This repo no longer depends on Neon/Drizzle at all.
 
 ---
 
@@ -30,7 +29,7 @@ own setup. This repo no longer depends on Neon/Drizzle at all.
 | Data            | **TanStack Query** (+ Start SSR integration) |
 | Motion          | **`motion` v12** via `LazyMotion` + `m`, every primitive gated on `useReducedMotion()` |
 | Repo            | **npm workspaces** monorepo (`apps/web`; `services/<slug>` later) |
-| Hosting         | **Vercel** (deployed manually via `vercel --prod`) |
+| Hosting         | **Vercel**, Git-connected — every push to `main` deploys to pawandanani.com |
 | Backend (later) | **Java Spring Boot 4** lab services behind a TanStack Start server-fn BFF |
 
 Run locally:
@@ -46,52 +45,62 @@ npx tsc -p apps/web/tsconfig.json    # type-check (kept green)
 
 ## Deploying
 
-### GitHub Pages (live)
+### pawandanani.com via Vercel (live since 2026-08-23)
+
+The Vercel project `portfolio-web` (linked in `.vercel/project.json`, root
+directory `apps/web`) is Git-connected to this repo with **`main` as the
+production branch**: every push to `main` deploys to pawandanani.com; a push
+to any other branch gets a preview URL. That Git integration *is* the
+pipeline — no GitHub Actions involved. Work on a branch, then fast-forward
+or merge into `main` to ship.
+
+DNS lives at Squarespace Domains: `@` → A `216.198.79.1`, `www` → CNAME
+`249406d76d6f9cac.vercel-dns-017.com`. Those values are project-specific
+(Vercel issued them); `npx vercel domains verify pawandanani.com` re-checks.
+The `d5rtplbwemtn` CNAME there is a Google ownership-verification record —
+leave it.
+
+### GitHub Pages (legacy)
 
 ```bash
 ./scripts/deploy-pages.sh
 ```
 
-Builds with `PAGES_BASE=/portfolio/`, snapshots the SSR-rendered home page
-from the built server, and force-pushes the static artifact to `gh-pages` →
-https://pdanani.github.io/portfolio/. Static only, but that's all this repo
-needs now — no server routes live here anymore.
+Builds with `PAGES_BASE=/portfolio/`, snapshots the SSR-rendered home page,
+and force-pushes the static artifact to `gh-pages` →
+https://pdanani.github.io/portfolio/. Superseded by the Vercel deploy above;
+kept as a fallback. (Each run also triggers a failed Vercel preview build for
+the `gh-pages` branch — harmless.)
 
-### pawandanani.com via Vercel (TODO — parked 2026-08-16, optional)
+### How the apex was cut over (reference)
 
-Unlike the tracker, moving the apex off Firebase isn't blocking anything —
-it's just a nicer permanent home for the one-pager than GitHub Pages.
-
-Where things stand: **pawandanani.com currently serves the OLD Next.js site
-from Firebase Hosting** (apex A record `199.36.158.100` = Firebase). The
-Vercel project `portfolio-web` (linked in `.vercel/project.json`) hosts the
-preview URL above but its last deploy predates the revamp. The Vercel CLI on
-this machine is **logged out** — that's the only blocker.
-
-Do the steps in this order, so the domain cuts over to the new build and
-never exposes the stale one:
+pawandanani.com used to serve the old Next.js site from Firebase Hosting
+(apex A record `199.36.158.100`). The steps that moved it, in order:
 
 1. **Authenticate** (one-time, opens the browser):
    ```bash
    npx vercel login
    ```
-2. **Deploy today's build, then attach the domain** (from the repo root —
-   the directory is already linked to `portfolio-web`):
+2. **Deploy, then attach the domain to the project** (from the repo root —
+   the directory is already linked to `portfolio-web`; subdomains need the
+   project name, the apex accepts it too):
    ```bash
    npx vercel --prod
-   npx vercel domains add pawandanani.com
-   npx vercel domains add www.pawandanani.com
+   npx vercel domains add pawandanani.com portfolio-web
+   npx vercel domains add www.pawandanani.com portfolio-web
+   npx vercel domains verify pawandanani.com   # prints the exact records to set
    ```
-   Vercel prints the DNS records it expects and starts watching for them.
-3. **Update DNS.** Nameservers are Google Cloud DNS
-   (`ns-cloud-e*.googledomains.com`) — an ex-Google-Domains setup, so the
-   domain is most likely managed at **Squarespace Domains** now. Change two
-   records (trust Vercel's step-2 output if it shows different values):
-   - `@` (apex): replace A `199.36.158.100` → **A `76.76.21.21`**
-   - `www`: delete its A record → **CNAME `cname.vercel-dns.com`**
+   Use the records `verify` prints, not generic ones from docs — Vercel
+   assigns per-project anycast IPs now, and verification checks for the
+   exact values it expects.
+3. **Update DNS** at Squarespace Domains (the zone still uses Google Cloud
+   DNS nameservers, `ns-cloud-e*.googledomains.com`; leave those alone —
+   only the records change, so no DNSSEC risk). Replace the two Firebase
+   records:
+   - `@` (apex): A `199.36.158.100` → **A `216.198.79.1`**
+   - `www`: delete the A record → **CNAME `249406d76d6f9cac.vercel-dns-017.com`**
 
-   Propagation is usually minutes; Vercel verifies automatically, issues
-   SSL itself, and redirects `www` → apex once both are attached.
+   Verified within minutes; SSL issued automatically.
 4. **Cleanup (optional):** in the Firebase console, remove the custom
    domain from the old hosting project, then retire the Firebase project.
 
