@@ -21,11 +21,11 @@ const COPY = {
   hintTap: 'tap anywhere for the lights',
 }
 
-/** Popcorn closes in from every edge to the centre, then irises back open. */
-const OPEN_MS = 1700
+/** Kernels pop into place until the page is buried; then they pop away. */
+const OPEN_MS = 1500
 const CLOSE_MS = 650
 /** Just kernels — enough of them to bury the page on their own. */
-const KERNELS = 240
+const KERNELS = 210
 
 export function useMovieWarp() {
   return useWarp({ fill: OPEN_MS, dissolve: CLOSE_MS })
@@ -33,38 +33,26 @@ export function useMovieWarp() {
 
 const SEATS = Array.from({ length: 3 }, (_, row) => row)
 
-/* One flood per open. Kernel i flies in from a random point just outside
-   the viewport toward the centre, landing on a ring that shrinks as the
-   flood advances — early kernels hug the edges, late ones pack the middle.
-   Leaving reverses it: the centre empties first (--od). Client-only. */
-function floodKernels() {
+/* One popping per open. No flight paths — each kernel just pops into
+   place somewhere on the screen at its own moment, and pops away again
+   at its own moment (--od) when the scene opens. Client-only. */
+function popKernels() {
   const w = window.innerWidth
   const h = window.innerHeight
-  const cx = w / 2
-  const cy = h / 2
-  const R = Math.hypot(cx, cy)
-  return Array.from({ length: KERNELS }, (_, i) => {
-    const p = i / KERNELS
-    const a = Math.random() * Math.PI * 2
-    const ring = R * (1 - p) + Math.random() * 70
-    return {
-      sx: cx + Math.cos(a) * (R + 160),
-      sy: cy + Math.sin(a) * (R + 160),
-      tx: cx + Math.cos(a) * ring,
-      ty: cy + Math.sin(a) * ring,
-      s: 0.85 + Math.random() * 0.75,
-      r: (Math.random() - 0.5) * 380,
-      dur: 420 + Math.random() * 240,
-      delay: p * 1000,
-      od: (1 - p) * 450,
-      hue: 80 + Math.random() * 14,
-    }
-  })
+  return Array.from({ length: KERNELS }, () => ({
+    tx: Math.random() * w,
+    ty: Math.random() * h,
+    s: 1 + Math.random() * 0.8,
+    rr: (Math.random() - 0.5) * 180,
+    delay: Math.random() * 1100,
+    od: Math.random() * 420,
+    hue: 80 + Math.random() * 14,
+  }))
 }
 
-/** Mounts fresh on every open, so no two floods are alike. */
+/** Mounts fresh on every open, so no two poppings are alike. */
 function PopcornPile() {
-  const [kernels] = useState(floodKernels)
+  const [kernels] = useState(popKernels)
   return (
     <div className="movie-pile">
       {kernels.map((k, i) => (
@@ -73,13 +61,10 @@ function PopcornPile() {
           className="movie-kernel"
           style={
             {
-              '--sx': `${k.sx}px`,
-              '--sy': `${k.sy}px`,
               '--tx': `${k.tx}px`,
               '--ty': `${k.ty}px`,
               '--s': k.s,
-              '--r': `${k.r}deg`,
-              '--dur': `${k.dur}ms`,
+              '--rr': `${k.rr}deg`,
               '--delay': `${k.delay}ms`,
               '--od': `${k.od}ms`,
               '--hue': k.hue,
@@ -92,13 +77,13 @@ function PopcornPile() {
 }
 
 /**
- * "Extra butter": popcorn floods in from every edge of the screen — top,
- * sides and bottom — packing inward until the page is buried under
- * kernels; then they fly back out the way they came, centre first,
- * revealing the cinema underneath (screen + ticket stub
- * under the beam, silhouetted seats). Leaving fades the lights back up.
- * The flood is CSS keyframes; house/scene fades are Web Animations.
- * Portalled to <body>; decorative.
+ * "Extra butter": kernels pop straight onto the screen — no flight, just
+ * corn popping wherever it pops, faster and faster until the page is
+ * buried and the house has gone dark; then they pop away again, and the
+ * cinema is just there (screen + ticket stub under the beam, silhouetted
+ * seats). Leaving fades the lights back up. Pure CSS keyframes for the
+ * pops; house/scene fades are Web Animations. Portalled to <body>;
+ * decorative.
  */
 export function MovieWarp({
   state,

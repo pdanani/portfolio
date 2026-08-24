@@ -1882,8 +1882,8 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Movies sticker easter egg — popcorn floods in from every edge to the */
-/* centre, then irises open into a cinema (movie-warp.tsx).             */
+/* Movies sticker easter egg — popcorn pops onto the page piece by      */
+/* piece, then pops away into a cinema (movie-warp.tsx).                */
 /* ------------------------------------------------------------------ */
 
 /* Halo variant: deep red → gold → cream, a marquee-bulb feel. */
@@ -2134,10 +2134,11 @@
   );
 }
 
-/* The flood. Kernels fly in from outside every edge (--sx/--sy) to a
-   ring that shrinks toward the centre (--tx/--ty) until the page is
-   buried in them. Once open, they fly back out the way they came,
-   centre first (--od). */
+/* The popping. Each kernel sits at its spot (--tx/--ty, static) and
+   pops into existence at its own moment — a fast scale-up with a little
+   overshoot, like corn going off — no travel at all. When the scene
+   opens they pop back out (--od). The kernel itself: puffy overlapping
+   cream lobes with shaded rims and a small brown hilum at the heart. */
 .movie-pile {
   position: absolute;
   inset: 0;
@@ -2148,65 +2149,89 @@
 
 .movie-kernel {
   position: absolute;
-  top: -44px;
-  left: -44px;
-  width: 88px;
-  height: 88px;
-  border-radius: 46% 54% 50% 50% / 52% 48% 52% 48%;
+  top: -46px;
+  left: -46px;
+  width: 92px;
+  height: 92px;
   background:
     radial-gradient(
-      circle at 32% 30%,
-      oklch(0.99 0.03 var(--hue)) 0 22%,
-      transparent 23%
+      circle at 30% 28%,
+      oklch(0.98 0.02 var(--hue)) 0 17%,
+      oklch(0.88 0.05 var(--hue)) 24%,
+      transparent 26%
     ),
     radial-gradient(
-      circle at 70% 36%,
-      oklch(0.97 0.06 var(--hue)) 0 24%,
+      circle at 68% 26%,
+      oklch(0.97 0.03 var(--hue)) 0 15%,
+      oklch(0.86 0.06 var(--hue)) 22%,
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 22% 62%,
+      oklch(0.96 0.03 var(--hue)) 0 16%,
+      oklch(0.85 0.06 var(--hue)) 23%,
       transparent 25%
     ),
     radial-gradient(
-      circle at 50% 72%,
-      oklch(0.95 0.08 var(--hue)) 0 26%,
-      transparent 27%
+      circle at 72% 64%,
+      oklch(0.95 0.04 var(--hue)) 0 17%,
+      oklch(0.84 0.07 var(--hue)) 24%,
+      transparent 26%
     ),
     radial-gradient(
-      circle at 50% 50%,
-      oklch(0.9 0.1 calc(var(--hue) - 6)) 0 40%,
-      transparent 41%
+      circle at 48% 44%,
+      oklch(0.99 0.02 var(--hue)) 0 20%,
+      oklch(0.9 0.05 var(--hue)) 28%,
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 50% 78%,
+      oklch(0.55 0.09 70) 0 5%,
+      oklch(0.68 0.08 76) 8%,
+      transparent 10%
+    ),
+    radial-gradient(
+      circle at 50% 52%,
+      oklch(0.8 0.07 calc(var(--hue) - 8)) 0 38%,
+      transparent 42%
     );
   opacity: 0;
-  transform: translate(var(--sx), var(--sy)) scale(var(--s));
-  animation: movie-kernel-fall var(--dur) cubic-bezier(0.35, 0, 0.7, 0.5)
-    var(--delay) forwards;
-  will-change: transform, opacity;
-}
-
-@keyframes movie-kernel-fall {
-  0% {
-    opacity: 1;
-    transform: translate(var(--sx), var(--sy)) scale(var(--s)) rotate(0deg);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(var(--tx), var(--ty)) scale(var(--s)) rotate(var(--r));
-  }
-}
-
-/* once open: back out the way they came, the centre emptying first */
-.movie-warp[data-state='open'] .movie-kernel {
-  animation: movie-kernel-out 0.55s cubic-bezier(0.5, 0, 0.85, 0.5) var(--od)
+  transform: translate(var(--tx), var(--ty)) rotate(var(--rr)) scale(var(--s));
+  animation: movie-pop-in 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) var(--delay)
     forwards;
 }
 
-@keyframes movie-kernel-out {
+@keyframes movie-pop-in {
   0% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) rotate(var(--rr))
+      scale(calc(var(--s) * 0.25));
+  }
+  60% {
     opacity: 1;
-    transform: translate(var(--tx), var(--ty)) scale(var(--s)) rotate(var(--r));
+    transform: translate(var(--tx), var(--ty)) rotate(var(--rr))
+      scale(calc(var(--s) * 1.12));
   }
   100% {
     opacity: 1;
-    transform: translate(var(--sx), var(--sy)) scale(var(--s))
-      rotate(calc(var(--r) * -1));
+    transform: translate(var(--tx), var(--ty)) rotate(var(--rr)) scale(var(--s));
+  }
+}
+
+/* once open: they pop back out, each at its own moment */
+.movie-warp[data-state='open'] .movie-kernel {
+  animation: movie-pop-out 0.14s ease-in var(--od) forwards;
+}
+
+@keyframes movie-pop-out {
+  0% {
+    opacity: 1;
+    transform: translate(var(--tx), var(--ty)) rotate(var(--rr)) scale(var(--s));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) rotate(var(--rr))
+      scale(calc(var(--s) * 0.4));
   }
 }
 
