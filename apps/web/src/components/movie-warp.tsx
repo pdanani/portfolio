@@ -1,5 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
-import type { CSSProperties } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useReducedMotion } from 'motion/react'
 import { useWarp } from './warp'
@@ -21,67 +20,29 @@ const COPY = {
   hintTap: 'tap anywhere for the lights',
 }
 
-/** Popcorn buries the screen, then settles away to reveal the cinema.
-    Must outlast the slowest kernel (delay ≤ 600 + fall ≤ 1100), or the
-    settle animation would snap mid-air kernels to their landing spots. */
-const OPEN_MS = 1800
-const CLOSE_MS = 700
-/** Kernels in the shower. */
-const KERNELS = 240
+/** Lights down (150) + three leader counts (3 × 360) + the splice flash. */
+const OPEN_MS = 1420
+const CLOSE_MS = 650
 
 export function useMovieWarp() {
   return useWarp({ fill: OPEN_MS, dissolve: CLOSE_MS })
 }
 
 const SEATS = Array.from({ length: 3 }, (_, row) => row)
-
-/* One random rain per open: where each kernel lands, how big, how it
-   tumbles, how long it falls and how late it starts. Client-only. */
-function popKernels() {
-  const w = window.innerWidth
-  const h = window.innerHeight
-  return Array.from({ length: KERNELS }, () => ({
-    tx: Math.random() * w,
-    ty: Math.random() * h,
-    s: 0.75 + Math.random() * 0.7,
-    r: (Math.random() - 0.5) * 420,
-    dur: 600 + Math.random() * 500,
-    delay: Math.random() * 600,
-    hue: 80 + Math.random() * 14,
-  }))
-}
-
-/** Mounts fresh on every open, so no two showers are alike. */
-function Popcorn() {
-  const [kernels] = useState(popKernels)
-  return (
-    <div className="movie-corn">
-      {kernels.map((k, i) => (
-        <span
-          key={i}
-          className="movie-kernel"
-          style={
-            {
-              '--tx': `${k.tx}px`,
-              '--ty': `${k.ty}px`,
-              '--s': k.s,
-              '--r': `${k.r}deg`,
-              '--dur': `${k.dur}ms`,
-              '--delay': `${k.delay}ms`,
-              '--hue': k.hue,
-            } as CSSProperties
-          }
-        />
-      ))}
-    </div>
-  )
-}
+/* Each numeral's slot in the countdown (ms after mount). */
+const COUNTS = [
+  { n: 3, delay: 150 },
+  { n: 2, delay: 510 },
+  { n: 1, delay: 870 },
+]
 
 /**
- * "Extra butter": popcorn rains in from above until the page is buried, the house goes dark underneath, then
- * the popcorn settles away to reveal the cinema — screen lit under a
- * projector beam over silhouetted seats. Leaving fades the lights back up.
- * The shower is CSS keyframes per kernel; the rest is Web Animations.
+ * "Roll film": the house lights snap down and the projector throws a dusty
+ * film leader across the whole viewport — crosshairs, rings, grain, and a
+ * sector sweep counting 3 · 2 · 1 — then a one-frame splice flash cuts to
+ * the cinema: a glowing screen with a ticket stub under the beam, over
+ * silhouetted seats. Leaving flickers out and fades the lights back up.
+ * The countdown is pure CSS; house/scene fades are Web Animations.
  * Portalled to <body>; decorative.
  */
 export function MovieWarp({
@@ -116,12 +77,12 @@ export function MovieWarp({
         fill: 'both',
       })
     if (phase === 'opening') {
-      // the house goes dark under the popcorn; the screen lights as it clears
-      fade(house, 0, 1, 600, 600)
-      fade(screen, 0, 1, 700, 1500)
+      // lights snap down; the scene is revealed by the splice at the end
+      fade(house, 0, 1, 150)
+      fade(screen, 0, 1, 120, OPEN_MS - 160)
     } else {
-      fade(screen, 1, 0, 300)
-      fade(house, 1, 0, 400, 250)
+      fade(screen, 1, 0, 240)
+      fade(house, 1, 0, 350, 220)
     }
   }, [phase, reduce])
 
@@ -136,7 +97,7 @@ export function MovieWarp({
       onClick={state.mode === 'pinned' ? onDismiss : undefined}
     >
       <div ref={houseRef} className="movie-house">
-        {/* the screen + projector beam */}
+        {/* the cinema, revealed by the splice */}
         <div ref={screenRef} className="movie-stage">
           <div className="movie-beam" />
           <div className="movie-screen">
@@ -160,13 +121,30 @@ export function MovieWarp({
           </div>
         </div>
 
+        {/* the film leader, only during the countdown */}
+        {phase === 'opening' ? (
+          <div className="movie-leader">
+            <div className="movie-grain" />
+            <span className="movie-leader-ring movie-leader-ring-outer" />
+            <span className="movie-leader-ring movie-leader-ring-inner" />
+            <span className="movie-leader-sweep" />
+            {COUNTS.map(({ n, delay }) => (
+              <span
+                key={n}
+                className="movie-leader-num"
+                style={{ animationDelay: `${delay}ms` }}
+              >
+                {n}
+              </span>
+            ))}
+            <span className="movie-splice" />
+          </div>
+        ) : null}
+
         <p className="movie-hint">
           ▼ {state.mode === 'hover' ? COPY.hintHover : COPY.hintTap}
         </p>
       </div>
-
-      {/* the shower, above everything */}
-      <Popcorn />
     </div>,
     document.body,
   )
