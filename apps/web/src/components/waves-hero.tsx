@@ -351,9 +351,11 @@ export function WavesHero() {
           copy bottom-aligns into the sky above it and the CTAs top-align
           into the scrim below it, so the buttons stay under the water no
           matter how long the intro copy is — a centered column would shift
-          them every time the paragraph changed length. */}
+          them every time the paragraph changed length. In portrait (phones)
+          the name is width-scaled and small, so it centres in the sky
+          instead — bottom-aligning it there left the top 60% empty. */}
       <div className="mx-auto grid min-h-screen max-w-5xl grid-rows-[7fr_3fr] px-6">
-        <div className="flex flex-col justify-end pb-6 pt-24 sm:pb-8">
+        <div className="flex flex-col justify-end portrait:justify-center pb-6 pt-24 sm:pb-8">
           <m.p
             {...rise(0.05)}
             className="font-mono text-xs uppercase tracking-[0.42em] text-brand-amber sm:text-sm"
