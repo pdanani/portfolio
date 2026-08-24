@@ -27,6 +27,8 @@ const GROW_MS = 1300
 const SHRINK_MS = 600
 /** How magnified the room starts: the record's centre fills the sticker. */
 const START_SCALE = 3
+/** How far the whole scene spins (about the record) while it zooms out. */
+const START_SPIN = -200
 const EASE_OUT = 'cubic-bezier(0.3, 0.6, 0.15, 1)'
 const EASE_IN = 'cubic-bezier(0.6, 0, 0.8, 0.3)'
 
@@ -39,7 +41,8 @@ const STROBE = Array.from({ length: 36 }, (_, i) => i * 10)
 /**
  * "The record drops": the listening room is on screen from the first frame,
  * magnified so the record's centre sits on the Music sticker, and one eased
- * animation zooms it out to the full turntable while a clip circle grows
+ * animation spins it (about the record, like the platter) and zooms it out
+ * to the full turntable while a clip circle grows
  * from the sticker — no fade, no pop. Leaving runs it in reverse. Both are
  * Web Animations on the compositor (transform + clip-path). Portalled to
  * <body>; decorative.
@@ -68,7 +71,7 @@ export function VinylWarp({
     const rx = r.left + r.width / 2
     const ry = r.top + r.height / 2
     room.style.transformOrigin = `${rx}px ${ry}px`
-    const zoomed = `translate(${origin.x - rx}px, ${origin.y - ry}px) scale(${START_SCALE})`
+    const zoomed = `translate(${origin.x - rx}px, ${origin.y - ry}px) scale(${START_SCALE}) rotate(${START_SPIN}deg)`
     const clipIn = `circle(0px at ${origin.x}px ${origin.y}px)`
     const clipOut = `circle(150vmax at ${origin.x}px ${origin.y}px)`
     const opening = phase === 'opening'
@@ -78,8 +81,14 @@ export function VinylWarp({
       fill: 'both',
     }
     const frames = opening
-      ? [{ transform: zoomed }, { transform: 'translate(0px, 0px) scale(1)' }]
-      : [{ transform: 'translate(0px, 0px) scale(1)' }, { transform: zoomed }]
+      ? [
+          { transform: zoomed },
+          { transform: 'translate(0px, 0px) scale(1) rotate(0deg)' },
+        ]
+      : [
+          { transform: 'translate(0px, 0px) scale(1) rotate(0deg)' },
+          { transform: zoomed },
+        ]
     const clips = opening
       ? [{ clipPath: clipIn }, { clipPath: clipOut }]
       : [{ clipPath: clipOut }, { clipPath: clipIn }]
@@ -106,6 +115,9 @@ export function VinylWarp({
         } as CSSProperties
       }
     >
+      {/* static floor under the rotating room, so its corners never show
+          the page while it spins */}
+      <div className="vinyl-floor" />
       <div ref={roomRef} className="vinyl-room">
         <div className="vinyl-vignette" />
 

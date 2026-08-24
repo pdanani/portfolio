@@ -1094,7 +1094,13 @@
   }
 }
 
-/* ---- the listening room, fading up over the disc ---- */
+.vinyl-floor {
+  position: absolute;
+  inset: 0;
+  background: oklch(0.12 0.01 60);
+}
+
+/* ---- the listening room (spins + zooms in from the record) ---- */
 .vinyl-room {
   position: absolute;
   inset: 0;
