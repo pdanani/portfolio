@@ -63,7 +63,12 @@ export function AboutSection() {
             ever-growing keyboard collection.
           </p>
 
-          <StaggerGroup className="mt-8 flex flex-wrap gap-6" amount={0.4}>
+          {/* justify-center so a narrower trailing row of stickers sits
+              centred under the row above instead of hugging the left edge */}
+          <StaggerGroup
+            className="mt-8 flex flex-wrap justify-center gap-6"
+            amount={0.4}
+          >
             {INTERESTS.map(({ emoji, label, tilt, spin }) => (
               <StaggerItem
                 key={label}
@@ -93,7 +98,7 @@ export function AboutSection() {
             ))}
           </StaggerGroup>
 
-          <p className="mt-6 font-mono text-xs tracking-wide text-brand-amber/90 uppercase sm:whitespace-nowrap">
+          <p className="mt-6 text-center font-mono text-xs tracking-wide text-brand-amber/90 uppercase sm:whitespace-nowrap">
             Stony Brook University · B.S. Computer Science &amp; B.S. Economics
             · 2021
           </p>

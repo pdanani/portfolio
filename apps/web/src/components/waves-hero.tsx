@@ -335,7 +335,10 @@ export function WavesHero() {
         ref={canvasRef}
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
-        style={{ opacity: 0, transition: 'opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1)' }}
+        style={{
+          opacity: 0,
+          transition: 'opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
+        }}
       />
 
       {/* bottom-up scrim for text legibility over the water */}
@@ -344,169 +347,180 @@ export function WavesHero() {
         className="waves-scrim pointer-events-none absolute inset-0 -z-10"
       />
 
-      <div className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 pb-16 pt-24 sm:pb-24">
-        <m.p
-          {...rise(0.05)}
-          className="font-mono text-xs uppercase tracking-[0.42em] text-brand-amber sm:text-sm"
-        >
-          Software Engineer
-        </m.p>
+      {/* Two rows split at the shader's waterline (70% of the hero). The
+          copy bottom-aligns into the sky above it and the CTAs top-align
+          into the scrim below it, so the buttons stay under the water no
+          matter how long the intro copy is — a centered column would shift
+          them every time the paragraph changed length. */}
+      <div className="mx-auto grid min-h-screen max-w-5xl grid-rows-[7fr_3fr] px-6">
+        <div className="flex flex-col justify-end pb-6 pt-24 sm:pb-8">
+          <m.p
+            {...rise(0.05)}
+            className="font-mono text-xs uppercase tracking-[0.42em] text-brand-amber sm:text-sm"
+          >
+            Software Engineer
+          </m.p>
 
-        {/* the name, spelled in soft clouds — kept IN the layout flow (the real
+          {/* the name, spelled in soft clouds — kept IN the layout flow (the real
             <h1>) so it reserves space and can never collide with the copy below;
             the SVG "gooey" filter rounds the letters into puffy blobs. The
             intro animates only opacity/transform (compositor-friendly) — a CSS
             blur here would re-run the SVG filters every frame. */}
-        <m.h1
-          aria-label="Pawan Danani"
-          className="mt-1 mb-1"
-          style={{ transformOrigin: 'left center' }}
-          initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.04, y: 12 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{
-            duration: reduce ? 0.01 : 1.5,
-            ease: EASE,
-            delay: reduce ? 0 : 0.2,
-          }}
-        >
-          <span className="sr-only">Pawan Danani</span>
-          <svg aria-hidden viewBox="0 0 1200 240" className="w-full max-w-4xl">
-            <defs>
-              <filter
-                id="waves-cloud"
-                x="-20%"
-                y="-90%"
-                width="140%"
-                height="300%"
-                colorInterpolationFilters="sRGB"
-              >
-                <feTurbulence
-                  type="fractalNoise"
-                  baseFrequency="0.009 0.013"
-                  numOctaves={3}
-                  seed={6}
-                  result="n"
-                />
-                <feDisplacementMap
-                  in="SourceGraphic"
-                  in2="n"
-                  scale={15}
-                  result="d"
-                />
-                <feGaussianBlur in="d" stdDeviation={5} result="b" />
-                <feColorMatrix
-                  in="b"
-                  type="matrix"
-                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"
-                  result="goo"
-                />
-                <feGaussianBlur in="goo" stdDeviation={1} />
-              </filter>
-              <filter
-                id="waves-cloud-haze"
-                x="-40%"
-                y="-160%"
-                width="180%"
-                height="420%"
-                colorInterpolationFilters="sRGB"
-              >
-                <feGaussianBlur stdDeviation={14} />
-              </filter>
-              <linearGradient id="waves-cloud-fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#ffffff" />
-                <stop offset="55%" stopColor="#eef2f8" />
-                <stop offset="100%" stopColor="#c1cad9" />
-              </linearGradient>
-            </defs>
-            {/* soft haze halo */}
-            <text
-              x="30"
-              y="168"
-              textAnchor="start"
-              textLength="1140"
-              lengthAdjust="spacingAndGlyphs"
-              fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
-              fontSize="150"
-              fill="#ffffff"
-              opacity="0.3"
-              filter="url(#waves-cloud-haze)"
-            >
-              Pawan Danani
-            </text>
-            {/* puffy cloud body */}
-            <text
-              x="30"
-              y="168"
-              textAnchor="start"
-              textLength="1140"
-              lengthAdjust="spacingAndGlyphs"
-              fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
-              fontSize="150"
-              fill="url(#waves-cloud-fill)"
-              filter="url(#waves-cloud)"
-            >
-              Pawan Danani
-            </text>
-          </svg>
-        </m.h1>
-
-        <m.p
-          {...rise(0.28)}
-          className="mt-6 max-w-xl text-base leading-relaxed text-foreground/85 sm:text-lg"
-        >
-          Based in NYC
-        </m.p>
-
-        <m.div
-          {...rise(0.4)}
-          className="mt-10 flex flex-wrap items-center gap-4"
-        >
-          <a
-            href="#projects"
-            onClick={scrollToAnchor}
-            className="rounded-[0.4rem] bg-primary px-7 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-            style={{
-              boxShadow:
-                '0 8px 30px color-mix(in oklab, var(--primary) 45%, transparent)',
+          <m.h1
+            aria-label="Pawan Danani"
+            className="mt-1 mb-1"
+            style={{ transformOrigin: 'left center' }}
+            initial={
+              reduce ? { opacity: 0 } : { opacity: 0, scale: 1.04, y: 12 }
+            }
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{
+              duration: reduce ? 0.01 : 1.5,
+              ease: EASE,
+              delay: reduce ? 0 : 0.2,
             }}
           >
-            View projects
-          </a>
-          <a
-            href="#about"
-            onClick={scrollToAnchor}
-            className="waves-glass rounded-[0.4rem] border border-border px-7 py-3 text-sm font-medium text-foreground transition hover:bg-accent"
-          >
-            About me
-          </a>
-          <span className="ml-1 flex items-center gap-4">
-            <a
-              href={`mailto:${PROFILE.email}`}
-              aria-label={`Email ${PROFILE.email}`}
-              className="text-foreground/60 transition hover:text-brand-amber"
+            <span className="sr-only">Pawan Danani</span>
+            <svg
+              aria-hidden
+              viewBox="0 0 1200 240"
+              className="w-full max-w-4xl"
             >
-              <Mail className="h-5 w-5" />
+              <defs>
+                <filter
+                  id="waves-cloud"
+                  x="-20%"
+                  y="-90%"
+                  width="140%"
+                  height="300%"
+                  colorInterpolationFilters="sRGB"
+                >
+                  <feTurbulence
+                    type="fractalNoise"
+                    baseFrequency="0.009 0.013"
+                    numOctaves={3}
+                    seed={6}
+                    result="n"
+                  />
+                  <feDisplacementMap
+                    in="SourceGraphic"
+                    in2="n"
+                    scale={15}
+                    result="d"
+                  />
+                  <feGaussianBlur in="d" stdDeviation={5} result="b" />
+                  <feColorMatrix
+                    in="b"
+                    type="matrix"
+                    values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"
+                    result="goo"
+                  />
+                  <feGaussianBlur in="goo" stdDeviation={1} />
+                </filter>
+                <filter
+                  id="waves-cloud-haze"
+                  x="-40%"
+                  y="-160%"
+                  width="180%"
+                  height="420%"
+                  colorInterpolationFilters="sRGB"
+                >
+                  <feGaussianBlur stdDeviation={14} />
+                </filter>
+                <linearGradient
+                  id="waves-cloud-fill"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="55%" stopColor="#eef2f8" />
+                  <stop offset="100%" stopColor="#c1cad9" />
+                </linearGradient>
+              </defs>
+              {/* soft haze halo */}
+              <text
+                x="30"
+                y="168"
+                textAnchor="start"
+                textLength="1140"
+                lengthAdjust="spacingAndGlyphs"
+                fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+                fontSize="150"
+                fill="#ffffff"
+                opacity="0.3"
+                filter="url(#waves-cloud-haze)"
+              >
+                Pawan Danani
+              </text>
+              {/* puffy cloud body */}
+              <text
+                x="30"
+                y="168"
+                textAnchor="start"
+                textLength="1140"
+                lengthAdjust="spacingAndGlyphs"
+                fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+                fontSize="150"
+                fill="url(#waves-cloud-fill)"
+                filter="url(#waves-cloud)"
+              >
+                Pawan Danani
+              </text>
+            </svg>
+          </m.h1>
+        </div>
+
+        <div className="pt-8 sm:pt-10">
+          <m.div {...rise(0.4)} className="flex flex-wrap items-center gap-4">
+            <a
+              href="#about"
+              onClick={scrollToAnchor}
+              className="rounded-[0.4rem] bg-primary px-7 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+              style={{
+                boxShadow:
+                  '0 8px 30px color-mix(in oklab, var(--primary) 45%, transparent)',
+              }}
+            >
+              About me
             </a>
             <a
-              href="https://github.com/pdanani"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-              className="text-foreground/60 transition hover:text-brand-amber"
+              href="#experience"
+              onClick={scrollToAnchor}
+              className="waves-glass rounded-[0.4rem] border border-border px-7 py-3 text-sm font-medium text-foreground transition hover:bg-accent"
             >
-              <Github className="h-5 w-5" />
+              Experience
             </a>
-            <a
-              href="https://www.linkedin.com/in/pawan-danani-8b9402148/"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-              className="text-foreground/60 transition hover:text-brand-amber"
-            >
-              <Linkedin className="h-5 w-5" />
-            </a>
-          </span>
-        </m.div>
+            <span className="ml-1 flex items-center gap-4">
+              <a
+                href={`mailto:${PROFILE.email}`}
+                aria-label={`Email ${PROFILE.email}`}
+                className="text-foreground/60 transition hover:text-brand-amber"
+              >
+                <Mail className="h-5 w-5" />
+              </a>
+              <a
+                href="https://github.com/pdanani"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="GitHub"
+                className="text-foreground/60 transition hover:text-brand-amber"
+              >
+                <Github className="h-5 w-5" />
+              </a>
+              <a
+                href="https://www.linkedin.com/in/pawan-danani-8b9402148/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="LinkedIn"
+                className="text-foreground/60 transition hover:text-brand-amber"
+              >
+                <Linkedin className="h-5 w-5" />
+              </a>
+            </span>
+          </m.div>
+        </div>
       </div>
 
       {/* scroll cue — appears once the sun has landed */}

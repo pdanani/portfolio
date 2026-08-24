@@ -25,11 +25,15 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      // Dark-only site: tell the browser (form controls, scrollbars) and
+      // opt out of Dark Reader, which inverts the white SVG name-clouds and
+      // dims the shader canvas.
+      { name: 'color-scheme', content: 'dark' },
+      { name: 'darkreader-lock' },
       { title: 'Pawan Danani — Software Engineer' },
       {
         name: 'description',
-        content:
-          'Software engineer based in NYC.',
+        content: 'Software engineer based in NYC.',
       },
     ],
     links: [
