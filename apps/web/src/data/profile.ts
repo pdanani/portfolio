@@ -10,6 +10,5 @@ export const PROFILE: Profile = {
       label: 'LinkedIn',
       url: 'https://www.linkedin.com/in/pawan-danani-8b9402148/',
     },
-    { label: 'Email', url: 'mailto:nycpawan@gmail.com' },
   ],
 }

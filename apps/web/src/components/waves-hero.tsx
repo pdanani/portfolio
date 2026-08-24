@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { m, useReducedMotion } from 'motion/react'
-import { ChevronDown, Github, Linkedin, Mail } from 'lucide-react'
+import { ChevronDown, Github, Linkedin } from 'lucide-react'
 import { EASE } from '#/lib/motion/variants'
-import { PROFILE } from '#/data/profile'
 import { scrollToAnchor } from '#/lib/scroll'
 
 /* Full-screen single-triangle vertex shader. */
@@ -383,11 +382,8 @@ export function WavesHero() {
             }}
           >
             <span className="sr-only">Pawan Danani</span>
-            <svg
-              aria-hidden
-              viewBox="0 0 1200 240"
-              className="w-full max-w-4xl"
-            >
+            {/* Shared filter + gradient defs, referenced by both SVGs below. */}
+            <svg aria-hidden focusable="false" className="absolute h-0 w-0">
               <defs>
                 <filter
                   id="waves-cloud"
@@ -441,6 +437,13 @@ export function WavesHero() {
                   <stop offset="100%" stopColor="#c1cad9" />
                 </linearGradient>
               </defs>
+            </svg>
+            {/* One line from `sm` up. */}
+            <svg
+              aria-hidden
+              viewBox="0 0 1200 240"
+              className="hidden w-full max-w-4xl sm:block"
+            >
               {/* soft haze halo */}
               <text
                 x="30"
@@ -471,15 +474,63 @@ export function WavesHero() {
                 Pawan Danani
               </text>
             </svg>
+            {/* Phones: two lines. Squeezing all twelve glyphs into ~340px made
+                the name ~40px tall; stacked, each line keeps them big. Same
+                150px glyph scale as the one-line version. */}
+            <svg
+              aria-hidden
+              viewBox="0 0 605 412"
+              className="w-full max-w-sm sm:hidden"
+            >
+              {(
+                [
+                  ['Pawan', 168, 510],
+                  ['Danani', 340, 545],
+                ] as const
+              ).map(([word, y, len]) => (
+                <g key={word}>
+                  <text
+                    x="30"
+                    y={y}
+                    textLength={len}
+                    textAnchor="start"
+                    lengthAdjust="spacingAndGlyphs"
+                    fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+                    fontSize="150"
+                    fill="#ffffff"
+                    opacity="0.3"
+                    filter="url(#waves-cloud-haze)"
+                  >
+                    {word}
+                  </text>
+                  <text
+                    x="30"
+                    y={y}
+                    textLength={len}
+                    textAnchor="start"
+                    lengthAdjust="spacingAndGlyphs"
+                    fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+                    fontSize="150"
+                    fill="url(#waves-cloud-fill)"
+                    filter="url(#waves-cloud)"
+                  >
+                    {word}
+                  </text>
+                </g>
+              ))}
+            </svg>
           </m.h1>
         </div>
 
         <div className="pt-8 sm:pt-10">
-          <m.div {...rise(0.4)} className="flex flex-wrap items-center gap-4">
+          <m.div
+            {...rise(0.4)}
+            className="flex flex-wrap items-center gap-3 sm:gap-4"
+          >
             <a
               href="#about"
               onClick={scrollToAnchor}
-              className="rounded-[0.4rem] bg-primary px-7 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+              className="rounded-[0.4rem] bg-primary px-5 py-3 text-sm sm:px-7 font-medium text-primary-foreground transition hover:opacity-90"
               style={{
                 boxShadow:
                   '0 8px 30px color-mix(in oklab, var(--primary) 45%, transparent)',
@@ -490,18 +541,11 @@ export function WavesHero() {
             <a
               href="#experience"
               onClick={scrollToAnchor}
-              className="waves-glass rounded-[0.4rem] border border-border px-7 py-3 text-sm font-medium text-foreground transition hover:bg-accent"
+              className="waves-glass rounded-[0.4rem] border border-border px-5 py-3 text-sm sm:px-7 font-medium text-foreground transition hover:bg-accent"
             >
               Experience
             </a>
-            <span className="ml-1 flex items-center gap-4">
-              <a
-                href={`mailto:${PROFILE.email}`}
-                aria-label={`Email ${PROFILE.email}`}
-                className="text-foreground/60 transition hover:text-brand-amber"
-              >
-                <Mail className="h-5 w-5" />
-              </a>
+            <span className="ml-1 flex items-center gap-3 sm:gap-4">
               <a
                 href="https://github.com/pdanani"
                 target="_blank"

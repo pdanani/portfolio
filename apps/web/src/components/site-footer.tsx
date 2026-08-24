@@ -1,9 +1,9 @@
-import { Github, Linkedin, Mail } from 'lucide-react'
+import { Github, Linkedin } from 'lucide-react'
 import { PROFILE } from '#/data/profile'
 
-const ICONS = { GitHub: Github, LinkedIn: Linkedin, Email: Mail } as const
+const ICONS = { GitHub: Github, LinkedIn: Linkedin } as const
 
-/** Slim closing footer — contact lives in the hero now, so this just keeps
+/** Slim closing footer — GitHub + LinkedIn live in the hero too, so this just keeps
     the conventional links at the bottom of the page. */
 export function SiteFooter() {
   return (
