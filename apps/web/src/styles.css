@@ -428,7 +428,7 @@
 /* Bros. match (smash-warp.tsx). Original CSS art only, id-prefixed.    */
 /* ------------------------------------------------------------------ */
 
-/* Halo: a slowly turning red → orange → gold ring around the one
+/* Halo: a slowly turning gold → green → blue ring around the one
    interactive sticker, plus a breathing outer glow, so it reads as a
    "legendary item" next to its plain siblings. The ring is a masked
    conic gradient; --smash-angle is a registered property so the hue can
@@ -451,10 +451,10 @@
   border-radius: calc(1rem + 4px); /* card is rounded-2xl */
   background: conic-gradient(
     from var(--smash-angle),
-    oklch(0.62 0.22 27),
-    oklch(0.75 0.18 55),
     oklch(0.85 0.16 85),
-    oklch(0.62 0.22 27)
+    oklch(0.7 0.17 145),
+    oklch(0.75 0.13 235),
+    oklch(0.85 0.16 85)
   );
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -489,11 +489,11 @@
 
 /* ---- the warp overlay ---- */
 .smash-warp {
-  --smash-ink: oklch(0.12 0.02 280 / 0.95);
-  --smash-gold: oklch(0.85 0.16 85);
+  --smash-ink: oklch(0.16 0.02 150 / 0.9);
+  --smash-gold: oklch(0.8 0.15 85);
   --smash-red: oklch(0.6 0.22 27);
-  --smash-paper: oklch(0.96 0.01 90);
-  --smash-box: oklch(0.17 0.03 280);
+  --smash-paper: oklch(0.95 0.02 95);
+  --smash-box: oklch(0.22 0.03 150);
   position: fixed;
   inset: 0;
   z-index: 60;
@@ -512,7 +512,7 @@
 
 /* Mosaic wipe: 336 cells (24 × 14, or 12 × 28 on phones) that pop in
    one by one in a shuffled order (--i), then hold — and stay as the
-   deep space the stage floats in. Closing plays them out last-in,
+   meadow the stage floats over. Closing plays them out last-in,
    first-out. */
 .smash-pixels {
   position: absolute;
@@ -593,9 +593,9 @@
 .smash-stage {
   position: absolute;
   left: 50%;
-  bottom: 24%;
-  width: min(72vw, 760px);
-  height: 44px;
+  bottom: 17%;
+  width: min(82vw, 940px);
+  height: 54px;
   transform: translateX(-50%);
   background: linear-gradient(
     180deg,
@@ -614,8 +614,8 @@
   top: 100%;
   right: 22%;
   left: 22%;
-  height: 80px;
-  background: linear-gradient(180deg, oklch(0.32 0.03 270), transparent);
+  height: 90px;
+  background: linear-gradient(180deg, oklch(0.3 0.04 150), transparent);
   clip-path: polygon(0 0, 100% 0, 72% 100%, 28% 100%);
 }
 
@@ -630,8 +630,7 @@
 .smash-timer {
   position: absolute;
   top: 1.2rem;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 1.5rem;
   font-size: 12px;
   color: var(--smash-paper);
   text-shadow: 3px 3px 0 var(--smash-ink);
@@ -640,18 +639,18 @@
 .smash-hud {
   position: absolute;
   right: 0;
-  bottom: 3.6rem;
+  bottom: 2.6rem;
   left: 0;
   display: flex;
   justify-content: center;
-  gap: clamp(1.5rem, 8vw, 6rem);
+  gap: clamp(2rem, 12vw, 12rem);
 }
 
 .smash-player {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 0.4rem;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .smash-tag {
@@ -669,7 +668,7 @@
 }
 
 .smash-damage {
-  font-size: clamp(22px, 4vw, 40px);
+  font-size: clamp(26px, 4.6vw, 48px);
   font-style: italic;
   color: var(--smash-paper);
   text-shadow: 3px 3px 0 var(--smash-ink);
@@ -773,7 +772,7 @@
 .smash-inv > li {
   padding: 0.35rem 0.6rem;
   border: 2px solid var(--smash-gold);
-  background: oklch(0.24 0.04 280);
+  background: oklch(0.26 0.04 150);
 }
 
 .smash-cont {

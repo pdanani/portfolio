@@ -29,19 +29,19 @@ const INTENT_MS = 220
 /** Opened by tap: dismiss on its own if nobody taps again. */
 const AUTO_CLOSE_MS = 7000
 
-/* Deep-space tones for the mosaic — it stays as the sky the stage floats in. */
-const SPACE = [
-  'oklch(0.18 0.04 285)',
-  'oklch(0.14 0.03 280)',
-  'oklch(0.22 0.05 290)',
-  'oklch(0.11 0.02 275)',
+/* Meadow greens for the mosaic — it stays as the field the stage floats over. */
+const FIELD = [
+  'oklch(0.5 0.1 147)',
+  'oklch(0.46 0.09 150)',
+  'oklch(0.54 0.11 145)',
+  'oklch(0.43 0.09 152)',
 ]
 
 /* Soft platforms flanking the main stage, kept clear of the centred
    textbox (hidden on phones, where the box spans the width). */
 const PLATFORMS = [
-  { left: '8%', width: '14%', bottom: '36%' },
-  { left: '78%', width: '14%', bottom: '36%' },
+  { left: '5%', width: '17%', bottom: '44%' },
+  { left: '78%', width: '17%', bottom: '44%' },
 ]
 
 export type WarpMode = 'hover' | 'pinned'
@@ -172,7 +172,7 @@ function shuffledCells() {
   }
   return order.map((slot) => ({
     slot,
-    color: SPACE[Math.floor(Math.random() * SPACE.length)],
+    color: FIELD[Math.floor(Math.random() * FIELD.length)],
   }))
 }
 
@@ -248,16 +248,16 @@ export function SmashWarp({
           {COPY.players.map((p, i) => (
             <div key={p.tag} className="smash-player">
               <span
-                className={i === 0 ? 'smash-tag' : 'smash-tag smash-tag-p2'}
-              >
-                {p.tag}
-              </span>
-              <span
                 className={
                   p.hot ? 'smash-damage smash-damage-hot' : 'smash-damage'
                 }
               >
                 {p.damage}
+              </span>
+              <span
+                className={i === 0 ? 'smash-tag' : 'smash-tag smash-tag-p2'}
+              >
+                {p.tag}
               </span>
               <span className="smash-stocks">
                 {[0, 1, 2].map((s) => (
