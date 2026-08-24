@@ -1069,6 +1069,163 @@
   }
 }
 
+/* The Music card is a miniature turntable — same materials as the scene:
+   wood plinth (the card itself), matte deck, platter, record, tonearm. */
+.vinyl-card {
+  border: 1px solid oklch(0.5 0.06 65 / 0.45);
+  background:
+    repeating-linear-gradient(
+      96deg,
+      oklch(0.4 0.05 58 / 0.16) 0 3px,
+      transparent 3px 9px
+    ),
+    linear-gradient(
+      150deg,
+      oklch(0.42 0.06 62) 0%,
+      oklch(0.32 0.05 58) 46%,
+      oklch(0.26 0.045 55) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 oklch(0.6 0.06 70 / 0.4),
+    inset 0 -2px 6px oklch(0 0 0 / 0.4),
+    0 12px 34px oklch(0 0 0 / 0.45);
+}
+
+.vinyl-mini {
+  position: relative;
+  display: block;
+  width: 4.1rem;
+  height: 4.1rem;
+  border: 1px solid oklch(0.85 0.01 80 / 0.1);
+  border-radius: 0.35rem;
+  background:
+    radial-gradient(
+      120% 90% at 30% 10%,
+      oklch(0.28 0.008 60 / 0.6),
+      transparent 60%
+    ),
+    linear-gradient(160deg, oklch(0.21 0.006 60), oklch(0.15 0.005 60));
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.06),
+    inset 0 -4px 12px oklch(0 0 0 / 0.5);
+}
+
+.vinyl-mini-platter {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.7rem;
+  display: grid;
+  place-items: center;
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    oklch(0.3 0.006 60) 0 62%,
+    oklch(0.24 0.006 60) 62% 100%
+  );
+  box-shadow:
+    inset 0 0 0 1px oklch(0.85 0.01 80 / 0.08),
+    inset 0 1px 4px oklch(0 0 0 / 0.45),
+    0 4px 10px oklch(0 0 0 / 0.45);
+}
+
+.vinyl-mini .vinyl-record {
+  width: 86%;
+  animation-duration: 9s;
+}
+
+.vinyl-mini .vinyl-label {
+  width: 40%;
+  padding: 0;
+}
+
+.vinyl-mini .vinyl-label-name {
+  font-size: 0.22rem;
+}
+
+.vinyl-mini .vinyl-label-sub {
+  display: none;
+}
+
+.vinyl-mini-spindle {
+  position: absolute;
+  z-index: 5;
+  width: 0.22rem;
+  height: 0.22rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    oklch(0.96 0.005 250),
+    oklch(0.62 0.01 250)
+  );
+  box-shadow: 0 0 0 1px oklch(0.1 0 0 / 0.6);
+}
+
+/* tonearm: pivot at the top-right, tube resting across the record */
+.vinyl-mini-arm {
+  position: absolute;
+  top: 0.32rem;
+  right: 0.32rem;
+  z-index: 6;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    oklch(0.92 0.005 250),
+    oklch(0.5 0.008 250)
+  );
+  box-shadow:
+    inset 0 0 0 1px oklch(0.3 0.01 250),
+    0 1px 3px oklch(0 0 0 / 0.5);
+}
+
+.vinyl-mini-arm::after {
+  content: '';
+  position: absolute;
+  top: 0.14rem;
+  right: 0.18rem;
+  width: 1.7rem;
+  height: 0.12rem;
+  border-radius: 0.14rem;
+  transform-origin: right center;
+  transform: rotate(38deg);
+  background: linear-gradient(
+    90deg,
+    oklch(0.86 0.006 250),
+    oklch(0.6 0.008 250)
+  );
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.5);
+}
+
+.vinyl-mini-knob {
+  position: absolute;
+  bottom: 0.3rem;
+  left: 0.32rem;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 38% 30%,
+    oklch(0.8 0.006 250),
+    oklch(0.34 0.008 250)
+  );
+  box-shadow: 0 1px 3px oklch(0 0 0 / 0.5);
+}
+
+.vinyl-mini-led {
+  position: absolute;
+  right: 0.4rem;
+  bottom: 0.38rem;
+  width: 0.26rem;
+  height: 0.26rem;
+  border-radius: 50%;
+  background: var(--brand-amber);
+  box-shadow: 0 0 6px oklch(0.81 0.15 72 / 0.8);
+  animation: vinyl-led 1.2s ease-in-out infinite alternate;
+}
+
 /* Notes falling out of the sticker: each starts inside the card's bottom
    edge, drifts down with a little side-to-side wobble, and fades away. */
 .vinyl-notes {

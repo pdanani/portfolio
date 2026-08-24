@@ -140,25 +140,39 @@ const NOTES = [
 ]
 
 /** The Music sticker: warm halo; hover or tap drops a record over the page. */
-function VinylSticker({
-  emoji,
-  label,
-  tilt,
-}: {
-  emoji: string
-  label: string
-  tilt: string
-}) {
+function VinylSticker({ label, tilt }: { label: string; tilt: string }) {
   const { state, close, triggerProps } = useVinylWarp()
   return (
     <div className="relative">
+      {/* the card is a miniature of the scene's turntable: wood plinth, deck,
+          platter with the record turning, a tiny tonearm resting on it */}
       <button
         type="button"
-        className={cn(CARD, 'vinyl-halo cursor-pointer', tilt)}
+        className={cn(
+          'vinyl-card vinyl-halo relative flex cursor-pointer flex-col items-center gap-2 rounded-2xl px-4 py-3 transition-transform duration-500 hover:-translate-y-1 hover:rotate-0',
+          tilt,
+        )}
         aria-label={`${label} — hover or tap for a surprise`}
         {...triggerProps}
       >
-        <StickerFace emoji={emoji} label={label} />
+        <span aria-hidden className="vinyl-mini">
+          <span className="vinyl-mini-platter">
+            <span className="vinyl-record">
+              <span className="vinyl-sheen" />
+              <span className="vinyl-label">
+                <span className="vinyl-label-name">Pawan Danani</span>
+                <span className="vinyl-label-sub">LP · 33⅓</span>
+              </span>
+            </span>
+            <span className="vinyl-mini-spindle" />
+          </span>
+          <span className="vinyl-mini-arm" />
+          <span className="vinyl-mini-knob" />
+          <span className="vinyl-mini-led" />
+        </span>
+        <span className="font-mono text-xs tracking-[0.2em] text-brand-amber/90 uppercase">
+          {label}
+        </span>
       </button>
       {/* notes drifting down out of the card and fading away */}
       <div aria-hidden className="vinyl-notes">
@@ -235,7 +249,7 @@ export function AboutSection() {
                 {warp === 'zelda' ? (
                   <ZeldaSticker emoji={emoji} label={label} tilt={tilt} />
                 ) : warp === 'vinyl' ? (
-                  <VinylSticker emoji={emoji} label={label} tilt={tilt} />
+                  <VinylSticker label={label} tilt={tilt} />
                 ) : (
                   <div className={cn(CARD, tilt)}>
                     <StickerFace emoji={emoji} label={label} />
