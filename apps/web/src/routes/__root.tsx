@@ -15,9 +15,10 @@ import type { ReactNode } from 'react'
    rather than a CSS @import so discovery isn't serialised behind the
    stylesheet. Press Start 2P is the Gaming easter egg's pixel font: its
    @font-face is declared here but the file only downloads the first time
-   the overlay renders text in it. */
+   the overlay renders text in it. Caveat is the hand-written "put your mouse
+   here" note beside that sticker. */
 const FONTS_HREF =
-  'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&family=Space+Grotesk:wght@300..700&family=Press+Start+2P&display=swap'
+  'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&family=Space+Grotesk:wght@300..700&family=Press+Start+2P&family=Caveat:wght@600&display=swap'
 
 interface MyRouterContext {
   queryClient: QueryClient

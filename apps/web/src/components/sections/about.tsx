@@ -59,7 +59,7 @@ function ZeldaSticker({
 }) {
   const { state, close, triggerProps } = useZeldaWarp()
   return (
-    <>
+    <div className="relative">
       <button
         type="button"
         className={cn(CARD, 'zelda-halo cursor-pointer', tilt)}
@@ -68,8 +68,57 @@ function ZeldaSticker({
       >
         <StickerFace emoji={emoji} label={label} />
       </button>
+
+      {/* Hand-drawn pointer hanging off the card: curls up from the note
+          into the sticker's bottom edge. Anchored to the card, so it keeps
+          pointing at it wherever the grid wraps. The turbulence filter
+          gives the strokes a sketched wobble. */}
+      <div aria-hidden className="zelda-point">
+        <svg viewBox="0 0 160 112" className="zelda-point-arrow">
+          <defs>
+            <filter
+              id="zelda-sketch"
+              x="-10%"
+              y="-10%"
+              width="120%"
+              height="120%"
+            >
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.045"
+                numOctaves={2}
+                seed={3}
+                result="n"
+              />
+              <feDisplacementMap
+                in="SourceGraphic"
+                in2="n"
+                scale={3}
+                xChannelSelector="R"
+                yChannelSelector="G"
+              />
+            </filter>
+          </defs>
+          <g
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            filter="url(#zelda-sketch)"
+          >
+            <path d="M 148 98 C 104 108, 62 94, 50 62 C 42 42, 38 26, 36 12" />
+            <path d="M 24 24 L 36 10 L 48 22" />
+          </g>
+        </svg>
+        <span className="zelda-point-label">
+          <span className="zelda-point-mouse">put your mouse here</span>
+          <span className="zelda-point-touch">tap here</span>
+        </span>
+      </div>
+
       <ZeldaWarp state={state} onDismiss={close} />
-    </>
+    </div>
   )
 }
 
@@ -95,6 +144,12 @@ export function AboutSection() {
               {/* dusk grade: melts the daylight shot into the water */}
               <div aria-hidden className="about-photo-grade absolute inset-0" />
             </div>
+            {/* written on the polaroid: tilts (and straightens) with it */}
+            <figcaption className="mt-4 text-center font-mono text-xs leading-relaxed tracking-wide text-brand-amber/90 uppercase">
+              <span className="block">Stony Brook University</span>
+              <span className="block">B.S. Computer Science</span>
+              <span className="block">B.S. Economics · 2021</span>
+            </figcaption>
           </figure>
         </Reveal>
 
@@ -115,8 +170,9 @@ export function AboutSection() {
           </p>
 
           {/* justify-center so a narrower trailing row of stickers sits
-              centred under the row above instead of hugging the left edge */}
-          <StaggerGroup className="mt-8 flex flex-wrap justify-center gap-6">
+              centred under the row above instead of hugging the left edge;
+              pb-32 is the room for the arrow hanging off the Gaming sticker */}
+          <StaggerGroup className="mt-8 flex flex-wrap justify-center gap-6 pb-32">
             {INTERESTS.map(({ emoji, label, tilt, spin, warp }) => (
               <StaggerItem
                 key={label}
@@ -132,11 +188,6 @@ export function AboutSection() {
               </StaggerItem>
             ))}
           </StaggerGroup>
-
-          <p className="mt-6 text-center font-mono text-xs tracking-wide text-brand-amber/90 uppercase sm:whitespace-nowrap">
-            Stony Brook University · B.S. Computer Science &amp; B.S. Economics
-            · 2021
-          </p>
         </Reveal>
       </div>
     </Section>

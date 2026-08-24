@@ -916,6 +916,81 @@
   }
 }
 
+/* "put your mouse here" — the hand-drawn pointer hanging off the Gaming
+   sticker (about.tsx). Positioned so the arrow tip (x = 36 in its
+   viewBox) sits under the card's centre; the note trails off to the
+   right. Bobs toward the card to nudge. Touch-only devices get "tap here". */
+.zelda-point {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: calc(50% - 36px);
+  display: flex;
+  align-items: flex-end;
+  gap: 0.25rem;
+  color: var(--brand-amber);
+  pointer-events: none;
+  animation: zelda-point-bob 2.2s ease-in-out infinite;
+}
+
+.zelda-point-arrow {
+  flex: none;
+  width: 160px;
+  height: 112px;
+  overflow: visible;
+}
+
+.zelda-point-label {
+  padding-bottom: 6px;
+  font-family: 'Caveat', 'Segoe Script', 'Bradley Hand', cursive;
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  transform: rotate(-4deg);
+}
+
+.zelda-point-touch {
+  display: none;
+}
+
+@media (hover: none) {
+  .zelda-point-mouse {
+    display: none;
+  }
+  .zelda-point-touch {
+    display: inline;
+  }
+}
+
+/* Narrow screens: a smaller arrow, and the note may wrap — the Gaming
+   sticker sits in the left column there, so the note must not run off
+   the right edge even when a mouse is present. */
+@media (max-width: 640px) {
+  .zelda-point {
+    left: calc(50% - 27px); /* tip x scales with the arrow: 36 × 120/160 */
+  }
+  .zelda-point-arrow {
+    width: 120px;
+    height: 84px;
+  }
+  .zelda-point-label {
+    max-width: 7.5rem;
+    font-size: 1.2rem;
+    line-height: 1.05;
+    white-space: normal;
+  }
+}
+
+@keyframes zelda-point-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* the wipe becomes a cut; the halo ring stays, static */
   .zelda-pixel {
