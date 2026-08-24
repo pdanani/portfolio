@@ -454,8 +454,7 @@ export function WavesHero() {
           {...rise(0.28)}
           className="mt-6 max-w-xl text-base leading-relaxed text-foreground/85 sm:text-lg"
         >
-          Software engineer based in NYC. I love food, code, and{' '}
-          <span className="text-foreground">more food</span>.
+          Based in NYC
         </m.p>
 
         <m.div
