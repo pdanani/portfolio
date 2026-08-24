@@ -1,4 +1,5 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
+import type { CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import { useReducedMotion } from 'motion/react'
 import { useWarp } from './warp'
@@ -20,29 +21,83 @@ const COPY = {
   hintTap: 'tap anywhere for the lights',
 }
 
-/** Lights down (150) + three leader counts (3 × 360) + the splice flash. */
-const OPEN_MS = 1420
+/** Popcorn closes in from every edge to the centre, then irises back open. */
+const OPEN_MS = 1700
 const CLOSE_MS = 650
+/** Just kernels — enough of them to bury the page on their own. */
+const KERNELS = 240
 
 export function useMovieWarp() {
   return useWarp({ fill: OPEN_MS, dissolve: CLOSE_MS })
 }
 
 const SEATS = Array.from({ length: 3 }, (_, row) => row)
-/* Each numeral's slot in the countdown (ms after mount). */
-const COUNTS = [
-  { n: 3, delay: 150 },
-  { n: 2, delay: 510 },
-  { n: 1, delay: 870 },
-]
+
+/* One flood per open. Kernel i flies in from a random point just outside
+   the viewport toward the centre, landing on a ring that shrinks as the
+   flood advances — early kernels hug the edges, late ones pack the middle.
+   Leaving reverses it: the centre empties first (--od). Client-only. */
+function floodKernels() {
+  const w = window.innerWidth
+  const h = window.innerHeight
+  const cx = w / 2
+  const cy = h / 2
+  const R = Math.hypot(cx, cy)
+  return Array.from({ length: KERNELS }, (_, i) => {
+    const p = i / KERNELS
+    const a = Math.random() * Math.PI * 2
+    const ring = R * (1 - p) + Math.random() * 70
+    return {
+      sx: cx + Math.cos(a) * (R + 160),
+      sy: cy + Math.sin(a) * (R + 160),
+      tx: cx + Math.cos(a) * ring,
+      ty: cy + Math.sin(a) * ring,
+      s: 0.85 + Math.random() * 0.75,
+      r: (Math.random() - 0.5) * 380,
+      dur: 420 + Math.random() * 240,
+      delay: p * 1000,
+      od: (1 - p) * 450,
+      hue: 80 + Math.random() * 14,
+    }
+  })
+}
+
+/** Mounts fresh on every open, so no two floods are alike. */
+function PopcornPile() {
+  const [kernels] = useState(floodKernels)
+  return (
+    <div className="movie-pile">
+      {kernels.map((k, i) => (
+        <span
+          key={i}
+          className="movie-kernel"
+          style={
+            {
+              '--sx': `${k.sx}px`,
+              '--sy': `${k.sy}px`,
+              '--tx': `${k.tx}px`,
+              '--ty': `${k.ty}px`,
+              '--s': k.s,
+              '--r': `${k.r}deg`,
+              '--dur': `${k.dur}ms`,
+              '--delay': `${k.delay}ms`,
+              '--od': `${k.od}ms`,
+              '--hue': k.hue,
+            } as CSSProperties
+          }
+        />
+      ))}
+    </div>
+  )
+}
 
 /**
- * "Roll film": the house lights snap down and the projector throws a dusty
- * film leader across the whole viewport — crosshairs, rings, grain, and a
- * sector sweep counting 3 · 2 · 1 — then a one-frame splice flash cuts to
- * the cinema: a glowing screen with a ticket stub under the beam, over
- * silhouetted seats. Leaving flickers out and fades the lights back up.
- * The countdown is pure CSS; house/scene fades are Web Animations.
+ * "Extra butter": popcorn floods in from every edge of the screen — top,
+ * sides and bottom — packing inward until the page is buried under
+ * kernels; then they fly back out the way they came, centre first,
+ * revealing the cinema underneath (screen + ticket stub
+ * under the beam, silhouetted seats). Leaving fades the lights back up.
+ * The flood is CSS keyframes; house/scene fades are Web Animations.
  * Portalled to <body>; decorative.
  */
 export function MovieWarp({
@@ -77,9 +132,9 @@ export function MovieWarp({
         fill: 'both',
       })
     if (phase === 'opening') {
-      // lights snap down; the scene is revealed by the splice at the end
-      fade(house, 0, 1, 150)
-      fade(screen, 0, 1, 120, OPEN_MS - 160)
+      // the house darkens under the rising pile; the scene waits beneath it
+      fade(house, 0, 1, 500, 400)
+      fade(screen, 0, 1, 350, OPEN_MS - 100)
     } else {
       fade(screen, 1, 0, 240)
       fade(house, 1, 0, 350, 220)
@@ -121,30 +176,13 @@ export function MovieWarp({
           </div>
         </div>
 
-        {/* the film leader, only during the countdown */}
-        {phase === 'opening' ? (
-          <div className="movie-leader">
-            <div className="movie-grain" />
-            <span className="movie-leader-ring movie-leader-ring-outer" />
-            <span className="movie-leader-ring movie-leader-ring-inner" />
-            <span className="movie-leader-sweep" />
-            {COUNTS.map(({ n, delay }) => (
-              <span
-                key={n}
-                className="movie-leader-num"
-                style={{ animationDelay: `${delay}ms` }}
-              >
-                {n}
-              </span>
-            ))}
-            <span className="movie-splice" />
-          </div>
-        ) : null}
-
         <p className="movie-hint">
           ▼ {state.mode === 'hover' ? COPY.hintHover : COPY.hintTap}
         </p>
       </div>
+
+      {/* the pile, above everything; pours away once the page is buried */}
+      {phase === 'opening' || phase === 'open' ? <PopcornPile /> : null}
     </div>,
     document.body,
   )

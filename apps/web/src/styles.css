@@ -1882,8 +1882,8 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Movies sticker easter egg — hover/tap rolls a film-leader countdown */
-/* into the cinema (movie-warp.tsx). Original CSS art, id-prefixed.    */
+/* Movies sticker easter egg — popcorn floods in from every edge to the */
+/* centre, then irises open into a cinema (movie-warp.tsx).             */
 /* ------------------------------------------------------------------ */
 
 /* Halo variant: deep red → gold → cream, a marquee-bulb feel. */
@@ -2134,133 +2134,79 @@
   );
 }
 
-/* The film leader: a dusty projected frame over the whole viewport —
-   vignette, crosshairs (the ::before/::after lines), two rings, a darker
-   sector sweeping once per count, and the numerals taking turns. Ends on
-   a one-frame splice flash; the scene fade underneath does the cut. */
-@property --movie-sweep {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-
-.movie-leader {
+/* The flood. Kernels fly in from outside every edge (--sx/--sy) to a
+   ring that shrinks toward the centre (--tx/--ty) until the page is
+   buried in them. Once open, they fly back out the way they came,
+   centre first (--od). */
+.movie-pile {
   position: absolute;
   inset: 0;
   z-index: 5;
-  display: grid;
-  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.movie-kernel {
+  position: absolute;
+  top: -44px;
+  left: -44px;
+  width: 88px;
+  height: 88px;
+  border-radius: 46% 54% 50% 50% / 52% 48% 52% 48%;
   background:
     radial-gradient(
-      120% 120% at 50% 50%,
-      transparent 40%,
-      oklch(0.3 0.02 80 / 0.55) 100%
+      circle at 32% 30%,
+      oklch(0.99 0.03 var(--hue)) 0 22%,
+      transparent 23%
     ),
-    oklch(0.72 0.025 90);
-  animation: movie-leader-flicker 0.24s steps(2) infinite;
-}
-
-@keyframes movie-leader-flicker {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.93;
-  }
-}
-
-.movie-leader::before,
-.movie-leader::after {
-  content: '';
-  position: absolute;
-  background: oklch(0.3 0.015 70 / 0.5);
-}
-
-.movie-leader::before {
-  top: 50%;
-  right: 0;
-  left: 0;
-  height: 2px;
-}
-
-.movie-leader::after {
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 2px;
-}
-
-.movie-leader-ring {
-  position: absolute;
-  border: 3px solid oklch(0.3 0.015 70 / 0.55);
-  border-radius: 50%;
-}
-
-.movie-leader-ring-outer {
-  width: min(72vmin, 640px);
-  height: min(72vmin, 640px);
-}
-
-.movie-leader-ring-inner {
-  width: min(58vmin, 520px);
-  height: min(58vmin, 520px);
-}
-
-/* one full sweep per count: 3 iterations, starting with the first numeral */
-.movie-leader-sweep {
-  position: absolute;
-  inset: 0;
-  background: conic-gradient(
-    oklch(0.35 0.02 70 / 0.22) var(--movie-sweep),
-    transparent 0
-  );
-  animation: movie-sweep 360ms linear 150ms 3;
-}
-
-@keyframes movie-sweep {
-  to {
-    --movie-sweep: 360deg;
-  }
-}
-
-.movie-leader-num {
-  position: absolute;
-  font-family: var(--ff-display);
-  font-size: min(38vmin, 340px);
-  font-weight: 700;
-  line-height: 1;
-  color: oklch(0.28 0.02 70);
-  text-shadow: 0 0 40px oklch(0.28 0.02 70 / 0.3);
+    radial-gradient(
+      circle at 70% 36%,
+      oklch(0.97 0.06 var(--hue)) 0 24%,
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 50% 72%,
+      oklch(0.95 0.08 var(--hue)) 0 26%,
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      oklch(0.9 0.1 calc(var(--hue) - 6)) 0 40%,
+      transparent 41%
+    );
   opacity: 0;
-  animation: movie-num 360ms linear forwards; /* delay set inline per numeral */
+  transform: translate(var(--sx), var(--sy)) scale(var(--s));
+  animation: movie-kernel-fall var(--dur) cubic-bezier(0.35, 0, 0.7, 0.5)
+    var(--delay) forwards;
+  will-change: transform, opacity;
 }
 
-@keyframes movie-num {
-  0%,
-  96% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-/* the splice: one white frame right before the cut to the scene */
-.movie-splice {
-  position: absolute;
-  inset: 0;
-  background: oklch(0.99 0.005 90);
-  opacity: 0;
-  animation: movie-splice 180ms steps(2, start) 1230ms forwards;
-}
-
-@keyframes movie-splice {
+@keyframes movie-kernel-fall {
   0% {
     opacity: 1;
+    transform: translate(var(--sx), var(--sy)) scale(var(--s)) rotate(0deg);
   }
   100% {
-    opacity: 0;
+    opacity: 1;
+    transform: translate(var(--tx), var(--ty)) scale(var(--s)) rotate(var(--r));
+  }
+}
+
+/* once open: back out the way they came, the centre emptying first */
+.movie-warp[data-state='open'] .movie-kernel {
+  animation: movie-kernel-out 0.55s cubic-bezier(0.5, 0, 0.85, 0.5) var(--od)
+    forwards;
+}
+
+@keyframes movie-kernel-out {
+  0% {
+    opacity: 1;
+    transform: translate(var(--tx), var(--ty)) scale(var(--s)) rotate(var(--r));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(var(--sx), var(--sy)) scale(var(--s))
+      rotate(calc(var(--r) * -1));
   }
 }
 
