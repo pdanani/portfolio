@@ -1,7 +1,9 @@
-import { useReducedMotion } from 'motion/react'
+import { useRef } from 'react'
+import { useInView, useReducedMotion } from 'motion/react'
 import { Reveal } from '#/components/motion/reveal'
 import { StaggerGroup, StaggerItem } from '#/components/motion/stagger'
-import { ZeldaWarp, useZeldaWarp } from '#/components/zelda-warp'
+import { SmashWarp, useSmashWarp } from '#/components/smash-warp'
+import { IN_VIEW } from '#/lib/motion/in-view'
 import { fallItem } from '#/lib/motion/variants'
 import { cn } from '#/lib/utils'
 import { Section, SectionHeading } from './section'
@@ -12,7 +14,7 @@ import { Section, SectionHeading } from './section'
    new one. Tilt classes are static (not computed) so Tailwind's JIT scanner
    can see them. `spin` seeds the tumble-in fall (fallItem below) — varied
    per item so the group doesn't fall in lockstep. `warp` marks the one
-   sticker that's an easter egg (see zelda-warp.tsx). */
+   sticker that's an easter egg (see smash-warp.tsx). */
 const INTERESTS = [
   { emoji: '🍽️', label: 'NYC eats', tilt: '-rotate-3', spin: -22 },
   { emoji: '🚴', label: 'Biking', tilt: 'rotate-2', spin: 18 },
@@ -48,7 +50,7 @@ function StickerFace({ emoji, label }: { emoji: string; label: string }) {
 }
 
 /** The Gaming sticker: haloed, and a button — hover or tap warps to Hyrule. */
-function ZeldaSticker({
+function SmashSticker({
   emoji,
   label,
   tilt,
@@ -57,12 +59,15 @@ function ZeldaSticker({
   label: string
   tilt: string
 }) {
-  const { state, close, triggerProps } = useZeldaWarp()
+  const { state, close, triggerProps } = useSmashWarp()
+  // the pointer draws itself on once the card has landed in view
+  const ref = useRef<HTMLDivElement>(null)
+  const drawn = useInView(ref, { once: true, ...IN_VIEW })
   return (
-    <div className="relative">
+    <div ref={ref} className="relative" data-drawn={drawn || undefined}>
       <button
         type="button"
-        className={cn(CARD, 'zelda-halo cursor-pointer', tilt)}
+        className={cn(CARD, 'smash-halo cursor-pointer', tilt)}
         aria-label={`${label} — hover or tap for a surprise`}
         {...triggerProps}
       >
@@ -70,14 +75,15 @@ function ZeldaSticker({
       </button>
 
       {/* Hand-drawn pointer hanging off the card: curls up from the note
-          into the sticker's bottom edge. Anchored to the card, so it keeps
-          pointing at it wherever the grid wraps. The turbulence filter
-          gives the strokes a sketched wobble. */}
-      <div aria-hidden className="zelda-point">
-        <svg viewBox="0 0 160 112" className="zelda-point-arrow">
+          into the sticker's bottom edge, drawn on (not tumbled in) once
+          the card is in view. Anchored to the card, so it keeps pointing
+          at it wherever the grid wraps; the turbulence filter gives the
+          strokes a sketched wobble. */}
+      <div aria-hidden className="smash-point">
+        <svg viewBox="0 0 160 112" className="smash-point-arrow">
           <defs>
             <filter
-              id="zelda-sketch"
+              id="smash-sketch"
               x="-10%"
               y="-10%"
               width="120%"
@@ -105,19 +111,19 @@ function ZeldaSticker({
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-            filter="url(#zelda-sketch)"
+            filter="url(#smash-sketch)"
           >
-            <path d="M 148 98 C 104 108, 62 94, 50 62 C 42 42, 38 26, 36 12" />
-            <path d="M 24 24 L 36 10 L 48 22" />
+            <path
+              pathLength={1}
+              d="M 148 98 C 104 108, 62 94, 50 62 C 42 42, 38 26, 36 12"
+            />
+            <path pathLength={1} d="M 24 24 L 36 10 L 48 22" />
           </g>
         </svg>
-        <span className="zelda-point-label">
-          <span className="zelda-point-mouse">put your mouse here</span>
-          <span className="zelda-point-touch">tap here</span>
-        </span>
+        <span className="smash-point-label">???</span>
       </div>
 
-      <ZeldaWarp state={state} onDismiss={close} />
+      <SmashWarp state={state} onDismiss={close} />
     </div>
   )
 }
@@ -179,7 +185,7 @@ export function AboutSection() {
                 variants={fallItem(reduce ?? false, spin)}
               >
                 {warp ? (
-                  <ZeldaSticker emoji={emoji} label={label} tilt={tilt} />
+                  <SmashSticker emoji={emoji} label={label} tilt={tilt} />
                 ) : (
                   <div className={cn(CARD, tilt)}>
                     <StickerFace emoji={emoji} label={label} />

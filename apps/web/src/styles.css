@@ -424,37 +424,37 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Gaming sticker easter egg — hover/tap warps the screen to Hyrule    */
-/* (zelda-warp.tsx). Original CSS art only, id-prefixed.               */
+/* Gaming sticker easter egg — hover/tap warps the screen to a Smash   */
+/* Bros. match (smash-warp.tsx). Original CSS art only, id-prefixed.    */
 /* ------------------------------------------------------------------ */
 
-/* Halo: a slowly turning gold → green → blue ring around the one
+/* Halo: a slowly turning red → orange → gold ring around the one
    interactive sticker, plus a breathing outer glow, so it reads as a
    "legendary item" next to its plain siblings. The ring is a masked
-   conic gradient; --zelda-angle is a registered property so the hue can
+   conic gradient; --smash-angle is a registered property so the hue can
    rotate without touching layout. */
-@property --zelda-angle {
+@property --smash-angle {
   syntax: '<angle>';
   inherits: false;
   initial-value: 0deg;
 }
 
-.zelda-halo {
-  animation: zelda-halo-breathe 2.6s ease-in-out infinite alternate;
+.smash-halo {
+  animation: smash-halo-breathe 2.6s ease-in-out infinite alternate;
 }
 
-.zelda-halo::before {
+.smash-halo::before {
   content: '';
   position: absolute;
   inset: -4px;
   padding: 3px;
   border-radius: calc(1rem + 4px); /* card is rounded-2xl */
   background: conic-gradient(
-    from var(--zelda-angle),
+    from var(--smash-angle),
+    oklch(0.62 0.22 27),
+    oklch(0.75 0.18 55),
     oklch(0.85 0.16 85),
-    oklch(0.7 0.17 145),
-    oklch(0.75 0.13 235),
-    oklch(0.85 0.16 85)
+    oklch(0.62 0.22 27)
   );
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -464,17 +464,17 @@
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  animation: zelda-halo-spin 5s linear infinite;
+  animation: smash-halo-spin 5s linear infinite;
   pointer-events: none;
 }
 
-@keyframes zelda-halo-spin {
+@keyframes smash-halo-spin {
   to {
-    --zelda-angle: 360deg;
+    --smash-angle: 360deg;
   }
 }
 
-@keyframes zelda-halo-breathe {
+@keyframes smash-halo-breathe {
   from {
     box-shadow:
       0 12px 34px oklch(0.72 0.18 50 / 0.14),
@@ -488,33 +488,33 @@
 }
 
 /* ---- the warp overlay ---- */
-.zelda-warp {
-  --zelda-ink: oklch(0.16 0.02 150 / 0.9);
-  --zelda-gold: oklch(0.8 0.15 85);
-  --zelda-paper: oklch(0.95 0.02 95);
-  --zelda-box: oklch(0.22 0.03 150);
-  --zelda-sky: oklch(0.62 0.11 235);
+.smash-warp {
+  --smash-ink: oklch(0.12 0.02 280 / 0.95);
+  --smash-gold: oklch(0.85 0.16 85);
+  --smash-red: oklch(0.6 0.22 27);
+  --smash-paper: oklch(0.96 0.01 90);
+  --smash-box: oklch(0.17 0.03 280);
   position: fixed;
   inset: 0;
   z-index: 60;
   overflow: hidden;
   font-family: 'Press Start 2P', ui-monospace, monospace;
-  color: var(--zelda-paper);
+  color: var(--smash-paper);
   -webkit-font-smoothing: auto;
 }
 
 /* Opened by hover: let the pointer keep hitting the sticker underneath,
    so hover ends only when it really leaves the card. Opened by tap: the
    whole screen is the dismiss target. */
-.zelda-warp[data-mode='hover'] {
+.smash-warp[data-mode='hover'] {
   pointer-events: none;
 }
 
 /* Mosaic wipe: 336 cells (24 × 14, or 12 × 28 on phones) that pop in
    one by one in a shuffled order (--i), then hold — and stay as the
-   meadow the overworld is built on. Closing plays them out last-in,
+   deep space the stage floats in. Closing plays them out last-in,
    first-out. */
-.zelda-pixels {
+.smash-pixels {
   position: absolute;
   inset: 0;
   display: grid;
@@ -523,37 +523,37 @@
 }
 
 @media (max-width: 640px) {
-  .zelda-pixels {
+  .smash-pixels {
     grid-template-columns: repeat(12, 1fr);
   }
 }
 
-.zelda-pixel {
+.smash-pixel {
   background: var(--c);
   opacity: 0;
-  animation: zelda-pixel-in 1ms linear forwards;
+  animation: smash-pixel-in 1ms linear forwards;
   animation-delay: calc(var(--i) * 1.8ms);
 }
 
-.zelda-warp[data-state='closing'] .zelda-pixel {
+.smash-warp[data-state='closing'] .smash-pixel {
   opacity: 1;
-  animation-name: zelda-pixel-out;
+  animation-name: smash-pixel-out;
   animation-delay: calc((335 - var(--i)) * 0.9ms);
 }
 
-@keyframes zelda-pixel-in {
+@keyframes smash-pixel-in {
   to {
     opacity: 1;
   }
 }
 
-@keyframes zelda-pixel-out {
+@keyframes smash-pixel-out {
   to {
     opacity: 0;
   }
 }
 
-.zelda-world {
+.smash-world {
   position: absolute;
   inset: 0;
   display: flex;
@@ -562,232 +562,142 @@
   transition: opacity 0.15s ease;
 }
 
-.zelda-warp[data-state='open'] .zelda-world {
+.smash-warp[data-state='open'] .smash-world {
   opacity: 1;
   transition-duration: 0.4s;
 }
 
-/* ---- overworld scenery (behind the HUD + textbox) ---- */
-.zelda-scenery {
+/* ---- the stage (behind the textbox): a floating main platform with
+   three soft platforms, over the deep space the mosaic paints ---- */
+.smash-scenery {
   position: absolute;
   inset: 0;
 }
 
-/* dirt path crossing the meadow */
-.zelda-path {
+.smash-glow {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 132px;
-  transform: translateX(-50%);
+  inset: 0;
   background:
-    repeating-linear-gradient(
-      0deg,
-      oklch(0.55 0.08 62) 0 30px,
-      oklch(0.49 0.08 60) 30px 32px
+    radial-gradient(
+      60% 45% at 50% 62%,
+      oklch(0.7 0.2 30 / 0.28) 0%,
+      transparent 70%
     ),
-    repeating-linear-gradient(
-      90deg,
-      oklch(0.55 0.08 62) 0 30px,
-      oklch(0.49 0.08 60) 30px 32px
+    radial-gradient(
+      40% 30% at 18% 18%,
+      oklch(0.6 0.15 300 / 0.22) 0%,
+      transparent 70%
     );
-  background-blend-mode: multiply;
-  box-shadow:
-    inset 6px 0 0 oklch(0.42 0.07 58),
-    inset -6px 0 0 oklch(0.42 0.07 58);
-  opacity: 0.92;
 }
 
-/* leafy canopy + trunk */
-.zelda-tree {
-  position: absolute;
-  width: 78px;
-  height: 78px;
-}
-
-.zelda-tree::before {
-  content: '';
+.smash-stage {
   position: absolute;
   left: 50%;
-  bottom: -16px;
-  width: 18px;
-  height: 22px;
+  bottom: 24%;
+  width: min(72vw, 760px);
+  height: 44px;
   transform: translateX(-50%);
-  background: oklch(0.42 0.07 58);
-  border: 3px solid var(--zelda-ink);
-}
-
-.zelda-tree::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      circle at 32% 30%,
-      oklch(0.62 0.11 145) 0 18%,
-      transparent 19%
-    ),
-    linear-gradient(180deg, oklch(0.58 0.11 146), oklch(0.46 0.1 148));
-  border: 3px solid var(--zelda-ink);
-  border-radius: 22px;
-  box-shadow: inset 0 -10px 0 oklch(0.4 0.09 150 / 0.5);
-}
-
-.zelda-rock {
-  position: absolute;
-  width: 50px;
-  height: 42px;
   background: linear-gradient(
     180deg,
-    oklch(0.66 0.02 250) 0 45%,
-    oklch(0.52 0.02 250) 45% 100%
+    oklch(0.88 0.02 260) 0 6px,
+    oklch(0.42 0.03 270) 6px 100%
   );
-  border: 3px solid var(--zelda-ink);
-  border-radius: 16px 16px 8px 8px;
+  border: 3px solid var(--smash-ink);
   box-shadow:
-    inset 0 -8px 0 oklch(0.42 0.02 250 / 0.6),
-    inset 0 6px 0 oklch(0.78 0.02 250 / 0.5);
+    0 18px 0 -6px oklch(0.24 0.03 270),
+    0 0 40px oklch(0.75 0.15 60 / 0.25);
 }
 
-.zelda-pond {
+.smash-stage::after {
+  content: '';
   position: absolute;
-  width: 168px;
-  height: 104px;
-  background:
-    radial-gradient(
-      circle at 36% 32%,
-      oklch(0.74 0.1 232) 0 14%,
-      transparent 15%
-    ),
-    linear-gradient(180deg, oklch(0.64 0.11 233), oklch(0.5 0.11 236));
-  border: 3px solid var(--zelda-ink);
-  border-radius: 9999px;
-  box-shadow: inset 0 -10px 0 oklch(0.44 0.1 238 / 0.6);
+  top: 100%;
+  right: 22%;
+  left: 22%;
+  height: 80px;
+  background: linear-gradient(180deg, oklch(0.32 0.03 270), transparent);
+  clip-path: polygon(0 0, 100% 0, 72% 100%, 28% 100%);
 }
 
-/* ---- HUD ---- */
-.zelda-hud {
-  position: relative;
+.smash-platform {
+  position: absolute;
+  height: 12px;
+  background: oklch(0.82 0.02 260);
+  border: 3px solid var(--smash-ink);
+}
+
+/* ---- HUD: match timer up top, damage meters + stocks down low ---- */
+.smash-timer {
+  position: absolute;
+  top: 1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--smash-paper);
+  text-shadow: 3px 3px 0 var(--smash-ink);
+}
+
+.smash-hud {
+  position: absolute;
+  right: 0;
+  bottom: 3.6rem;
+  left: 0;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.25rem 1.5rem 0;
-  font-size: 10px;
-  letter-spacing: 0.08em;
+  justify-content: center;
+  gap: clamp(1.5rem, 8vw, 6rem);
+}
+
+.smash-player {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+.smash-tag {
+  padding: 3px 6px;
+  font-size: 8px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  background: var(--smash-red);
+  color: var(--smash-paper);
+  box-shadow: 2px 2px 0 var(--smash-ink);
 }
 
-.zelda-hud > * {
+.smash-tag-p2 {
+  background: oklch(0.52 0.15 250);
+}
+
+.smash-damage {
+  font-size: clamp(22px, 4vw, 40px);
+  font-style: italic;
+  color: var(--smash-paper);
+  text-shadow: 3px 3px 0 var(--smash-ink);
+}
+
+.smash-damage-hot {
+  color: oklch(0.72 0.22 30);
+}
+
+.smash-stocks {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  gap: 4px;
 }
 
-.zelda-hud-label {
-  text-shadow: 2px 2px 0 var(--zelda-ink);
+.smash-stock {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--smash-gold);
+  border: 2px solid var(--smash-ink);
 }
 
-.zelda-emblem {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  background: var(--zelda-gold);
-  border: 3px solid var(--zelda-ink);
-  box-shadow: 3px 3px 0 var(--zelda-ink);
-}
-
-.zelda-emblem::before {
-  content: '';
-  width: 0;
-  height: 0;
-  border-left: 7px solid transparent;
-  border-right: 7px solid transparent;
-  border-bottom: 12px solid oklch(0.24 0.05 60);
-}
-
-/* HUD hearts: an 8-bit heart as a stepped clip-path on a 7 × 6 cell grid —
-   ink outline (slightly larger) behind the fill. */
-.zelda-heart {
-  --heart: polygon(
-    14.29% 0%,
-    42.86% 0%,
-    42.86% 16.67%,
-    57.14% 16.67%,
-    57.14% 0%,
-    85.71% 0%,
-    85.71% 16.67%,
-    100% 16.67%,
-    100% 50%,
-    85.71% 50%,
-    85.71% 66.67%,
-    71.43% 66.67%,
-    71.43% 83.33%,
-    57.14% 83.33%,
-    57.14% 100%,
-    42.86% 100%,
-    42.86% 83.33%,
-    28.57% 83.33%,
-    28.57% 66.67%,
-    14.29% 66.67%,
-    14.29% 50%,
-    0% 50%,
-    0% 16.67%,
-    14.29% 16.67%
-  );
-  position: relative;
-  width: 21px;
-  height: 18px;
-}
-
-.zelda-heart::before,
-.zelda-heart::after {
-  content: '';
-  position: absolute;
-  clip-path: var(--heart);
-}
-
-.zelda-heart::before {
-  inset: -3px;
-  background: var(--zelda-ink);
-}
-
-.zelda-heart::after {
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    oklch(0.66 0.21 27) 0 34%,
-    oklch(0.56 0.2 27) 34% 100%
-  );
-}
-
-.zelda-heart-empty::after {
-  background: oklch(0.3 0.04 150);
-}
-
-.zelda-gem {
-  width: 16px;
-  height: 24px;
-  background: linear-gradient(
-    180deg,
-    oklch(0.78 0.1 150) 0 50%,
-    oklch(0.6 0.11 152) 50% 100%
-  );
-  border: 2px solid var(--zelda-ink);
-  clip-path: polygon(50% 0, 100% 30%, 100% 70%, 50% 100%, 0 70%, 0 30%);
-  box-shadow: inset 3px 0 0 oklch(0.9 0.06 150 / 0.6);
-}
-
-.zelda-rupees {
-  color: var(--zelda-gold);
-  text-shadow: 2px 2px 0 var(--zelda-ink);
+.smash-stock-lost {
+  background: oklch(0.3 0.02 270);
 }
 
 /* ---- centre: quest text ---- */
-.zelda-center {
+.smash-center {
   position: relative;
   display: flex;
   flex: 1;
@@ -799,59 +709,59 @@
   padding: 1.5rem;
 }
 
-.zelda-eyebrow {
+.smash-eyebrow {
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: oklch(0.85 0.08 235);
 }
 
-.zelda-eyebrow > span {
-  background: var(--zelda-box);
+.smash-eyebrow > span {
+  background: var(--smash-box);
   padding: 0.5rem 0.75rem;
-  box-shadow: 3px 3px 0 var(--zelda-ink);
+  box-shadow: 3px 3px 0 var(--smash-ink);
 }
 
-.zelda-title {
+.smash-title {
   font-family: inherit; /* the base h2 rule would swap in Space Grotesk */
   margin-top: 1.5rem;
   font-size: clamp(16px, 3vw, 30px);
   line-height: 1.3;
   color: oklch(0.85 0.15 85);
   text-shadow:
-    3px 0 0 var(--zelda-ink),
-    -3px 0 0 var(--zelda-ink),
-    0 3px 0 var(--zelda-ink),
-    0 -3px 0 var(--zelda-ink),
-    7px 7px 0 var(--zelda-ink);
+    3px 0 0 var(--smash-ink),
+    -3px 0 0 var(--smash-ink),
+    0 3px 0 var(--smash-ink),
+    0 -3px 0 var(--smash-ink),
+    7px 7px 0 var(--smash-ink);
 }
 
 /* NPC dialogue box */
-.zelda-textbox {
+.smash-textbox {
   position: relative;
   margin-top: 1.5rem;
   padding: 1.25rem 1.5rem 1.75rem;
-  background: var(--zelda-box);
-  border: 4px solid var(--zelda-gold);
+  background: var(--smash-box);
+  border: 4px solid var(--smash-gold);
   box-shadow:
-    0 0 0 4px var(--zelda-ink),
-    6px 6px 0 var(--zelda-ink);
+    0 0 0 4px var(--smash-ink),
+    6px 6px 0 var(--smash-ink);
 }
 
-.zelda-body {
+.smash-body {
   font-size: clamp(9px, 1.15vw, 12px);
   line-height: 2;
-  color: var(--zelda-paper);
+  color: var(--smash-paper);
 }
 
-.zelda-inv-label {
+.smash-inv-label {
   margin-top: 1rem;
   font-size: 9px;
   letter-spacing: 0.14em;
-  color: var(--zelda-gold);
+  color: var(--smash-gold);
 }
 
-.zelda-inv {
+.smash-inv {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -860,22 +770,22 @@
   font-size: 12px;
 }
 
-.zelda-inv > li {
+.smash-inv > li {
   padding: 0.35rem 0.6rem;
-  border: 2px solid var(--zelda-gold);
-  background: oklch(0.26 0.04 150);
+  border: 2px solid var(--smash-gold);
+  background: oklch(0.24 0.04 280);
 }
 
-.zelda-cont {
+.smash-cont {
   position: absolute;
   right: 14px;
   bottom: 10px;
   font-size: 10px;
-  color: var(--zelda-gold);
-  animation: zelda-blink 1s steps(1) infinite;
+  color: var(--smash-gold);
+  animation: smash-blink 1s steps(1) infinite;
 }
 
-@keyframes zelda-blink {
+@keyframes smash-blink {
   0%,
   50% {
     opacity: 1;
@@ -886,41 +796,36 @@
   }
 }
 
-.zelda-hint {
+.smash-hint {
   position: relative;
   padding: 0 1.5rem 1.25rem;
   text-align: center;
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  text-shadow: 2px 2px 0 var(--zelda-ink);
+  text-shadow: 2px 2px 0 var(--smash-ink);
 }
 
 @media (max-width: 640px) {
-  .zelda-hud {
-    font-size: 8px;
+  .smash-stage {
+    height: 32px;
   }
-  .zelda-path {
-    width: 84px;
+  .smash-platform {
+    display: none;
   }
-  .zelda-tree {
-    width: 56px;
-    height: 56px;
-  }
-  .zelda-pond {
-    width: 120px;
-    height: 74px;
-  }
-  .zelda-textbox {
+  .smash-textbox {
     padding: 1rem 1rem 1.5rem;
   }
 }
 
-/* "put your mouse here" — the hand-drawn pointer hanging off the Gaming
-   sticker (about.tsx). Positioned so the arrow tip (x = 36 in its
-   viewBox) sits under the card's centre; the note trails off to the
-   right. Bobs toward the card to nudge. Touch-only devices get "tap here". */
-.zelda-point {
+/* "???" — the hand-drawn pointer hanging off the Gaming sticker
+   (about.tsx). Positioned so the arrow tip (x = 36 in its viewBox) sits
+   under the card's centre; the note trails off to the right. It doesn't
+   tumble in with the sticker: it stays invisible until the card has
+   landed in view (`data-drawn` on the wrapper), then the stroke draws
+   itself on, the chevron snaps in, the note fades up, and only then does
+   it start bobbing toward the card. */
+.smash-point {
   position: absolute;
   top: calc(100% + 4px);
   left: calc(50% - 36px);
@@ -929,59 +834,76 @@
   gap: 0.25rem;
   color: var(--brand-amber);
   pointer-events: none;
-  animation: zelda-point-bob 2.2s ease-in-out infinite;
 }
 
-.zelda-point-arrow {
+.smash-point-arrow {
   flex: none;
   width: 160px;
   height: 112px;
   overflow: visible;
 }
 
-.zelda-point-label {
+/* pathLength="1" on both paths, so one dash unit is the whole stroke */
+.smash-point-arrow path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+[data-drawn] .smash-point-arrow path:first-child {
+  animation: smash-point-draw 0.7s ease-out 0.9s forwards;
+}
+
+[data-drawn] .smash-point-arrow path:last-child {
+  animation: smash-point-draw 0.25s ease-out 1.55s forwards;
+}
+
+.smash-point-label {
   padding-bottom: 6px;
   font-family: 'Caveat', 'Segoe Script', 'Bradley Hand', cursive;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
+  opacity: 0;
   transform: rotate(-4deg);
 }
 
-.zelda-point-touch {
-  display: none;
+[data-drawn] .smash-point-label {
+  animation: smash-point-fade 0.35s ease-out 1.75s forwards;
 }
 
-@media (hover: none) {
-  .zelda-point-mouse {
-    display: none;
-  }
-  .zelda-point-touch {
-    display: inline;
+[data-drawn] .smash-point {
+  animation: smash-point-bob 2.2s ease-in-out 2.2s infinite;
+}
+
+@keyframes smash-point-draw {
+  to {
+    stroke-dashoffset: 0;
   }
 }
 
-/* Narrow screens: a smaller arrow, and the note may wrap — the Gaming
-   sticker sits in the left column there, so the note must not run off
-   the right edge even when a mouse is present. */
+@keyframes smash-point-fade {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Narrow screens: a smaller arrow, so the note never runs off the right
+   edge — the Gaming sticker sits in the left column there. */
 @media (max-width: 640px) {
-  .zelda-point {
+  .smash-point {
     left: calc(50% - 27px); /* tip x scales with the arrow: 36 × 120/160 */
   }
-  .zelda-point-arrow {
+  .smash-point-arrow {
     width: 120px;
     height: 84px;
   }
-  .zelda-point-label {
-    max-width: 7.5rem;
-    font-size: 1.2rem;
-    line-height: 1.05;
-    white-space: normal;
+  .smash-point-label {
+    font-size: 1.35rem;
   }
 }
 
-@keyframes zelda-point-bob {
+@keyframes smash-point-bob {
   0%,
   100% {
     transform: translateY(0);
@@ -993,10 +915,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   /* the wipe becomes a cut; the halo ring stays, static */
-  .zelda-pixel {
+  .smash-pixel {
     animation-delay: 0s !important;
   }
-  .zelda-cont {
+  .smash-cont {
     animation: none !important;
   }
 }
