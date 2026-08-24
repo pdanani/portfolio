@@ -29,7 +29,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {
         name: 'description',
         content:
-          'Software engineer building resilient systems — currently at M&C Saatchi World Services in New York.',
+          'Software engineer based in NYC. I love food, code, and more food.',
       },
     ],
     links: [
