@@ -21,8 +21,10 @@ const COPY = {
   hintTap: 'tap anywhere for the lights',
 }
 
-/** Popcorn buries the screen, then settles away to reveal the cinema. */
-const OPEN_MS = 1500
+/** Popcorn buries the screen, then settles away to reveal the cinema.
+    Must outlast the slowest kernel (delay ≤ 600 + fall ≤ 1100), or the
+    settle animation would snap mid-air kernels to their landing spots. */
+const OPEN_MS = 1800
 const CLOSE_MS = 700
 /** Kernels in the shower. */
 const KERNELS = 240
@@ -33,8 +35,8 @@ export function useMovieWarp() {
 
 const SEATS = Array.from({ length: 3 }, (_, row) => row)
 
-/* One random shower per open: where each kernel lands, how big, how it
-   tumbles, and how late it pops. Client-only (mounts on interaction). */
+/* One random rain per open: where each kernel lands, how big, how it
+   tumbles, how long it falls and how late it starts. Client-only. */
 function popKernels() {
   const w = window.innerWidth
   const h = window.innerHeight
@@ -42,14 +44,15 @@ function popKernels() {
     tx: Math.random() * w,
     ty: Math.random() * h,
     s: 0.75 + Math.random() * 0.7,
-    r: (Math.random() - 0.5) * 540,
-    delay: Math.random() * 520,
+    r: (Math.random() - 0.5) * 420,
+    dur: 600 + Math.random() * 500,
+    delay: Math.random() * 600,
     hue: 80 + Math.random() * 14,
   }))
 }
 
 /** Mounts fresh on every open, so no two showers are alike. */
-function Popcorn({ origin }: { origin: { x: number; y: number } }) {
+function Popcorn() {
   const [kernels] = useState(popKernels)
   return (
     <div className="movie-corn">
@@ -59,12 +62,11 @@ function Popcorn({ origin }: { origin: { x: number; y: number } }) {
           className="movie-kernel"
           style={
             {
-              '--ox': `${origin.x}px`,
-              '--oy': `${origin.y}px`,
               '--tx': `${k.tx}px`,
               '--ty': `${k.ty}px`,
               '--s': k.s,
               '--r': `${k.r}deg`,
+              '--dur': `${k.dur}ms`,
               '--delay': `${k.delay}ms`,
               '--hue': k.hue,
             } as CSSProperties
@@ -76,8 +78,7 @@ function Popcorn({ origin }: { origin: { x: number; y: number } }) {
 }
 
 /**
- * "Extra butter": kernels burst out of the popcorn sticker and shower
- * across the page until it's buried, the house goes dark underneath, then
+ * "Extra butter": popcorn rains in from above until the page is buried, the house goes dark underneath, then
  * the popcorn settles away to reveal the cinema — screen lit under a
  * projector beam over silhouetted seats. Leaving fades the lights back up.
  * The shower is CSS keyframes per kernel; the rest is Web Animations.
@@ -93,7 +94,7 @@ export function MovieWarp({
   const reduce = useReducedMotion()
   const houseRef = useRef<HTMLDivElement>(null)
   const screenRef = useRef<HTMLDivElement>(null)
-  const { phase, origin } = state
+  const { phase } = state
 
   useLayoutEffect(() => {
     const house = houseRef.current
@@ -116,8 +117,8 @@ export function MovieWarp({
       })
     if (phase === 'opening') {
       // the house goes dark under the popcorn; the screen lights as it clears
-      fade(house, 0, 1, 500, 500)
-      fade(screen, 0, 1, 600, 1000)
+      fade(house, 0, 1, 600, 600)
+      fade(screen, 0, 1, 700, 1500)
     } else {
       fade(screen, 1, 0, 300)
       fade(house, 1, 0, 400, 250)
@@ -165,7 +166,7 @@ export function MovieWarp({
       </div>
 
       {/* the shower, above everything */}
-      <Popcorn origin={origin} />
+      <Popcorn />
     </div>,
     document.body,
   )

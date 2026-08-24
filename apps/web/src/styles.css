@@ -2134,9 +2134,9 @@
   );
 }
 
-/* The shower. Each kernel is a butter-yellow cluster of lobes; it pops
-   out of the sticker (--ox/--oy) to its landing spot (--tx/--ty),
-   tumbling as it goes, then — once the house is dark — settles away. */
+/* The rain. Each kernel is a butter-yellow cluster of lobes; it drops in
+   from above the top edge to its landing spot (--tx/--ty), tumbling as it
+   falls, then — once the house is dark — settles away. */
 .movie-corn {
   position: absolute;
   inset: 0;
@@ -2172,17 +2172,17 @@
       oklch(0.9 0.1 calc(var(--hue) - 6)) 0 40%,
       transparent 41%
     );
-  filter: drop-shadow(0 3px 3px oklch(0 0 0 / 0.35));
   opacity: 0;
-  transform: translate(var(--ox), var(--oy)) scale(0);
-  animation: movie-pop 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.1) var(--delay)
+  will-change: transform, opacity;
+  transform: translate(var(--tx), -140px) scale(var(--s));
+  animation: movie-fall var(--dur) cubic-bezier(0.4, 0, 0.9, 0.6) var(--delay)
     forwards;
 }
 
-@keyframes movie-pop {
+@keyframes movie-fall {
   0% {
     opacity: 1;
-    transform: translate(var(--ox), var(--oy)) scale(0) rotate(0deg);
+    transform: translate(var(--tx), -140px) scale(var(--s)) rotate(0deg);
   }
   100% {
     opacity: 1;
@@ -2193,7 +2193,7 @@
 /* once open: the popcorn settles away, dropping a little as it fades */
 .movie-warp[data-state='open'] .movie-kernel,
 .movie-warp[data-state='closing'] .movie-kernel {
-  animation: movie-settle 0.55s ease-in calc(var(--delay) * 0.4) forwards;
+  animation: movie-settle 0.8s ease-in calc(var(--delay) * 0.6) forwards;
 }
 
 @keyframes movie-settle {
