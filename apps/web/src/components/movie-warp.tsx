@@ -1,4 +1,5 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
+import type { CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import { useReducedMotion } from 'motion/react'
 import { useWarp } from './warp'
@@ -20,11 +21,11 @@ const COPY = {
   hintTap: 'tap anywhere for the lights',
 }
 
-/** Lights dim, curtains draw open; leaving closes them and brings the lights up. */
-const OPEN_MS = 1400
-const CLOSE_MS = 900
-const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)'
-const EASE_IN = 'cubic-bezier(0.55, 0, 0.8, 0.35)'
+/** Popcorn buries the screen, then settles away to reveal the cinema. */
+const OPEN_MS = 1500
+const CLOSE_MS = 700
+/** Kernels in the shower. */
+const KERNELS = 240
 
 export function useMovieWarp() {
   return useWarp({ fill: OPEN_MS, dissolve: CLOSE_MS })
@@ -32,11 +33,54 @@ export function useMovieWarp() {
 
 const SEATS = Array.from({ length: 3 }, (_, row) => row)
 
+/* One random shower per open: where each kernel lands, how big, how it
+   tumbles, and how late it pops. Client-only (mounts on interaction). */
+function popKernels() {
+  const w = window.innerWidth
+  const h = window.innerHeight
+  return Array.from({ length: KERNELS }, () => ({
+    tx: Math.random() * w,
+    ty: Math.random() * h,
+    s: 0.75 + Math.random() * 0.7,
+    r: (Math.random() - 0.5) * 540,
+    delay: Math.random() * 520,
+    hue: 80 + Math.random() * 14,
+  }))
+}
+
+/** Mounts fresh on every open, so no two showers are alike. */
+function Popcorn({ origin }: { origin: { x: number; y: number } }) {
+  const [kernels] = useState(popKernels)
+  return (
+    <div className="movie-corn">
+      {kernels.map((k, i) => (
+        <span
+          key={i}
+          className="movie-kernel"
+          style={
+            {
+              '--ox': `${origin.x}px`,
+              '--oy': `${origin.y}px`,
+              '--tx': `${k.tx}px`,
+              '--ty': `${k.ty}px`,
+              '--s': k.s,
+              '--r': `${k.r}deg`,
+              '--delay': `${k.delay}ms`,
+              '--hue': k.hue,
+            } as CSSProperties
+          }
+        />
+      ))}
+    </div>
+  )
+}
+
 /**
- * "Curtains up": the page dims like house lights, two pleated curtains part
- * from the centre to the wings, and the screen behind them lights up under
- * a projector beam. Only the curtains move. Leaving draws them closed and
- * fades the lights back up. Web Animations (transform + opacity).
+ * "Extra butter": kernels burst out of the popcorn sticker and shower
+ * across the page until it's buried, the house goes dark underneath, then
+ * the popcorn settles away to reveal the cinema — screen lit under a
+ * projector beam over silhouetted seats. Leaving fades the lights back up.
+ * The shower is CSS keyframes per kernel; the rest is Web Animations.
  * Portalled to <body>; decorative.
  */
 export function MovieWarp({
@@ -48,19 +92,14 @@ export function MovieWarp({
 }) {
   const reduce = useReducedMotion()
   const houseRef = useRef<HTMLDivElement>(null)
-  const leftRef = useRef<HTMLDivElement>(null)
-  const rightRef = useRef<HTMLDivElement>(null)
   const screenRef = useRef<HTMLDivElement>(null)
-  const { phase } = state
+  const { phase, origin } = state
 
   useLayoutEffect(() => {
     const house = houseRef.current
-    const left = leftRef.current
-    const right = rightRef.current
     const screen = screenRef.current
-    if (!house || !left || !right || !screen) return
+    if (!house || !screen) return
     if (phase !== 'opening' && phase !== 'closing') return
-    const opening = phase === 'opening'
     const t = (ms: number) => (reduce ? 1 : ms)
     const fade = (
       el: HTMLElement,
@@ -75,29 +114,13 @@ export function MovieWarp({
         easing: 'ease-out',
         fill: 'both',
       })
-    const draw = (
-      el: HTMLElement,
-      from: string,
-      to: string,
-      ms: number,
-      delay = 0,
-    ) =>
-      el.animate([{ transform: from }, { transform: to }], {
-        duration: t(ms),
-        delay: t(delay),
-        easing: opening ? EASE_OUT : EASE_IN,
-        fill: 'both',
-      })
-    if (opening) {
-      fade(house, 0, 1, 380)
-      draw(left, 'translateX(0)', 'translateX(-88%)', 1000, 320)
-      draw(right, 'translateX(0)', 'translateX(88%)', 1000, 320)
-      fade(screen, 0, 1, 700, 520)
+    if (phase === 'opening') {
+      // the house goes dark under the popcorn; the screen lights as it clears
+      fade(house, 0, 1, 500, 500)
+      fade(screen, 0, 1, 600, 1000)
     } else {
-      draw(left, 'translateX(-88%)', 'translateX(0)', 650)
-      draw(right, 'translateX(88%)', 'translateX(0)', 650)
-      fade(screen, 1, 0, 400, 200)
-      fade(house, 1, 0, 350, 550)
+      fade(screen, 1, 0, 300)
+      fade(house, 1, 0, 400, 250)
     }
   }, [phase, reduce])
 
@@ -112,7 +135,7 @@ export function MovieWarp({
       onClick={state.mode === 'pinned' ? onDismiss : undefined}
     >
       <div ref={houseRef} className="movie-house">
-        {/* the screen + projector beam, behind the curtains */}
+        {/* the screen + projector beam */}
         <div ref={screenRef} className="movie-stage">
           <div className="movie-beam" />
           <div className="movie-screen">
@@ -136,15 +159,13 @@ export function MovieWarp({
           </div>
         </div>
 
-        {/* the curtains: pleated, parting to the wings */}
-        <div ref={leftRef} className="movie-curtain movie-curtain-left" />
-        <div ref={rightRef} className="movie-curtain movie-curtain-right" />
-        <div className="movie-valance" />
-
         <p className="movie-hint">
           ▼ {state.mode === 'hover' ? COPY.hintHover : COPY.hintTap}
         </p>
       </div>
+
+      {/* the shower, above everything */}
+      <Popcorn origin={origin} />
     </div>,
     document.body,
   )

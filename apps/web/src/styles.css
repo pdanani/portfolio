@@ -1882,8 +1882,8 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Movies sticker easter egg — hover/tap dims the lights and draws the */
-/* curtains (movie-warp.tsx). Original CSS art, id-prefixed.           */
+/* Movies sticker easter egg — hover/tap buries the page in popcorn,   */
+/* then the cinema (movie-warp.tsx). Original CSS art, id-prefixed.    */
 /* ------------------------------------------------------------------ */
 
 /* Halo variant: deep red → gold → cream, a marquee-bulb feel. */
@@ -2134,53 +2134,78 @@
   );
 }
 
-/* curtains: pleated velvet, each covering half the stage; the wings stay */
-.movie-curtain {
+/* The shower. Each kernel is a butter-yellow cluster of lobes; it pops
+   out of the sticker (--ox/--oy) to its landing spot (--tx/--ty),
+   tumbling as it goes, then — once the house is dark — settles away. */
+.movie-corn {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 52%;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.movie-kernel {
+  position: absolute;
+  top: -44px;
+  left: -44px;
+  width: 88px;
+  height: 88px;
+  border-radius: 46% 54% 50% 50% / 52% 48% 52% 48%;
   background:
-    linear-gradient(
-      to bottom,
-      oklch(0 0 0 / 0.35),
-      transparent 12%,
-      transparent 80%,
-      oklch(0 0 0 / 0.45)
+    radial-gradient(
+      circle at 32% 30%,
+      oklch(0.99 0.03 var(--hue)) 0 22%,
+      transparent 23%
     ),
-    repeating-linear-gradient(
-      90deg,
-      oklch(0.4 0.17 25) 0 26px,
-      oklch(0.55 0.2 25) 26px 46px,
-      oklch(0.33 0.15 25) 46px 60px
+    radial-gradient(
+      circle at 70% 36%,
+      oklch(0.97 0.06 var(--hue)) 0 24%,
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 50% 72%,
+      oklch(0.95 0.08 var(--hue)) 0 26%,
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      oklch(0.9 0.1 calc(var(--hue) - 6)) 0 40%,
+      transparent 41%
     );
-  box-shadow: 0 0 60px oklch(0 0 0 / 0.7);
-  will-change: transform;
+  filter: drop-shadow(0 3px 3px oklch(0 0 0 / 0.35));
+  opacity: 0;
+  transform: translate(var(--ox), var(--oy)) scale(0);
+  animation: movie-pop 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.1) var(--delay)
+    forwards;
 }
 
-.movie-curtain-left {
-  left: 0;
+@keyframes movie-pop {
+  0% {
+    opacity: 1;
+    transform: translate(var(--ox), var(--oy)) scale(0) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(var(--tx), var(--ty)) scale(var(--s)) rotate(var(--r));
+  }
 }
 
-.movie-curtain-right {
-  right: 0;
+/* once open: the popcorn settles away, dropping a little as it fades */
+.movie-warp[data-state='open'] .movie-kernel,
+.movie-warp[data-state='closing'] .movie-kernel {
+  animation: movie-settle 0.55s ease-in calc(var(--delay) * 0.4) forwards;
 }
 
-/* the pelmet across the top */
-.movie-valance {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 9vh;
-  background: repeating-linear-gradient(
-    90deg,
-    oklch(0.36 0.16 25) 0 30px,
-    oklch(0.52 0.2 25) 30px 52px,
-    oklch(0.3 0.14 25) 52px 68px
-  );
-  border-bottom: 8px solid oklch(0.85 0.15 85 / 0.8);
-  box-shadow: 0 10px 30px oklch(0 0 0 / 0.6);
+@keyframes movie-settle {
+  0% {
+    opacity: 1;
+    transform: translate(var(--tx), var(--ty)) scale(var(--s)) rotate(var(--r));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), calc(var(--ty) + 60px)) scale(var(--s))
+      rotate(calc(var(--r) + 20deg));
+  }
 }
 
 .movie-hint {
@@ -2204,8 +2229,9 @@
     height: 52vh;
     padding: 1.25rem;
   }
-  .movie-curtain {
-    width: 54%;
+  .movie-kernel {
+    width: 64px;
+    height: 64px;
   }
 }
 
