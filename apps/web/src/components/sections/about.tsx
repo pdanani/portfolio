@@ -23,7 +23,7 @@ const INTERESTS = [
   { emoji: '🥾', label: 'Hiking', tilt: '-rotate-2', spin: -16 },
   { emoji: '⌨️', label: 'Keyboards', tilt: 'rotate-3', spin: 24 },
   { emoji: '🍿', label: 'Movies', tilt: '-rotate-1', spin: -20 },
-  { emoji: '🎧', label: 'Music', tilt: 'rotate-1', spin: 16, warp: 'vinyl' },
+  { emoji: '🎵', label: 'Music', tilt: 'rotate-1', spin: 16, warp: 'vinyl' },
   { emoji: '🎮', label: 'Gaming', tilt: '-rotate-1', spin: -18, warp: 'zelda' },
   { emoji: '🏀', label: 'Sports', tilt: 'rotate-3', spin: 20 },
 ]
