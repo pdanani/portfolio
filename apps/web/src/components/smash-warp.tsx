@@ -218,16 +218,38 @@ export function SmashWarp({
 
       <div className="smash-world">
         <div className="smash-scenery">
+          <div className="smash-sky" />
+          <div className="smash-cloud" style={{ top: '8%', left: '38%' }} />
+          <div className="smash-cloud" style={{ top: '18%', left: '68%' }} />
           <div className="smash-glow" />
           <div className="smash-stage" />
           {PLATFORMS.map((p, i) => (
             <div key={i} className="smash-platform" style={p} />
           ))}
+          {/* the fight: P1 in a stance, P2 launched off the impact */}
+          <div className="smash-burst" />
+          <div className="smash-lines" />
+          {/* Hammer King (P1) winding up; Leaf Kid (P2) launched off the hit */}
+          <div className="smash-fighter smash-fighter-p1">
+            <span className="f-hammer" />
+            <span className="f-crown" />
+            <span className="f-head" />
+            <span className="f-body" />
+            <span className="f-arm" />
+            <span className="f-legs" />
+          </div>
+          <div className="smash-fighter smash-fighter-p2">
+            <span className="f-leaf" />
+            <span className="f-head" />
+            <span className="f-body" />
+            <span className="f-arm" />
+            <span className="f-legs" />
+          </div>
         </div>
 
         <span className="smash-timer">{COPY.timer}</span>
 
-        <div className="smash-center">
+        <div className="smash-card">
           <p className="smash-eyebrow">
             <span>{COPY.eyebrow}</span>
           </p>
