@@ -8,7 +8,7 @@ import type { WarpState } from './warp'
 const COPY = {
   eyebrow: 'Sidequest',
   title: 'A wild Pawan appeared!',
-  body: 'Off the clock you’ll find him out on a route somewhere, catching them all — with a detour to Hyrule now and then.',
+  body: 'In the winter when it’s cold in NYC, I love playing video games with my friends.',
   bagLabel: 'Bag',
   inventory: ['Poké Ball', 'Potion', 'Bicycle', 'Running Shoes'],
   hintHover: 'move away to return',
