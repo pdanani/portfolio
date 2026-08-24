@@ -1069,6 +1069,42 @@
   }
 }
 
+/* Notes falling out of the sticker: each starts inside the card's bottom
+   edge, drifts down with a little side-to-side wobble, and fades away. */
+.vinyl-notes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.vinyl-notes > span {
+  position: absolute;
+  top: 78%;
+  left: var(--x);
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--brand-amber);
+  opacity: 0;
+  animation: vinyl-note-fall var(--d) ease-in var(--t) infinite;
+}
+
+@keyframes vinyl-note-fall {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(-8deg);
+  }
+  12% {
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate(9px, 42px) rotate(6deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-6px, 96px) rotate(-10deg);
+  }
+}
+
 /* ---- the overlay: a circle clipped at the sticker's centre ---- */
 .vinyl-warp {
   --vinyl-amber: oklch(0.81 0.15 72);

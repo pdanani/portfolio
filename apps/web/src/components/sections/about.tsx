@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import type { CSSProperties } from 'react'
 import { useInView, useReducedMotion } from 'motion/react'
 import { Reveal } from '#/components/motion/reveal'
 import { StaggerGroup, StaggerItem } from '#/components/motion/stagger'
@@ -129,6 +130,15 @@ function ZeldaSticker({
   )
 }
 
+/* Notes that fall out of the Music sticker: start x (% of the card), loop
+   duration, and stagger, varied so they never fall in step. */
+const NOTES = [
+  { glyph: '♪', x: '18%', d: '3.6s', t: '0s' },
+  { glyph: '♫', x: '62%', d: '4.2s', t: '-1.4s' },
+  { glyph: '♩', x: '40%', d: '3.9s', t: '-2.6s' },
+  { glyph: '♪', x: '80%', d: '4.6s', t: '-0.7s' },
+]
+
 /** The Music sticker: warm halo; hover or tap drops a record over the page. */
 function VinylSticker({
   emoji,
@@ -141,7 +151,7 @@ function VinylSticker({
 }) {
   const { state, close, triggerProps } = useVinylWarp()
   return (
-    <>
+    <div className="relative">
       <button
         type="button"
         className={cn(CARD, 'vinyl-halo cursor-pointer', tilt)}
@@ -150,8 +160,19 @@ function VinylSticker({
       >
         <StickerFace emoji={emoji} label={label} />
       </button>
+      {/* notes drifting down out of the card and fading away */}
+      <div aria-hidden className="vinyl-notes">
+        {NOTES.map((n, i) => (
+          <span
+            key={i}
+            style={{ '--x': n.x, '--d': n.d, '--t': n.t } as CSSProperties}
+          >
+            {n.glyph}
+          </span>
+        ))}
+      </div>
       <VinylWarp state={state} onDismiss={close} />
-    </>
+    </div>
   )
 }
 
