@@ -16,7 +16,9 @@ export const PROJECTS: Array<Project> = [
       'ntfy',
     ],
     githubUrl: 'https://github.com/pdanani/warehouse-watch-app',
-    // liveUrl: 'https://costco.pawandanani.com' once the DNS CNAME + Vercel deploy are live
+    // The card links here (liveUrl wins over githubUrl). Swap to
+    // https://costco.pawandanani.com once that CNAME is added at the registrar.
+    liveUrl: 'https://warehouse-watch-app.vercel.app',
   },
   {
     slug: 'memory-allocator',
