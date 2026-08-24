@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { WavesHero } from '#/components/waves-hero'
+import { Undersea } from '#/components/undersea'
 import { AboutSection } from '#/components/sections/about'
 import { ExperienceSection } from '#/components/sections/experience'
 import { ProjectsSection } from '#/components/sections/projects'
@@ -13,8 +14,9 @@ function Home() {
   return (
     <main>
       <WavesHero />
-      {/* everything below the waterline: the sea darkening into night */}
-      <div className="night-sea">
+      {/* everything below the waterline is under the sea: sunlit shallows
+          that darken into the deep as the reader scrolls */}
+      <Undersea>
         <AboutSection />
         <WaveDivider />
         <ExperienceSection />
@@ -23,7 +25,7 @@ function Home() {
         <WaveDivider />
         <SkillsSection />
         <SiteFooter />
-      </div>
+      </Undersea>
     </main>
   )
 }

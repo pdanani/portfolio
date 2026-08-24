@@ -8,7 +8,7 @@ export function SkillsSection() {
     <Section id="skills">
       <SectionHeading number="04" title="Toolbox" />
 
-      <StaggerGroup className="grid gap-10 sm:grid-cols-3" amount={0.2}>
+      <StaggerGroup className="grid gap-10 sm:grid-cols-3">
         {SKILLS.map((group) => (
           <StaggerItem key={group.label}>
             <h3 className="font-mono text-xs tracking-[0.3em] text-brand-amber uppercase">

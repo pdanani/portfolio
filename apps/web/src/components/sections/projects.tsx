@@ -60,7 +60,7 @@ export function ProjectsSection() {
         blurb="Systems work and product builds — a few will dock here as live apps over time."
       />
 
-      <StaggerGroup className="grid gap-5 sm:grid-cols-2" amount={0.1}>
+      <StaggerGroup className="grid gap-5 sm:grid-cols-2">
         {PROJECTS.map((project) => (
           <StaggerItem key={project.slug} className="h-full">
             <ProjectCard project={project} />

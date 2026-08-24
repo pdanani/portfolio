@@ -133,7 +133,7 @@ pawandanani.com used to serve the old Next.js site from Firebase Hosting
   one-pager: Experience (timeline with amber "harbor-light" markers),
   Selected projects (glass cards), and Toolbox (skill chips) — contact is
   folded into the hero (email + LinkedIn) with a slim closing footer —
-  all on a `night-sea` gradient that continues the hero's sea into night
+  all under the water — an `Undersea` scene (sunlit shallows darkening into the deep as you scroll, light shafts from where the sun set, marine snow, bioluminescent glow at depth)
   (with the set sun's afterglow bleeding past the waterline at the same x).
   Subtle SVG wave dividers between sections; reveals via the existing
   motion primitives; hero CTAs + scroll cue wired to section anchors.
@@ -191,7 +191,7 @@ apps/web/src/
 │  └─ motion/         Reveal, StaggerGroup, Parallax, scroll progress
 ├─ data/              typed resume content (profile, experience, projects, skills)
 ├─ lib/               cn(), formatMonth/Range, motion variants + provider
-└─ styles.css         Tailwind v4 + OKLCH tokens + waves/night-sea classes
+└─ styles.css         Tailwind v4 + OKLCH tokens + waves/undersea classes
 data/data.json        archival source of the migrated content
 ```
 

@@ -18,7 +18,7 @@ const INTERESTS = [
   { emoji: '⌨️', label: 'Keyboards', tilt: 'rotate-3', spin: 24 },
   { emoji: '🍿', label: 'Movies', tilt: '-rotate-1', spin: -20 },
   { emoji: '🍷', label: 'Wine', tilt: 'rotate-1', spin: 16 },
-  { emoji: '🏃', label: 'Running', tilt: '-rotate-1', spin: -18 },
+  { emoji: '🎮', label: 'Gaming', tilt: '-rotate-1', spin: -18 },
   { emoji: '🏀', label: 'Sports', tilt: 'rotate-3', spin: 20 },
 ]
 
@@ -41,13 +41,13 @@ export function AboutSection() {
                 loading="lazy"
                 className="block w-full saturate-[0.92]"
               />
-              {/* dusk grade: melts the daylight shot into the night-sea */}
+              {/* dusk grade: melts the daylight shot into the water */}
               <div aria-hidden className="about-photo-grade absolute inset-0" />
             </div>
           </figure>
         </Reveal>
 
-        <Reveal amount={0.3} className="max-w-xl">
+        <Reveal className="max-w-xl">
           <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
             Hi — I&apos;m Pawan, a software engineer based in New York. I
             studied Computer Science and Economics at Stony Brook University,
@@ -65,10 +65,7 @@ export function AboutSection() {
 
           {/* justify-center so a narrower trailing row of stickers sits
               centred under the row above instead of hugging the left edge */}
-          <StaggerGroup
-            className="mt-8 flex flex-wrap justify-center gap-6"
-            amount={0.4}
-          >
+          <StaggerGroup className="mt-8 flex flex-wrap justify-center gap-6">
             {INTERESTS.map(({ emoji, label, tilt, spin }) => (
               <StaggerItem
                 key={label}

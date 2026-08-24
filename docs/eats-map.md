@@ -18,7 +18,7 @@ start.
 ## Map
 
 - **Google Maps JavaScript API**, embedded and styled to match the site
-  (dark/night map style to sit with the `night-sea` palette, not Google's
+  (dark/night map style to sit with the undersea palette, not Google's
   default light theme).
 - Pins driven by a small typed data file in this repo (`src/data/eats.ts`
   or similar), not Google My Maps — keeps the list versioned with the site
@@ -50,5 +50,5 @@ start.
 - First batch of pins + notes (the user's actual list).
 - Whether the page gets any of the site's other chrome (nav back to `/`,
   footer) or stays a minimal standalone page.
-- Map visual style to match `night-sea` — needs a Google Maps JSON style
+- Map visual style to match the undersea palette — needs a Google Maps JSON style
   config, not just a CSS filter over the iframe.

@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import type { ReactNode } from 'react'
 import { m, useInView, useReducedMotion } from 'motion/react'
 import { DURATION, EASE } from '#/lib/motion/variants'
+import { IN_VIEW } from '#/lib/motion/in-view'
 
 export interface RevealProps {
   children: ReactNode
@@ -9,8 +10,6 @@ export interface RevealProps {
   /** Travel distance in px (ignored under reduced motion). */
   y?: number
   delay?: number
-  /** Viewport intersection ratio (0–1) before revealing. */
-  amount?: number
   /** Reveal only once (default) vs every time it scrolls into view. */
   once?: boolean
 }
@@ -25,12 +24,11 @@ export function Reveal({
   className,
   y = 24,
   delay = 0,
-  amount = 0.3,
   once = true,
 }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
-  const inView = useInView(ref, { once, amount })
+  const inView = useInView(ref, { once, ...IN_VIEW })
 
   return (
     <m.div

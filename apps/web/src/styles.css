@@ -142,8 +142,8 @@
   -webkit-backdrop-filter: blur(14px);
 }
 
-/* Dusk grade over the (daylight) About photo so it sits naturally on the
-   night-sea: navy rising from the waterline below, a whisper of the set
+/* Dusk grade over the (daylight) About photo so it sits naturally under
+   the water: navy rising from the waterline below, a whisper of the set
    sun's warmth from the top right. */
 .about-photo-grade {
   background:
@@ -160,22 +160,267 @@
     );
 }
 
-/* Backdrop for everything below the hero: the sea darkening into night.
-   The faint warm radial at the top sits at the same x as the hero's set
-   sun (0.78), so its afterglow appears to bleed past the waterline. */
-.night-sea {
+/* ------------------------------------------------------------------ */
+/* Below the waterline — the scene behind every section after the hero */
+/* ------------------------------------------------------------------ */
+
+/* Paint order inside the isolated container (back to front): its own
+   fallback colour, the sticky viewport-sized backdrop (z -2), the in-flow
+   surface band that eases the seam with the hero (z -1), then the
+   sections. undersea.tsx drives the depth cross-fade from scroll
+   progress; everything here only ever animates transform/opacity. */
+.undersea {
+  position: relative;
+  isolation: isolate;
+  background: oklch(0.09 0.04 258);
+}
+
+.undersea-backdrop {
+  position: sticky;
+  top: 0;
+  z-index: -2;
+  height: 100vh;
+  margin-bottom: -100vh; /* takes no space: the sections start at the top */
+  overflow: hidden;
+  pointer-events: none;
+  contain: layout paint;
+}
+
+.undersea-backdrop > * {
+  position: absolute;
+  inset: 0;
+}
+
+/* Sunlit shallows — what the reader arrives into. The warm radial at
+   x = 0.78 is the set sun still filtering down (same x the hero lands it
+   at); the cool one on the left is skylight. */
+.undersea-shallow {
   background:
     radial-gradient(
-      90% 34% at 78% 0%,
-      oklch(0.45 0.09 30 / 0.12) 0%,
-      transparent 60%
+      55% 42% at 78% -8%,
+      oklch(0.62 0.13 50 / 0.3) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      60% 50% at 16% -10%,
+      oklch(0.62 0.1 215 / 0.2) 0%,
+      transparent 70%
     ),
     linear-gradient(
       to bottom,
-      oklch(0.095 0.04 252) 0%,
-      oklch(0.085 0.038 256) 45%,
-      oklch(0.06 0.028 262) 100%
+      oklch(0.27 0.08 232) 0%,
+      oklch(0.2 0.07 242) 50%,
+      oklch(0.14 0.055 252) 100%
     );
+}
+
+/* The abyss — cross-faded over the shallows as depth increases. */
+.undersea-deep {
+  background: linear-gradient(
+    to bottom,
+    oklch(0.12 0.045 256) 0%,
+    oklch(0.085 0.035 260) 55%,
+    oklch(0.055 0.025 266) 100%
+  );
+}
+
+/* Light shafts. The wrapper's mask fades them in below the seam and out
+   before the bottom of the viewport; each bar is a soft horizontal
+   gradient rotated about its top, swaying on its own period (custom
+   properties set per ray in undersea.tsx). */
+.undersea-rays {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 14%,
+    black 45%,
+    transparent 92%
+  );
+}
+
+.undersea-ray {
+  position: absolute;
+  top: -12vh;
+  left: var(--x);
+  width: var(--w);
+  height: 160vh;
+  transform-origin: 50% 0;
+  transform: rotate(var(--a));
+  background: linear-gradient(
+    to right,
+    transparent,
+    oklch(0.94 0.04 200 / var(--i)) 50%,
+    transparent
+  );
+  animation: undersea-ray-sway var(--d) ease-in-out var(--delay) infinite
+    alternate;
+}
+
+@keyframes undersea-ray-sway {
+  from {
+    transform: rotate(var(--a)) translateX(-1.5vw);
+    opacity: 0.7;
+  }
+  to {
+    transform: rotate(calc(var(--a) + 2.5deg)) translateX(1.5vw);
+    opacity: 1;
+  }
+}
+
+/* Marine snow: two repeating dot tiles drifting up at different speeds
+   (the near one bigger and faster, for parallax). Each tile extends one
+   tile-height below the viewport and translates up exactly that far, so
+   the loop is seamless. */
+.undersea-snow {
+  inset: 0 0 auto;
+  height: calc(100% + var(--tile));
+  background-repeat: repeat;
+  background-size: var(--tile) var(--tile);
+  animation: undersea-snow-rise var(--d) linear infinite;
+}
+
+.undersea-snow-far {
+  --tile: 280px;
+  --d: 44s;
+  opacity: 0.4;
+  background-image:
+    radial-gradient(
+      circle at 12% 18%,
+      oklch(0.95 0.03 205 / 0.7) 0.8px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle at 63% 8%,
+      oklch(0.95 0.03 205 / 0.55) 0.8px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle at 34% 52%,
+      oklch(0.95 0.03 205 / 0.6) 1px,
+      transparent 1.7px
+    ),
+    radial-gradient(
+      circle at 81% 44%,
+      oklch(0.95 0.03 205 / 0.5) 0.8px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle at 52% 79%,
+      oklch(0.95 0.03 205 / 0.65) 0.8px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle at 8% 88%,
+      oklch(0.95 0.03 205 / 0.5) 1px,
+      transparent 1.7px
+    ),
+    radial-gradient(
+      circle at 90% 92%,
+      oklch(0.95 0.03 205 / 0.6) 0.8px,
+      transparent 1.5px
+    );
+}
+
+.undersea-snow-near {
+  --tile: 440px;
+  --d: 28s;
+  opacity: 0.55;
+  background-image:
+    radial-gradient(
+      circle at 20% 12%,
+      oklch(0.96 0.04 200 / 0.8) 1.4px,
+      transparent 2.4px
+    ),
+    radial-gradient(
+      circle at 72% 27%,
+      oklch(0.96 0.04 200 / 0.6) 1.8px,
+      transparent 3px
+    ),
+    radial-gradient(
+      circle at 45% 58%,
+      oklch(0.96 0.04 200 / 0.75) 1.2px,
+      transparent 2.2px
+    ),
+    radial-gradient(
+      circle at 88% 70%,
+      oklch(0.96 0.04 200 / 0.55) 2px,
+      transparent 3.2px
+    ),
+    radial-gradient(
+      circle at 10% 84%,
+      oklch(0.96 0.04 200 / 0.7) 1.5px,
+      transparent 2.5px
+    );
+}
+
+@keyframes undersea-snow-rise {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(0.6vw, calc(var(--tile) * -0.25), 0);
+  }
+  50% {
+    transform: translate3d(0, calc(var(--tile) * -0.5), 0);
+  }
+  75% {
+    transform: translate3d(-0.6vw, calc(var(--tile) * -0.75), 0);
+  }
+  100% {
+    transform: translate3d(0, calc(var(--tile) * -1), 0);
+  }
+}
+
+/* Bioluminescence at depth — cyan, violet and a last ember of the sunset's
+   amber, breathing slowly. The wrapper's opacity is scroll-driven so the
+   glow only wakes up once the reader is deep. */
+.undersea-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      42% 38% at 18% 74%,
+      oklch(0.78 0.12 200 / 0.18) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      36% 42% at 82% 88%,
+      oklch(0.62 0.16 300 / 0.14) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      24% 26% at 54% 98%,
+      oklch(0.82 0.14 70 / 0.12) 0%,
+      transparent 70%
+    );
+  animation: undersea-glow-breathe 9s ease-in-out infinite alternate;
+}
+
+@keyframes undersea-glow-breathe {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+/* Softens the seam: the hero ends in a near-black scrim, the shallows are
+   lit. In flow (not sticky) so it scrolls away with the hero. */
+.undersea-surface {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: 22vh;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    oklch(0.06 0.03 256) 0%,
+    oklch(0.06 0.03 256 / 0.55) 45%,
+    transparent 100%
+  );
 }
 
 /* ------------------------------------------------------------------ */

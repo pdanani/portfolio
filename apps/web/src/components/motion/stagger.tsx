@@ -3,11 +3,11 @@ import type { ReactNode } from 'react'
 import { m, useInView, useReducedMotion } from 'motion/react'
 import type { Variants } from 'motion/react'
 import { fadeUpItem, staggerContainer } from '#/lib/motion/variants'
+import { IN_VIEW } from '#/lib/motion/in-view'
 
 export interface StaggerGroupProps {
   children: ReactNode
   className?: string
-  amount?: number
   once?: boolean
 }
 
@@ -18,11 +18,10 @@ export interface StaggerGroupProps {
 export function StaggerGroup({
   children,
   className,
-  amount = 0.2,
   once = true,
 }: StaggerGroupProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once, amount })
+  const inView = useInView(ref, { once, ...IN_VIEW })
 
   return (
     <m.div
