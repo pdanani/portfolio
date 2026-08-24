@@ -5,7 +5,7 @@ import { useReducedMotion } from 'motion/react'
 
 /* Everything the overlay says, in one place. */
 const COPY = {
-  eyebrow: 'Secret found · Gaming',
+  eyebrow: 'Sidequest',
   title: "It's dangerous to go alone!",
   body: 'So when the laptop closes, Pawan heads to Hyrule. The Legend of Zelda — favourite series, no contest.',
   inventory: ['Master Sword', 'Hylian Shield', 'Ocarina', 'Hookshot'],
@@ -17,11 +17,9 @@ const COPY = {
 const CELLS = 336
 /** Mosaic fill; the overworld fades in once it's done. */
 const FILL_MS = 620
-const DISSOLVE_MS = 560
+const DISSOLVE_MS = 340
 /** Hover intent, so brushing past the sticker doesn't fire it. */
 const INTENT_MS = 220
-/** Once open by hover, stay at least this long even if the pointer slips. */
-const MIN_SHOW_MS = 1800
 /** Opened by tap: dismiss on its own if nobody taps again. */
 const AUTO_CLOSE_MS = 7000
 
@@ -55,16 +53,12 @@ export interface WarpState {
 }
 
 type Timers = Partial<
-  Record<
-    'intent' | 'minShow' | 'auto' | 'phase' | 'close',
-    ReturnType<typeof setTimeout>
-  >
+  Record<'intent' | 'auto' | 'phase' | 'close', ReturnType<typeof setTimeout>>
 >
 
 /**
  * State machine behind the warp. Mouse: hover the sticker (with intent
- * delay) to open, move away to close — with a minimum on-screen time so a
- * slipped pointer doesn't cut it short. Touch/keyboard: click toggles a
+ * delay) to open; moving away starts the dissolve immediately. Touch/keyboard: click toggles a
  * "pinned" open that dismisses on tap-anywhere, Escape, or a timer.
  */
 export function useZeldaWarp() {
@@ -76,7 +70,6 @@ export function useZeldaWarp() {
   const stateRef = useRef(state)
   stateRef.current = state
   const timers = useRef<Timers>({})
-  const openedAt = useRef(0)
   const lastPointer = useRef('mouse')
 
   const clear = useCallback((...keys: Array<keyof Timers>) => {
@@ -93,7 +86,7 @@ export function useZeldaWarp() {
   const close = useCallback(() => {
     const s = stateRef.current
     if (s.phase === 'closed' || s.phase === 'closing') return
-    clear('intent', 'minShow', 'auto', 'phase')
+    clear('intent', 'auto', 'phase')
     setState({ phase: 'closing', mode: s.mode })
     after('close', reduce ? 40 : DISSOLVE_MS, () =>
       setState({ phase: 'closed', mode: s.mode }),
@@ -112,7 +105,6 @@ export function useZeldaWarp() {
         }
         return
       }
-      openedAt.current = Date.now()
       setState({ phase: 'opening', mode })
       after('phase', reduce ? 40 : FILL_MS, () =>
         setState((prev) =>
@@ -145,7 +137,6 @@ export function useZeldaWarp() {
     'aria-expanded': state.phase !== 'closed',
     onPointerEnter: (event: PointerEvent<HTMLElement>) => {
       if (event.pointerType !== 'mouse') return
-      clear('minShow')
       if (stateRef.current.phase === 'closed') {
         after('intent', INTENT_MS, () => open('hover'))
       }
@@ -156,11 +147,7 @@ export function useZeldaWarp() {
       const s = stateRef.current
       if (s.mode !== 'hover' || s.phase === 'closed' || s.phase === 'closing')
         return
-      after(
-        'minShow',
-        Math.max(0, MIN_SHOW_MS - (Date.now() - openedAt.current)),
-        close,
-      )
+      close()
     },
     onPointerDown: (event: PointerEvent<HTMLElement>) => {
       lastPointer.current = event.pointerType
@@ -244,7 +231,7 @@ export function ZeldaWarp({
         <div className="zelda-hud">
           <div>
             <span className="zelda-emblem" />
-            <span className="zelda-hud-label">Side quest</span>
+            <span className="zelda-hud-label">Hyrule</span>
           </div>
           <div>
             {[false, false, false, true].map((empty, i) => (

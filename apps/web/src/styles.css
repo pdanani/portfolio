@@ -538,7 +538,7 @@
 .zelda-warp[data-state='closing'] .zelda-pixel {
   opacity: 1;
   animation-name: zelda-pixel-out;
-  animation-delay: calc((335 - var(--i)) * 1.5ms);
+  animation-delay: calc((335 - var(--i)) * 0.9ms);
 }
 
 @keyframes zelda-pixel-in {
