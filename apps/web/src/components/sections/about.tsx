@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { useInView, useReducedMotion } from 'motion/react'
 import { Reveal } from '#/components/motion/reveal'
 import { StaggerGroup, StaggerItem } from '#/components/motion/stagger'
+import { VinylWarp, useVinylWarp } from '#/components/vinyl-warp'
 import { ZeldaWarp, useZeldaWarp } from '#/components/zelda-warp'
 import { IN_VIEW } from '#/lib/motion/in-view'
 import { fallItem } from '#/lib/motion/variants'
@@ -13,16 +14,16 @@ import { Section, SectionHeading } from './section'
    interaction language echoes across the section instead of introducing a
    new one. Tilt classes are static (not computed) so Tailwind's JIT scanner
    can see them. `spin` seeds the tumble-in fall (fallItem below) — varied
-   per item so the group doesn't fall in lockstep. `warp` marks the one
-   sticker that's an easter egg (see zelda-warp.tsx). */
+   per item so the group doesn't fall in lockstep. `warp` marks the stickers
+   that are easter eggs (zelda-warp.tsx, vinyl-warp.tsx). */
 const INTERESTS = [
   { emoji: '🍽️', label: 'NYC eats', tilt: '-rotate-3', spin: -22 },
   { emoji: '🚴', label: 'Biking', tilt: 'rotate-2', spin: 18 },
   { emoji: '🥾', label: 'Hiking', tilt: '-rotate-2', spin: -16 },
   { emoji: '⌨️', label: 'Keyboards', tilt: 'rotate-3', spin: 24 },
   { emoji: '🍿', label: 'Movies', tilt: '-rotate-1', spin: -20 },
-  { emoji: '🍷', label: 'Wine', tilt: 'rotate-1', spin: 16 },
-  { emoji: '🎮', label: 'Gaming', tilt: '-rotate-1', spin: -18, warp: true },
+  { emoji: '🎧', label: 'Music', tilt: 'rotate-1', spin: 16, warp: 'vinyl' },
+  { emoji: '🎮', label: 'Gaming', tilt: '-rotate-1', spin: -18, warp: 'zelda' },
   { emoji: '🏀', label: 'Sports', tilt: 'rotate-3', spin: 20 },
 ]
 
@@ -128,6 +129,32 @@ function ZeldaSticker({
   )
 }
 
+/** The Music sticker: warm halo; hover or tap drops a record over the page. */
+function VinylSticker({
+  emoji,
+  label,
+  tilt,
+}: {
+  emoji: string
+  label: string
+  tilt: string
+}) {
+  const { state, close, triggerProps } = useVinylWarp()
+  return (
+    <>
+      <button
+        type="button"
+        className={cn(CARD, 'vinyl-halo cursor-pointer', tilt)}
+        aria-label={`${label} — hover or tap for a surprise`}
+        {...triggerProps}
+      >
+        <StickerFace emoji={emoji} label={label} />
+      </button>
+      <VinylWarp state={state} onDismiss={close} />
+    </>
+  )
+}
+
 export function AboutSection() {
   const reduce = useReducedMotion()
 
@@ -184,8 +211,10 @@ export function AboutSection() {
                 key={label}
                 variants={fallItem(reduce ?? false, spin)}
               >
-                {warp ? (
+                {warp === 'zelda' ? (
                   <ZeldaSticker emoji={emoji} label={label} tilt={tilt} />
+                ) : warp === 'vinyl' ? (
+                  <VinylSticker emoji={emoji} label={label} tilt={tilt} />
                 ) : (
                   <div className={cn(CARD, tilt)}>
                     <StickerFace emoji={emoji} label={label} />
