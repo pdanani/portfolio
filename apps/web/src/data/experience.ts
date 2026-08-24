@@ -21,7 +21,7 @@ export const EXPERIENCE: Array<ExperienceEntry> = [
     start: '2023-08',
     end: '2025-12',
     summary:
-      'I got to touch nearly every corner of retail tech here: modernizing a legacy IBM i point-of-sale into a React web app that 2,000+ employees use daily, building the Java companion app that turned tablets in 70 stores into tap-to-pay terminals, and shipping an internal AI assistant that cut IT and HR tickets by 15%. Along the way I replaced years-old overnight deployment rituals with modern Jenkins pipelines, hardened the middleware APIs, and kept the employee mobile app humming for 3,000+ users.',
+      'I got to touch nearly every corner of retail tech here: modernizing a legacy IBM i point-of-sale into a React web app that 2,000+ employees use daily, building the Java companion app that turned tablets in 70 stores into tap-to-pay terminals, and shipping an internal AI assistant that cut IT and HR tickets by 15%. Along the way I replaced legacy manual late night deployment processes with modern Jenkins pipelines, hardened the middleware APIs, and kept the employee mobile app humming for 3,000+ users.',
     tech: [
       'React',
       'Java',
@@ -42,7 +42,7 @@ export const EXPERIENCE: Array<ExperienceEntry> = [
     start: '2022-03',
     end: '2022-10',
     summary:
-      'A proper startup sprint: I built the Explore, Profile, and Home pages of madeyn.com — a social e-commerce app — and wired up the AWS underneath it: Cognito auth, Lambda triggers syncing users into Postgres, and media compression that cut page weight by 60%.',
+      'A proper startup sprint: I built the Explore, Profile, and Home pages of madeyn.com, a social e-commerce app, and wired up the AWS underneath it: Cognito auth, Lambda triggers syncing users into Postgres, and media compression that cut page weight by 60%.',
     tech: ['React', 'GraphQL', 'AWS Cognito', 'Lambda', 'S3', 'PostgreSQL'],
   },
 ]

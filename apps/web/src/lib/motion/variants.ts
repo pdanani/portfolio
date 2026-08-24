@@ -25,3 +25,27 @@ export function fadeUpItem(reduce: boolean, y = 20): Variants {
     },
   }
 }
+
+/**
+ * Tumbles in from above and springs into place — a playful entrance for
+ * scattered/sticker-style items (e.g. the About interests). `spin` is the
+ * starting rotation (deg) it falls out of before settling to 0 — vary it
+ * per item so a group doesn't fall in lockstep. Pass `reduce` (from
+ * useReducedMotion) to collapse to a plain fade.
+ */
+export function fallItem(reduce: boolean, spin = 20): Variants {
+  return {
+    hidden: reduce
+      ? { opacity: 0 }
+      : { opacity: 0, y: -120, rotate: spin, scale: 0.85 },
+    show: {
+      opacity: 1,
+      y: 0,
+      rotate: 0,
+      scale: 1,
+      transition: reduce
+        ? { duration: 0.01 }
+        : { type: 'spring', stiffness: 260, damping: 14, mass: 0.9 },
+    },
+  }
+}

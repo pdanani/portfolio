@@ -324,12 +324,18 @@ export function WavesHero() {
         className="waves-fallback pointer-events-none absolute inset-0 -z-20"
       />
 
-      {/* WebGL ocean — starts hidden, revealed only on successful compile */}
+      {/* WebGL ocean — starts hidden, revealed only on successful compile.
+          The fallback below is dusk-toned but the shader's first frame is
+          the noon start of the intro; without an eased opacity transition
+          here that mismatch reads as a hard color-pop the instant the
+          canvas is revealed (worse on a cold load, where the fallback sits
+          on screen longer first). Same easing as the rest of the hero's
+          reveals (EASE) so the cross-dissolve feels like part of it. */}
       <canvas
         ref={canvasRef}
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
-        style={{ opacity: 0 }}
+        style={{ opacity: 0, transition: 'opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1)' }}
       />
 
       {/* bottom-up scrim for text legibility over the water */}
