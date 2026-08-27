@@ -11,7 +11,7 @@ export const EXPERIENCE: Array<ExperienceEntry> = [
     start: '2025-12',
     end: null,
     summary:
-      'I build geospatial analysis and data tools here — one web app where teams keep shared, validated data in one place instead of scattered spreadsheets, assemble dashboards from customizable widgets, and explore it all on interactive maps.',
+      'I build geospatial analysis and data tools here — one web app where teams keep shared, validated data in one place instead of scattered spreadsheets, turn it into dashboards that answer the question in front of them, and explore it all on interactive maps.',
     tech: ['React', 'Mapbox GL', 'deck.gl', 'FastAPI', 'PostgreSQL'],
   },
   {
