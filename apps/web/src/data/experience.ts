@@ -10,8 +10,7 @@ export const EXPERIENCE: Array<ExperienceEntry> = [
     location: 'New York, NY',
     start: '2025-12',
     end: null,
-    summary:
-      'I build geospatial analysis and data tools here — one web app where teams keep shared, validated data in one place instead of scattered spreadsheets, turn it into dashboards that answer the question in front of them, and explore it all on interactive maps.',
+    summary: 'I build geospatial analysis and data tools here.',
     tech: ['React', 'Mapbox GL', 'deck.gl', 'FastAPI', 'PostgreSQL'],
   },
   {
