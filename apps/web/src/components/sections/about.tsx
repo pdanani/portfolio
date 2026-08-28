@@ -80,47 +80,28 @@ function ZeldaSticker({
       {/* Hand-drawn pointer hanging off the card: curls up from the note
           into the sticker's bottom edge, drawn on (not tumbled in) once
           the card is in view. Anchored to the card, so it keeps pointing
-          at it wherever the grid wraps; the turbulence filter gives the
-          strokes a sketched wobble. */}
+          at it wherever the grid wraps. The sketched wobble is baked into
+          the path data — it used to come from an feTurbulence +
+          feDisplacementMap filter, but WebKit re-ran that filter on every
+          frame of the stroke draw and of the bob that follows, which is
+          what made the arrow crawl on iOS. */}
       <div aria-hidden className="zelda-point">
         <svg viewBox="0 0 160 112" className="zelda-point-arrow">
-          <defs>
-            <filter
-              id="zelda-sketch"
-              x="-10%"
-              y="-10%"
-              width="120%"
-              height="120%"
-            >
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.045"
-                numOctaves={2}
-                seed={3}
-                result="n"
-              />
-              <feDisplacementMap
-                in="SourceGraphic"
-                in2="n"
-                scale={3}
-                xChannelSelector="R"
-                yChannelSelector="G"
-              />
-            </filter>
-          </defs>
           <g
             fill="none"
             stroke="currentColor"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-            filter="url(#zelda-sketch)"
           >
             <path
               pathLength={1}
-              d="M 148 98 C 104 108, 62 94, 50 62 C 42 42, 38 26, 36 12"
+              d="M 148.4 98.4 C 145.4 98.6, 136.8 99.4, 130.5 99.7 C 124.2 100.0, 116.8 100.3, 110.7 100.2 C 104.6 100.1, 99.0 100.4, 94.0 99.0 C 88.9 97.7, 84.7 94.5, 80.3 92.1 C 76.0 89.8, 72.1 88.2, 67.9 85.2 C 63.8 82.2, 58.3 77.7, 55.5 74.1 C 52.6 70.4, 52.4 66.9, 51.0 63.2 C 49.5 59.6, 48.2 54.9, 46.8 52.2 C 45.5 49.5, 43.8 49.3, 42.9 46.9 C 41.9 44.6, 41.7 40.9, 41.2 38.1 C 40.8 35.3, 40.6 32.4, 40.2 30.3 C 39.8 28.3, 38.9 27.9, 38.6 25.8 C 38.3 23.8, 38.7 20.5, 38.3 18.0 C 37.9 15.5, 36.6 11.9, 36.3 10.7"
             />
-            <path pathLength={1} d="M 24 24 L 36 10 L 48 22" />
+            <path
+              pathLength={1}
+              d="M 23.6 24.4 C 24.0 23.8, 25.3 22.0, 26.2 20.8 C 27.1 19.5, 27.8 18.2, 28.8 16.9 C 29.9 15.6, 31.1 14.2, 32.4 12.9 C 33.7 11.6, 35.5 9.2, 36.6 9.0 C 37.8 8.9, 38.4 10.6, 39.5 11.8 C 40.5 13.1, 42.1 15.2, 42.9 16.5 C 43.8 17.8, 44.1 18.5, 44.7 19.5 C 45.3 20.6, 46.2 22.2, 46.6 22.8"
+            />
           </g>
         </svg>
         <span className="zelda-point-label">???</span>
@@ -219,6 +200,13 @@ function MovieSticker({
 
 export function AboutSection() {
   const reduce = useReducedMotion()
+  /* The stickers carry several `infinite` decorations (the spinning halo
+     rings, the falling notes, the turning record, the arrow's bob). They
+     used to keep running while the section was scrolled away, burning a
+     frame budget nobody could see. `data-live` parks them until the group
+     is actually on screen — note `once: false`, unlike the reveal triggers. */
+  const stickersRef = useRef<HTMLDivElement>(null)
+  const stickersLive = useInView(stickersRef, { once: false, ...IN_VIEW })
 
   return (
     <Section id="about">
@@ -267,26 +255,32 @@ export function AboutSection() {
           {/* justify-center so a narrower trailing row of stickers sits
               centred under the row above instead of hugging the left edge;
               pb-32 is the room for the arrow hanging off the Gaming sticker */}
-          <StaggerGroup className="mt-8 flex flex-wrap justify-center gap-6 pb-32">
-            {INTERESTS.map(({ emoji, label, tilt, spin, warp }) => (
-              <StaggerItem
-                key={label}
-                variants={fallItem(reduce ?? false, spin)}
-              >
-                {warp === 'zelda' ? (
-                  <ZeldaSticker emoji={emoji} label={label} tilt={tilt} />
-                ) : warp === 'vinyl' ? (
-                  <VinylSticker label={label} tilt={tilt} />
-                ) : warp === 'movie' ? (
-                  <MovieSticker emoji={emoji} label={label} tilt={tilt} />
-                ) : (
-                  <div className={cn(CARD, tilt)}>
-                    <StickerFace emoji={emoji} label={label} />
-                  </div>
-                )}
-              </StaggerItem>
-            ))}
-          </StaggerGroup>
+          <div
+            ref={stickersRef}
+            className="interest-stickers"
+            data-live={stickersLive || undefined}
+          >
+            <StaggerGroup className="mt-8 flex flex-wrap justify-center gap-6 pb-32">
+              {INTERESTS.map(({ emoji, label, tilt, spin, warp }) => (
+                <StaggerItem
+                  key={label}
+                  variants={fallItem(reduce ?? false, spin)}
+                >
+                  {warp === 'zelda' ? (
+                    <ZeldaSticker emoji={emoji} label={label} tilt={tilt} />
+                  ) : warp === 'vinyl' ? (
+                    <VinylSticker label={label} tilt={tilt} />
+                  ) : warp === 'movie' ? (
+                    <MovieSticker emoji={emoji} label={label} tilt={tilt} />
+                  ) : (
+                    <div className={cn(CARD, tilt)}>
+                      <StickerFace emoji={emoji} label={label} />
+                    </div>
+                  )}
+                </StaggerItem>
+              ))}
+            </StaggerGroup>
+          </div>
         </Reveal>
       </div>
     </Section>

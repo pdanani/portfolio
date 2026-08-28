@@ -8,7 +8,7 @@ export const DURATION = 0.6
 /** Parent that staggers its children into view. Pair with `fadeUpItem`. */
 export const staggerContainer: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+  show: { transition: { staggerChildren: 0.05, delayChildren: 0.06 } },
 }
 
 /**
@@ -37,15 +37,20 @@ export function fallItem(reduce: boolean, spin = 20): Variants {
   return {
     hidden: reduce
       ? { opacity: 0 }
-      : { opacity: 0, y: -120, rotate: spin, scale: 0.85 },
+      : { opacity: 0, y: -80, rotate: spin, scale: 0.9 },
     show: {
       opacity: 1,
       y: 0,
       rotate: 0,
       scale: 1,
+      // A tween, not a spring: springs are integrated per frame on the main
+      // thread, so eight of them landed on top of the halo/undersea paint
+      // work and dropped frames on iOS. This curve overshoots a little at
+      // the end (the y > 1 control point), which keeps the bounce, and
+      // Motion can hand a fixed-duration transform tween to the browser.
       transition: reduce
         ? { duration: 0.01 }
-        : { type: 'spring', stiffness: 260, damping: 14, mass: 0.9 },
+        : { duration: 0.45, ease: [0.34, 1.4, 0.64, 1] },
     },
   }
 }

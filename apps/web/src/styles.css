@@ -439,8 +439,14 @@
   initial-value: 0deg;
 }
 
-.zelda-halo {
-  animation: zelda-halo-breathe 2.6s ease-in-out infinite alternate;
+.zelda-halo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  box-shadow: 0 0 30px 6px oklch(0.85 0.16 85 / 0.5);
+  animation: halo-breathe 2.6s ease-in-out infinite alternate;
+  pointer-events: none;
 }
 
 .zelda-halo::before {
@@ -468,22 +474,21 @@
   pointer-events: none;
 }
 
-@keyframes zelda-halo-spin {
+/* Opacity only — compositable, unlike the box-shadow keyframes this
+   replaced, which repainted each card (and re-blurred the backdrop
+   behind it) on every frame. */
+@keyframes halo-breathe {
+  from {
+    opacity: 0.4;
+  }
   to {
-    --zelda-angle: 360deg;
+    opacity: 1;
   }
 }
 
-@keyframes zelda-halo-breathe {
-  from {
-    box-shadow:
-      0 12px 34px oklch(0.72 0.18 50 / 0.14),
-      0 0 18px 2px oklch(0.85 0.16 85 / 0.22);
-  }
+@keyframes zelda-halo-spin {
   to {
-    box-shadow:
-      0 12px 34px oklch(0.72 0.18 50 / 0.14),
-      0 0 30px 6px oklch(0.85 0.16 85 / 0.45);
+    --zelda-angle: 360deg;
   }
 }
 
@@ -948,11 +953,11 @@
 }
 
 [data-drawn] .zelda-point-arrow path:first-child {
-  animation: zelda-point-draw 0.7s ease-out 0.9s forwards;
+  animation: zelda-point-draw 0.55s ease-out 0.3s forwards;
 }
 
 [data-drawn] .zelda-point-arrow path:last-child {
-  animation: zelda-point-draw 0.25s ease-out 1.55s forwards;
+  animation: zelda-point-draw 0.2s ease-out 0.8s forwards;
 }
 
 .zelda-point-label {
@@ -967,11 +972,11 @@
 }
 
 [data-drawn] .zelda-point-label {
-  animation: zelda-point-fade 0.35s ease-out 1.75s forwards;
+  animation: zelda-point-fade 0.3s ease-out 1s forwards;
 }
 
 [data-drawn] .zelda-point {
-  animation: zelda-point-bob 2.2s ease-in-out 2.2s infinite;
+  animation: zelda-point-bob 2.2s ease-in-out 1.35s infinite;
 }
 
 @keyframes zelda-point-draw {
@@ -1027,8 +1032,14 @@
 /* ------------------------------------------------------------------ */
 
 /* Warm halo variant for the Music sticker: amber → cream → orange. */
-.vinyl-halo {
-  animation: vinyl-halo-breathe 2.6s ease-in-out infinite alternate;
+.vinyl-halo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  box-shadow: 0 0 30px 6px oklch(0.81 0.15 72 / 0.5);
+  animation: halo-breathe 2.6s ease-in-out infinite alternate;
+  pointer-events: none;
 }
 
 .vinyl-halo::before {
@@ -1054,19 +1065,6 @@
   mask-composite: exclude;
   animation: zelda-halo-spin 5s linear infinite;
   pointer-events: none;
-}
-
-@keyframes vinyl-halo-breathe {
-  from {
-    box-shadow:
-      0 12px 34px oklch(0.72 0.18 50 / 0.14),
-      0 0 18px 2px oklch(0.81 0.15 72 / 0.22);
-  }
-  to {
-    box-shadow:
-      0 12px 34px oklch(0.72 0.18 50 / 0.14),
-      0 0 30px 6px oklch(0.81 0.15 72 / 0.45);
-  }
 }
 
 /* The Music card is a miniature turntable — same materials as the scene:
@@ -1887,8 +1885,14 @@
 /* ------------------------------------------------------------------ */
 
 /* Halo variant: deep red → gold → cream, a marquee-bulb feel. */
-.movie-halo {
-  animation: movie-halo-breathe 2.6s ease-in-out infinite alternate;
+.movie-halo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  box-shadow: 0 0 30px 6px oklch(0.6 0.2 25 / 0.55);
+  animation: halo-breathe 2.6s ease-in-out infinite alternate;
+  pointer-events: none;
 }
 
 .movie-halo::before {
@@ -1914,19 +1918,6 @@
   mask-composite: exclude;
   animation: zelda-halo-spin 5s linear infinite;
   pointer-events: none;
-}
-
-@keyframes movie-halo-breathe {
-  from {
-    box-shadow:
-      0 12px 34px oklch(0.72 0.18 50 / 0.14),
-      0 0 18px 2px oklch(0.6 0.2 25 / 0.25);
-  }
-  to {
-    box-shadow:
-      0 12px 34px oklch(0.72 0.18 50 / 0.14),
-      0 0 30px 6px oklch(0.6 0.2 25 / 0.5);
-  }
 }
 
 .movie-warp {
@@ -2269,5 +2260,55 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Interest stickers — off-screen throttle                             */
+/* ------------------------------------------------------------------ */
+
+/* The halo rings, the falling notes, the turning record, the LED and the
+   arrow's bob are all `infinite`, and used to keep animating for the whole
+   page whether or not the About section was on screen. `data-live` comes
+   from an IntersectionObserver in about.tsx; without it everything here
+   parks mid-frame and costs nothing. Listed explicitly rather than as a
+   blanket `*` so an open easter-egg overlay is never frozen. */
+.interest-stickers:not([data-live]) .zelda-halo::before,
+.interest-stickers:not([data-live]) .zelda-halo::after,
+.interest-stickers:not([data-live]) .vinyl-halo::before,
+.interest-stickers:not([data-live]) .vinyl-halo::after,
+.interest-stickers:not([data-live]) .movie-halo::before,
+.interest-stickers:not([data-live]) .movie-halo::after,
+.interest-stickers:not([data-live]) .vinyl-notes > span,
+.interest-stickers:not([data-live]) .vinyl-mini .vinyl-record,
+.interest-stickers:not([data-live]) .vinyl-mini-led,
+.interest-stickers:not([data-live]) .zelda-point {
+  animation-play-state: paused;
+}
+
+/* ------------------------------------------------------------------ */
+/* Touch devices — the expensive effects, cheaply                      */
+/* ------------------------------------------------------------------ */
+
+/* iOS Safari has to re-sample and re-blur the backdrop for every
+   `backdrop-filter` layer that moves, and behind these cards the backdrop
+   is the undersea scene, which is itself animating — so nothing can be
+   cached and eight tumbling cards each cost a full-frame blur. Phones get
+   a flat translucent fill instead; it reads almost identically over the
+   dark water, and the real blur stays on pointer devices. */
+@media (hover: none) and (pointer: coarse) {
+  .waves-glass {
+    background: color-mix(in oklab, var(--card) 88%, transparent);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /* The spinning ring regenerates a conic gradient and re-composites a
+     mask every frame, three cards over. Hold the gradient still on
+     touch — the colours stay, the per-frame repaint goes. */
+  .zelda-halo::before,
+  .vinyl-halo::before,
+  .movie-halo::before {
+    animation: none;
   }
 }
